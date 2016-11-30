@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">        
+    <referenceContainer name="after.body.start">
+        <block
+            template="utag.phtml"
+            class="Tealium\Tags\Block\Utag"
+            name="tealium.tags.utag"
+        />
+        <block
+            template="udo.phtml"
+            class="Tealium\Tags\Block\TestData"
+            name="tealium.tags.defaultudo"
+        />
+    </referenceContainer>
+</layout>

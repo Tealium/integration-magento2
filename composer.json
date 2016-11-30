@@ -1,0 +1,18 @@
+{
+    "name": "tealium/tags",
+    "description": "Create UDOs for a Magento 2 site",
+    "version": "0.0.1-dev",
+    "type": "magento2-module",
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/Tealium/integration-magento2"
+    }],
+    "license": "proprietary",
+    "authors": [{
+        "name": "Christopher Anderberg",
+        "role": "Integrations"
+    }],
+    "autoload": {
+        "files": [ "registration.php" ]
+    }
+}
