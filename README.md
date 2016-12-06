@@ -4,6 +4,19 @@ Tealium Magento 2 Integration
 ## Introduction
 This is a pre-release of what is to become Tealium's official integration for TiQ on the Magento 2 framework. In its current state it is simply an implementation of some minimal boiler plate code for implementing and extending UDOs for various page types. It relies heavily on Magento's prescribed dependency injection system and layout systems. Included is a simple script that will scaffold out boiler plate code when creating a new UDO. It allows you to specify any UDOs that it may extend, and which pages of the site the new UDO should appear on. When finished, you're left with a scaffolded template that just needs to be filled in with any data specific logic for your particular use case.
 
+## Installation
+Because this module is still in development, it will be necessary to modify your composer.json file to allow Composer to install it using the "dev" stability level. You can either change the [minimum-stability](https://getcomposer.org/doc/04-schema.md#minimum-stability) option, or you can use [stability flags (recommended)](https://getcomposer.org/doc/04-schema.md#minimum-stability).
+
+For example, you could add ```"tealium/tags": "@dev"``` to the "require" section of your composer.json file.
+
+```
+"require": {
+  "tealium/tags": "@dev",
+  ...
+}
+```
+Then run ```composer install```.
+
 ## Configure
 In the "Utag.php" file in the "Block" folder, lines 14, 15, and 16 need to be changed to match your account, profile, and environment. As of now these values are simply hardcoded in this file. A better means of configuring these variables is planned before the official release of the module.
 
