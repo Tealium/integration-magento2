@@ -164,11 +164,13 @@ EOT;
             template="utag.phtml"
             class="Tealium\Tags\Block\Utag"
             name="tealium.tags.utag"
+            ifconfig = "tags/general/enabled"
         />
         <block
             template="udo.phtml"
             class="Tealium\Tags\Block\\$udoName"
             name="tealium.tags.defaultudo"
+            ifconfig = "tags/general/enabled"
         />
     </referenceContainer>
 </layout>
@@ -184,6 +186,7 @@ EOT;
             template="udo.phtml"
             class="Tealium\Tags\Block\\$udoName"
             name="tealium.tags.udo"
+            ifconfig = "tags/general/enabled"
         />
     </referenceContainer>
 </layout>            

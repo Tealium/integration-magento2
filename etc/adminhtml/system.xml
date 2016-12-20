@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <!-- Add new Tab -->
+        <tab id="tealium" translate="label" sortOrder="200">
+            <label>Tealium</label>
+        </tab>
+        <section id="tags" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1"
+                 showInStore="1">
+            <label>Tags</label>
+            <tab>tealium</tab>
+            <resource>Tealium_Example::config_example</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>General Options</label>
+                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1"
+                       showInWebsite="1"
+                       showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="account" translate="label" type="text" sortOrder="3" showInDefault="1"
+                       showInStore="1" showInWebsite="1">
+                    <label>Account</label>
+                </field>
+                <field id="profile" translate="label" type="text" sortOrder="3" showInDefault="1"
+                       showInStore="1" showInWebsite="1">
+                    <label>Profile</label>
+                </field>
+                <field id="environment" translate="label" type="text" sortOrder="3" showInDefault="1"
+                       showInStore="1" showInWebsite="1">
+                    <label>Environment</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

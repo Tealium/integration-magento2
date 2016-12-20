@@ -4,6 +4,10 @@ Tealium Magento 2 Integration
 ## Introduction
 This is a pre-release of what is to become Tealium's official integration for TiQ on the Magento 2 framework. In its current state it is simply an implementation of some minimal boiler plate code for implementing and extending UDOs for various page types. It relies heavily on Magento's prescribed dependency injection system and layout systems. Included is a simple script that will scaffold out boiler plate code when creating a new UDO. It allows you to specify any UDOs that it may extend, and which pages of the site the new UDO should appear on. When finished, you're left with a scaffolded template that just needs to be filled in with any data specific logic for your particular use case.
 
+You can get started understanding the UDO and concepts of a data layer at [https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503](https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503).
+
+Documentation on Magento can be found at [http://devdocs.magento.com/](http://devdocs.magento.com/).
+
 ## Installation
 Because this module is still in development, it will be necessary to modify your composer.json file to allow Composer to install it using the "dev" stability level. You can either change the [minimum-stability](https://getcomposer.org/doc/04-schema.md#minimum-stability) option, or you can use [stability flags (recommended)](https://getcomposer.org/doc/04-schema.md#minimum-stability).
 
@@ -51,3 +55,22 @@ Since the basic UDO is probably only used by other UDOs and won't actually go on
 ```shell
 php scaffold.php create BasicUdo
 ```
+
+## Change Log
+
+- 0.0.1 Development Release
+    - Scaffold new UDOs
+    - Extend and customize UDOs
+
+
+- 0.1.0 MVP Beta
+    - Configure account info in admin panel
+    - Enable/Disable extension in admin panel
+    - More useful info in README
+
+## License
+
+Use of this software is subject to the terms and conditions of the license agreement contained in the file titled "LICENSE.txt".  Please read the license before downloading or using any of the files contained in this repository. By downloading or using any of these files, you are agreeing to be bound by and comply with the license agreement.
+
+---
+Copyright (C) 2012-2016, Tealium Inc.

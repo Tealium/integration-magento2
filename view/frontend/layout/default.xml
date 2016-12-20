@@ -5,11 +5,13 @@
             template="utag.phtml"
             class="Tealium\Tags\Block\Utag"
             name="tealium.tags.utag"
+            ifconfig = "tags/general/enabled"
         />
         <block
             template="udo.phtml"
             class="Tealium\Tags\Block\TestData"
             name="tealium.tags.defaultudo"
+            ifconfig = "tags/general/enabled"
         />
     </referenceContainer>
 </layout>
