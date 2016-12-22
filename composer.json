@@ -1,7 +1,7 @@
 {
     "name": "tealium/tags",
     "description": "Create UDOs for a Magento 2 site",
-    "version": "0.1.0-beta",
+    "version": "0.8.0-RC",
     "type": "magento2-module",
     "repositories": [{
         "type": "vcs",
