@@ -13,6 +13,9 @@
         "role": "Integrations"
     }],
     "autoload": {
-        "files": [ "registration.php" ]
+        "files": [ "registration.php" ],
+        "psr-4": {
+            "Tealium\\Tags\\" : ""
+        }
     }
 }
