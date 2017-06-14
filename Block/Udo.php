@@ -47,11 +47,11 @@ class Udo extends Template
         if(is_array($data)) {
             foreach($data as $name => $value) {
                 if(!$this->validateValue($value)) {
-                    throw new Exception("All data in a udo must either be a string or array of strings. This constraint was not satisfied when setting \"" . $name . "\"");
+                    throw new \Exception("All data in a udo must either be a string or array of strings. This constraint was not satisfied when setting \"" . $name . "\"");
                 }
             }
         } else {
-            throw new Exception("Must pass data as an array when setting the data of a udo");
+            throw new \Exception("Must pass data as an array when setting the data of a udo");
         }
     }
     
