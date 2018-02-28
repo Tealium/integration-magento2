@@ -1,0 +1,39 @@
+<?php
+
+$helper = Mage::helper('tealium_tags');
+$store = Mage::app()->getStore();
+
+// if Tealium extension is not enabled, return immediately to not render
+if (!$helper->isEnabled($store)) {
+    return; // not enabled, no javascript inserted
+}
+
+// initialize custom data
+$customData = array();
+$customData["page_type"] = "tag product list";
+$customData["page_name"] = $this->getLayout()->getBlock('head')->getTitle();
+
+// create a tealium object for the page
+$tealium = $helper->init($store, $this, "Search")
+    ->addCustomDataFromSetup($store, "Search")
+    ->addCustomDataFromObject($customData)
+    ->getTealiumObject();
+
+// load and use the external config if it's enabled, and render Tealium
+// JavaScript code to the page.
+if ($helper->getIsExternalScript($store)) {
+    $syncType = "sync";
+    $externalScriptType = $helper->getExternalScriptType($store);
+    if ($externalScriptType == "sync" || $externalScriptType == "async") {
+        $syncType = $externalScriptType;
+    }
+    echo $tealium->render("full", true, $syncType);
+} else {
+    echo $tealium->render("udo");
+}
+
+// Sometimes it's useful to send the entire udo to a server for diagnostics.
+// Render a tag in the form of an html <img> element that
+// will send the url encoded udo to a specified server if the feature is
+// enabled in the config.
+echo $helper->getDiagnosticTag($store);
