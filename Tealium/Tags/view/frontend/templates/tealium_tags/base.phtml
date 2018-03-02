@@ -1,0 +1,19 @@
+<?php
+
+/** @var Magento\Framework\View\Element\Template  $this */
+$helper = $this->helper('Tealium\Tags\Helper\Data');
+$store = $this->getStore();
+//$tealium = new $helper($store);
+
+// if Tealium extension is not enabled, return immediately to not render
+if (!$helper->isEnabled($store)) {
+    return; // not enabled, no javascript inserted
+}
+
+// load and use the external config if it's enabled, and render Tealium
+// JavaScript code to the page.
+if (!$helper->getIsExternalScript($store)) {
+    // get the udo and universal code snippet and render
+    $tealium = $helper->getTealiumObject($store, $this);
+    echo $tealium->render("tag");
+}
