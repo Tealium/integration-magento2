@@ -1,0 +1,64 @@
+<?php
+/** @var Magento\Framework\View\Element\Template  $this */
+$helper = $this->helper('Tealium\Tags\Helper\Data');
+$store = $this->getStore();
+
+// if Tealium extension is not enabled, return immediately to not render
+if (!$helper->isEnabled($store)) {
+    return; // not enabled, no javascript inserted
+}
+
+// populate the "$terms" local variable with the search terms
+$terms = array();
+
+$escaper = $this->getObjectManager()->create('Magento\Framework\Escaper');
+
+$searchBlock = $this->getLayout()->getBlock('catalogsearch_advanced_result');
+$searchCriterias = $searchBlock->getSearchCriterias();
+foreach (array('left', 'right') as $side) {
+    if (@$searchCriterias[$side]) {
+        foreach ($searchCriterias[$side] as $criteria) {
+            $terms[] = $escaper
+                ->escapeHtml(__($criteria['name'])                )
+                .":"
+                .$escaper
+                ->escapeHtml($criteria['value']);
+        }
+    }
+}
+
+if (empty($terms)) {
+    $terms[] = "no-criteria";
+}
+
+// set some custom data by imploding the terms
+$customData = array();
+$customData["page_type"] = "advanced search results";
+$customData["page_type"] = "advanced search";
+$customData["search_results"] = $searchBlock->getResultCount();
+$customData["search_keyword"] = implode('","', $terms);
+
+// create a tealium object for the page with custom data
+$tealium = $helper->init($store, $this, "Search")->
+    addCustomDataFromSetup($store, "Search")->
+    addCustomDataFromObject($customData)->
+    getTealiumObject();
+
+// load and use the external config if it's enabled, and render Tealium
+// JavaScript code to the page.
+if ($helper->getIsExternalScript($store)) {
+    $syncType = "sync";
+    $externalScriptType = $helper->getExternalScriptType($store);
+    if ($externalScriptType == "sync" || $externalScriptType == "async") {
+        $syncType = $externalScriptType;
+    }
+    echo $tealium->render("full", true, $syncType);
+} else {
+    echo $tealium->render("udo");
+}
+
+// Sometimes it's useful to send the entire udo to a server for diagnostics.
+// Render a tag in the form of an html <img> element that
+// will send the url encoded udo to a specified server if the feature is
+// enabled in the config.
+echo $helper->getDiagnosticTag($store);

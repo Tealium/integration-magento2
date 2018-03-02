@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="after.body.start">
+            <block class="Tealium\Tags\Block\Template" name="tealium_base" as="tealium_base" template="Tealium_Tags::tealium_tags/base.phtml"/>
+            <block class="Tealium\Tags\Block\Template" name="tealium_generic" as="tealium_generic" template="Tealium_Tags::tealium_tags/generic.phtml" before="tealium_base"/>
+        </referenceContainer>
+    </body>
+</page>
