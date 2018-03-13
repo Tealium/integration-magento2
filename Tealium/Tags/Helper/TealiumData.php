@@ -61,9 +61,15 @@ class TealiumData extends AbstractHelper{
         $outputArray['site_region'] =
             $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
-        $outputArray['page_name'] =
-            $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
-        $outputArray['page_type'] = $page->getTealiumType() ? : "";
+        $titleBlock = $page->getLayout()->getBlock('page.main.title');
+        if ($titleBlock){
+            $outputArray['page_name'] =
+                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_type'] = $page->getTealiumType() ? : "";
+        } else {
+            $outputArray['page_name'] = "not supported by extension";
+            $outputArray['page_type'] = "not supported by extension";
+        }
 
         return $outputArray;
     }
