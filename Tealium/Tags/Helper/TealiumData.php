@@ -280,9 +280,16 @@ class TealiumData extends AbstractHelper{
         $outputArray['site_region'] =
             $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
-        $outputArray['page_name'] =
-            $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
-        $outputArray['page_type'] = "cart";
+
+        $titleBlock = $page->getLayout()->getBlock('page.main.title');
+        if ($titleBlock){
+            $outputArray['page_name'] =
+                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_type'] = "cart";
+        } else {
+            $outputArray['page_name'] = "Cart";
+            $outputArray['page_type'] = "cart";
+        }
 
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
         $outputArray['product_id'] = $checkout_ids ? : array();
@@ -451,9 +458,15 @@ class TealiumData extends AbstractHelper{
         $outputArray['site_region'] =
             $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
-        $outputArray['page_name'] =
-            $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
-        $outputArray['page_type'] = $page->getTealiumType() ? : "";
+        $titleBlock = $page->getLayout()->getBlock('page.main.title');
+        if ($titleBlock){
+            $outputArray['page_name'] =
+                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_type'] = $page->getTealiumType() ? : "";
+        } else {
+            $outputArray['page_name'] = "Customer Data";
+            $outputArray['page_type'] = "customer_data";
+        }
         $outputArray['customer_id'] = $customer_id ? : "";
         $outputArray['customer_email'] = $customer_email ? : "";
         $outputArray['customer_type'] = $customer_type ? : "";
