@@ -1,7 +1,7 @@
 <?php
 
-$helper = Mage::helper('tealium_tags');
-$store = Mage::app()->getStore();
+$helper = $this->helper('Tealium\Tags\Helper\Data');
+$store = $this->getStore();
 
 // if Tealium extension is not enabled, return immediately to not render
 if (!$helper->isEnabled($store)) {
