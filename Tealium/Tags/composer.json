@@ -2,7 +2,7 @@
     "name": "tealium/tags",
     "description": "",
     "require": {
-        "php": "7.1.*"
+        "php": "~5.5.0|~5.6.0|~7.0.0|7.1.*"
     },
     "suggest": {
 
