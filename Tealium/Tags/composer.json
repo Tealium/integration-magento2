@@ -19,13 +19,5 @@
         "psr-4": {
             "Tealium\\Tags\\": ""
         }
-    },
-    "extra": {
-        "map": [
-            [
-                "*",
-                "Tealium/Tags"
-            ]
-        ]
     }
 }
