@@ -18,17 +18,14 @@ class Tealium extends \Magento\Framework\View\Element\Template{
     private $customUdo;
 
     protected $_helper;
-    protected $_request;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Tealium\Tags\Helper\TealiumData $helper,
-        \Magento\Framework\App\Request\Http $request,
         array $data = []
     )
     {
         $this->_helper = $helper;
-        $this->_request = $request;
         parent::__construct($context, $data);
     }
 
@@ -133,8 +130,13 @@ class Tealium extends \Magento\Framework\View\Element\Template{
     public function render($type = null, $external = false, $sync = "sync")
     {
         // check if the tealium api is being used and render just the data layer
-        if ( $this->_request->getParam('tealium_api') != "true" && $external )
-        {
+        if (
+            !(
+                isset($_REQUEST["tealium_api"])
+                && $_REQUEST["tealium_api"] == "true"
+            )
+            && $external
+        ) {
             // not using the api, and the script is an external script
             // instead of setting utag_data with a udo object, include
             // the external script instead
@@ -216,8 +218,10 @@ $insert_tag
 EOD;
 
         // if using the tealium_api, return a page with only the javascript
-        if ( $this->_request->getParam('tealium_api') == "true" )
-        {
+        if (
+            isset($_REQUEST["tealium_api"])
+            && $_REQUEST["tealium_api"] == "true"
+        ) {
             $tag = "\n\n" . $insert_tag . "\n//TEALIUM_END\n";
             $udo = "//TEALIUM_START\n" . "\n" . $udoJs;
         }
