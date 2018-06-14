@@ -197,7 +197,7 @@ class TealiumData extends AbstractHelper{
 
             if (!(
             $outputArray['product_unit_price'] = array(
-                number_format($_product->getFinalPrice(), 2)
+                number_format($_product->getFinalPrice(), 2,'.','')
             )
             )) {
                 $outputArray['product_unit_price'] = array();
@@ -205,7 +205,7 @@ class TealiumData extends AbstractHelper{
 
             if (!(
             $outputArray['product_list_price'] = array(
-                number_format($_product->getData('price'), 2)
+                number_format($_product->getData('price'), 2,'.','')
             )
             )) {
                 $outputArray['product_list_price'] = array();
