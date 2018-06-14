@@ -41,12 +41,16 @@ if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configura
             $(function(){
                 $('[data-role=priceBox]').on('updatePrice',function(event){
                     var oldPrice = event.target.innerText;
-                    var newPrice = oldPrice.substring(1);
-                    newPrice.replace(/\n/g, "");
-                    console.log(newPrice);
-                    var oldUDO = utag_data;
-                    oldUDO.product_price = [newPrice];
-                    utag.view(oldUDO);
+                    if (oldPrice != ""){
+                        var newPrice = oldPrice.substring(1);
+                        newPrice.replace(/\r?\n|\r/g, "");
+                        newPrice.replace(/[^0-9.]/g, "");
+                        var oldUDO = utag_data;
+                        if (oldUDO.product_price[0] != newPrice){
+                            oldUDO.product_price = [newPrice];
+                            utag.view(oldUDO);
+                        }
+                    }
                 })
             })
         });
