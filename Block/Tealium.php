@@ -184,7 +184,7 @@ class Tealium extends \Magento\Framework\View\Element\Template{
             }
 
             // create the javascript for utag_data
-            $udoJs = "var utag_data = $udoJson;";
+            $udoJs = "window.utag_data = $udoJson;";
 
             // create the entire script tag to render for utag_data
             $udo = <<<EOD
