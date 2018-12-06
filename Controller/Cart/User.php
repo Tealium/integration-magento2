@@ -42,7 +42,7 @@ class User extends Action
         $groupObject = $this->_groupFactory->getById($groupId);
         $groupName = $groupObject->getCode();
 
-        echo json_encode(['id' => [$id], 'type' => [$groupName], 'email' => [$email] ]);
+        echo json_encode(['customer_id' => $id, 'customer_type' => $groupName, 'customer_email' => $email ]);
 
 		exit;
 	}

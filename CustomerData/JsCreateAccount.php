@@ -35,9 +35,9 @@ class JsCreateAccount implements SectionSourceInterface
         $result = [];
         
         if ($id) {
-            $result['data']['customer_email'] = [(string)$email];
-            $result['data']['customer_id'] = [(string)$id];
-            $result['data']['customer_type'] = [(string)$type];
+            $result['data']['customer_email'] = $email;
+            $result['data']['customer_id'] = $id;
+            $result['data']['customer_type'] = $type;
             $result['data']['tealium_event'] = 'user_register';
         }
         

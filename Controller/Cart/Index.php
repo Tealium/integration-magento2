@@ -32,6 +32,9 @@ class Index extends Action
 		//echo json_encode(phpinfo()); exit;
 		$cartData = $this->_cart->getQuote()->getAllVisibleItems();
 
+		$cart_total_items = 0;
+		$cart_total_value = 0;
+
 		$result = [
 			'data'=>[ 
 				'product_category'=>[],
@@ -42,7 +45,9 @@ class Index extends Action
 				'product_quantity'=>[],
 				'product_sku'=>[],
 				'product_subcategory'=>[],
-				'product_unit_price'=>[]
+				'product_unit_price'=>[],
+				'cart_total_items'=>'',
+				'cart_total_value'=>''
 			]
 		];
 
@@ -60,6 +65,9 @@ class Index extends Action
 			}
 			$productData = $this->_productHelper->getProductData($product->getId());
 
+			$cart_total_items += $value->getQty();
+			$cart_total_value += $productData['product_unit_price'][0];
+
 			array_push($result['data']['product_category'], $productData['product_category'][0]);
 			array_push($result['data']['product_discount'], $productData['product_discount'][0]);
 			array_push($result['data']['product_name'], $productData['product_name'][0]);
@@ -69,6 +77,7 @@ class Index extends Action
 			array_push($result['data']['product_sku'], $productData['product_sku'][0]);
 			array_push($result['data']['product_subcategory'], $productData['product_subcategory'][0]);
 			array_push($result['data']['product_unit_price'], $productData['product_unit_price'][0]);
+
 			for ($index = 2; $index <= 10; $index++) {
 				if (isset($productData['product_subcategory_'.$index])) {
 					if(!isset($result['data']['product_subcategory_'.$index])) {
@@ -83,6 +92,9 @@ class Index extends Action
 			}
 		}
 		
+		$result['data']['cart_total_items'] = strval($cart_total_items);
+		$result['data']['cart_total_value'] = strval($cart_total_value);
+
 		echo json_encode($result);
 		exit;
 	}
