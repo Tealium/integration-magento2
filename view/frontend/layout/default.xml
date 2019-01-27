@@ -5,5 +5,8 @@
             <block class="Tealium\Tags\Block\Template" name="tealium_base" as="tealium_base" template="Tealium_Tags::tealium_tags/base.phtml"/>
             <block class="Tealium\Tags\Block\Template" name="tealium_generic" as="tealium_generic" template="Tealium_Tags::tealium_tags/generic.phtml" before="tealium_base"/>
         </referenceContainer>
+        <referenceContainer name="after.body.start">
+            <block class="Tealium\Tags\Block\Template" template="Tealium_Tags::tealium_tags/action_js.phtml" />
+        </referenceContainer>
     </body>
 </page>
