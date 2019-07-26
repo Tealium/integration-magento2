@@ -189,8 +189,10 @@ class Tealium extends \Magento\Framework\View\Element\Template{
             // create the entire script tag to render for utag_data
             $udo = <<<EOD
 <!-- Tealium Universal Data Object / Data Layer -->
-<script type="text/javascript">
+<script>
+require(['domReady!'], function () {
 $udoJs
+})
 </script>
 <!-- ****************************************** -->
 EOD;
@@ -209,8 +211,10 @@ EOD;
         // enclose the tealium tag js in a <script></script> tag
         $tag = <<<EOD
 <!-- Async Load of Tealium utag.js library -->
-<script type="text/javascript">
+<script>
+require(['domReady!'], function () {
 $insert_tag
+})
 </script>
 <!-- ************************************* -->
 EOD;
