@@ -13,13 +13,13 @@ class SendFriend implements ObserverInterface
 
     protected $_request;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession,
         Http $request
     ) {
         $this->_customerSession = $customerSession;
         $this->_request = $request;
-	}
+    }
 
     /**
      *
@@ -27,8 +27,8 @@ class SendFriend implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         $request = $this->_request->getParams();
         $product_id = $request['id'];
 

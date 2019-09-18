@@ -16,7 +16,7 @@ class UpdatePost implements ObserverInterface
 
     protected $_checkoutSession;
 
-	public function __construct(
+    public function __construct(
         Http $request,
         CustomerSession $customerSession,
         CheckoutSession $_checkoutSession
@@ -24,7 +24,7 @@ class UpdatePost implements ObserverInterface
         $this->_customerSession = $customerSession;
         $this->_checkoutSession = $_checkoutSession;
         $this->_request = $request;
-	}
+    }
 
     /**
      *
@@ -32,8 +32,8 @@ class UpdatePost implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
 
         $requestParamList=$this->_request->getParams();
         $quoteList=$this->_checkoutSession->getQuote()->getAllVisibleItems();

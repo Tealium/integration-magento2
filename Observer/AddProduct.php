@@ -22,7 +22,7 @@ class AddProduct implements ObserverInterface
 
     protected $_objectManager;
 
-	public function __construct(
+    public function __construct(
         Http $request,
         CustomerSession $customerSession,
         ProductRepositoryInterface $productRepository,
@@ -34,7 +34,7 @@ class AddProduct implements ObserverInterface
         $this->_request = $request;
         $this->_productRepository = $productRepository;
         $this->_objectManager = $objectManager;
-	}
+    }
 
     /**
      *
@@ -42,20 +42,20 @@ class AddProduct implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         //get product from session
         $product_id=$this->_checkoutSession->getLastAddedProductId(true);
         $requestParamList = $this->_request->getParams();
         if (isset($requestParamList['super_attribute'])) {
             $product = $this->_productRepository->getById($product_id);
-            $myProduct = $this->_objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable')->getProductByAttributes($requestParamList['super_attribute'],$product);
+            $myProduct = $this->_objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable')->getProductByAttributes($requestParamList['super_attribute'], $product);
             $product_id = $myProduct->getId();
         }
 
         $product_quantity = 1;
         if (isset($requestParamList['qty'])) {
-        	$product_quantity = $requestParamList['qty'];
+            $product_quantity = $requestParamList['qty'];
         }
         //echo $requestParamList['qty']; exit;
         $this->_customerSession->setTealiumAddProductId($product_id);

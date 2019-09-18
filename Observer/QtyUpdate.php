@@ -50,21 +50,20 @@ class QtyUpdate implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {   
+    public function execute(Observer $observer)
+    {
         
         $requestParamList = $this->_request->getParams();
         if (array_key_exists('item_id', $requestParamList)) {
-
             $product = $this->_quoteItem->load($requestParamList['item_id']);
-			foreach ($product->getOptions() as $option) {
-				if ($option) {
-					$optionStr = $option->getValue();
-					if ($optionStr && (strpos($optionStr, 'super_attribute') !== false)) {
-						$option_list = json_decode($optionStr);
-						$product = $this->_productConfigurable->getProductByAttributes((array)$option_list->super_attribute,$product);
-					}
-				}
+            foreach ($product->getOptions() as $option) {
+                if ($option) {
+                    $optionStr = $option->getValue();
+                    if ($optionStr && (strpos($optionStr, 'super_attribute') !== false)) {
+                        $option_list = json_decode($optionStr);
+                        $product = $this->_productConfigurable->getProductByAttributes((array)$option_list->super_attribute, $product);
+                    }
+                }
             }
             //$realProduct = $this->_productRepository->get($product->getSku());
             $this->_customerSession->setTealiumQty([$product->getId()]);

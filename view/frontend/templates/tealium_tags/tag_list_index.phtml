@@ -8,10 +8,10 @@ if (!$helper->isEnabled($store)) {
     return; // not enabled, no javascript inserted
 }
 
-$tags = array();
+$tags = [];
 
 if (sizeof($this->getTags()) > 0) {
-    foreach ($this->getTags()as $name => $tag) {
+    foreach ($this->getTags() as $name => $tag) {
         $tags[] = $name;
     }
 } else {
@@ -19,7 +19,7 @@ if (sizeof($this->getTags()) > 0) {
 }
 
 // initialize custom data
-$customData = array();
+$customData = [];
 $customData["page_type"] = "tag list";
 $customData["page_name"] = $this->getLayout()->getBlock('head')->getTitle();
 $customData["search_keyword"] = implode('","', $tags);

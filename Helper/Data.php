@@ -7,6 +7,7 @@
  */
 
 namespace Tealium\Tags\Helper;
+
 use \Magento\Framework\App\Helper\AbstractHelper;
 use \Tealium\Tags\lib\Tealium\TealiumData;
 
@@ -43,17 +44,17 @@ class Data extends AbstractHelper
         );
     }
 
-    public function init(&$store, &$page = array(), $pageType)
+    public function init(&$store, &$page = [], $pageType)
     {
         // initialize basic profile settings
         $account = $this->getAccount($store);
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
 
-        $data = array(
+        $data = [
             "store" => $store,
             "page" => $page
-        );
+        ];
 
         $this->store = $store;
         $this->page = $page;
@@ -69,10 +70,10 @@ class Data extends AbstractHelper
          * the "$data" variable is referenced in the custom UDO
          * definition file
          */
-        $data = array(
+        $data = [
             "store" => $this->store,
             "page" => $this->page
-        );
+        ];
 
         if ($this->scopeConfig->getValue('tealium_tags/general/custom_udo_enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId())) {
             // To define a custom udo, define the "$udoElements" variable, which
@@ -81,27 +82,28 @@ class Data extends AbstractHelper
 
             // One way to define a custom udo is to include an external file
             // that defines "$udoElements"
-            include_once ($this->scopeConfig->getValue(
-                'tealium_tags/general/udo', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId()));
+            include_once($this->scopeConfig->getValue(
+                'tealium_tags/general/udo',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $store->getId()
+            ));
 
             // Another way to define a custom udo is to define a "getCustomUdo"
             // method, which is used to set "$udoElements"
             if (method_exists($this, "getCustomUdo")) {
                 $customUdoElements = getCustomUdo();
-                if (
-                    is_array($customUdoElements) &&
+                if (is_array($customUdoElements) &&
                     self::isAssocArray($customUdoElements)
                 ) {
                     $udoElements = $customUdoElements;
                 }
-            } elseif (
-                !isset($udoElements)
+            } elseif (!isset($udoElements)
                 || (
                     isset($udoElements)
                     && !self::isAssocArray($udoElements)
                 )
             ) {
-                $udoElements = array();
+                $udoElements = [];
             }
 
             // if a custom udo is defined for the page type, set the udo
@@ -241,7 +243,8 @@ class Data extends AbstractHelper
     public function getIsExternalScript($store)
     {
         return $this->scopeConfig->getValue(
-            'tealium_tags/general/external_script', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            'tealium_tags/general/external_script',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
     }
@@ -255,7 +258,8 @@ class Data extends AbstractHelper
     public function getExternalScriptType($store)
     {
         $async = $this->scopeConfig->getValue(
-            'tealium_tags/general/external_script_type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            'tealium_tags/general/external_script_type',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
         return $async ? "async" : "sync";
@@ -270,15 +274,17 @@ class Data extends AbstractHelper
     public function getDiagnosticTag($store)
     {
         if ($this->scopeConfig->getValue(
-            'tealium_tags/general/diagnostic_enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            'tealium_tags/general/diagnostic_enable',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $store->getId()
         )
         ) {
             $utag_data = urlencode($this->tealium->render("json"));
             $url = $this->scopeConfig->getValue(
-                    'tealium_tags/general/diagnostic_tag', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                    $store->getId()
-                )
+                'tealium_tags/general/diagnostic_tag',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $store->getId()
+            )
                 . '?origin=server&user_agent='
                 . $_SERVER ['HTTP_USER_AGENT']
                 . '&data='

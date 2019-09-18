@@ -8,7 +8,8 @@
 
 namespace Tealium\Tags\Block;
 
-class Template extends \Magento\Framework\View\Element\Template{
+class Template extends \Magento\Framework\View\Element\Template
+{
 
     protected $_objectManager;
 
@@ -26,38 +27,44 @@ class Template extends \Magento\Framework\View\Element\Template{
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\Registry $registry,
         array $data = []
-    )
-    {
+    ) {
         $this->_objectManager = $objectManager;
         $this->_registry = $registry;
         parent::__construct($context, $data);
     }
 
-    public function getStore(){
+    public function getStore()
+    {
         return $this->_storeManager->getStore();
     }
 
-    public function getObjectManager(){
+    public function getObjectManager()
+    {
         return $this->_objectManager;
     }
 
-    public function setType($type){
+    public function setType($type)
+    {
         $this->_tealiumType = $type;
     }
 
-    public function getTealiumType(){
+    public function getTealiumType()
+    {
         return $this->_tealiumType;
     }
 
-    public function setName($name){
+    public function setName($name)
+    {
         $this->_tealiumName = $name;
     }
 
-    public function getTealiumName(){
+    public function getTealiumName()
+    {
         return $this->_tealiumName;
     }
 
-    public function getRegestry(){
+    public function getRegestry()
+    {
         return $this->_registry;
     }
 }

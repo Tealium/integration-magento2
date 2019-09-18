@@ -14,13 +14,13 @@ class AddToCompare implements ObserverInterface
 
     protected $_productFactory;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession,
         ProductFactory $productFactory
     ) {
         $this->_customerSession = $customerSession;
         $this->_productFactory = $productFactory;
-	}
+    }
 
     /**
      *
@@ -28,8 +28,8 @@ class AddToCompare implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         
         $quoteItem = $observer->getData('product');
         $product_quantity = $quoteItem->getQty();

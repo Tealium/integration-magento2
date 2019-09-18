@@ -9,7 +9,7 @@ if (!$helper->isEnabled($store)) {
 }
 
 // get the terms used
-$terms = array();
+$terms = [];
 
 if (sizeof($this->getTerms()) > 0) {
     foreach ($this->getTerms() as $_term) {
@@ -20,7 +20,7 @@ if (sizeof($this->getTerms()) > 0) {
 }
 
 // initialize the custom data with popular search terms
-$customData = array();
+$customData = [];
 $customData["page_type"] = "popular search terms";
 $customData["page_name"] = $this->getLayout()->getBlock('head')->getTitle();
 $customData["search_keyword"] = implode('","', $terms);

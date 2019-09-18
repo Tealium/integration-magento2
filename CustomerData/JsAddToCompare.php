@@ -40,5 +40,3 @@ class JsAddToCompare implements SectionSourceInterface
         return $result;
     }
 }
-
-

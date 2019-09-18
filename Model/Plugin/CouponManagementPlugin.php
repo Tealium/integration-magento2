@@ -1,12 +1,13 @@
-<?php 
+<?php
 
-namespace Tealium\Tags\Model\Plugin; 
+namespace Tealium\Tags\Model\Plugin;
 
 use Magento\Sales\Model\Order;
 use Magento\Quote\Model\CouponManagement;
 use Magento\Framework\App\Request\Http;
 
-class CouponManagementPlugin { 
+class CouponManagementPlugin
+{
 
     protected $_request;
 
@@ -17,15 +18,13 @@ class CouponManagementPlugin {
         $this->_request = $request;
     }
 
-    /** 
-    * Order success action. * 
-    * @return bool */ 
+    /**
+     * Order success action. *
+     * @return bool */
     public function aroundSet(
-        CouponManagement $subject, 
+        CouponManagement $subject,
         callable $proceed
-    ) { 
-        echo 'json_encode($data)';
-        exit;
+    ) {
         $result = $proceed();
         return $result;
     }

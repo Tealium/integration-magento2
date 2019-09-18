@@ -41,5 +41,3 @@ class JsAddToCart implements SectionSourceInterface
         return $result;
     }
 }
-
-

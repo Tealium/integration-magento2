@@ -10,11 +10,11 @@ class AddToWish implements ObserverInterface
 
     protected $_customerSession;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession
     ) {
         $this->_customerSession = $customerSession;
-	}
+    }
 
     /**
      *
@@ -22,8 +22,8 @@ class AddToWish implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         
         $productItem = $observer->getData('product');
 

@@ -16,7 +16,7 @@ class LoginAccount implements ObserverInterface
 
     protected $_coreSession;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession,
         CoreSession $coreSession,
         GroupRepositoryInterface $groupFactory
@@ -24,7 +24,7 @@ class LoginAccount implements ObserverInterface
         $this->_customerSession = $customerSession;
         $this->_groupFactory = $groupFactory;
         $this->_coreSession = $coreSession;
-	}
+    }
 
     /**
      *
@@ -32,8 +32,8 @@ class LoginAccount implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         $customerObject = $observer->getData('customer');
         $email = $customerObject->getEmail();
         $id = $customerObject->getId();

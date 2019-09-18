@@ -15,7 +15,7 @@ if (preg_match('/checkout.+success|success.+checkout/i', $_SERVER['PHP_SELF'])) 
         ->addCustomDataFromSetup($store, "Confirmation")
         ->getTealiumObject();
 } else {
-    $customData = array();
+    $customData = [];
     $customData["page_type"] = "generic";
     $tealium = $helper->init($store, $this, "Home")
         ->addCustomDataFromSetup($store, "Home")

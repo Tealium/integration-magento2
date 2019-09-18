@@ -38,5 +38,3 @@ class JsSendFriend implements SectionSourceInterface
         return $result;
     }
 }
-
-

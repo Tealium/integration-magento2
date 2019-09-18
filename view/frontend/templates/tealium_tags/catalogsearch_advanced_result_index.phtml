@@ -9,17 +9,17 @@ if (!$helper->isEnabled($store)) {
 }
 
 // populate the "$terms" local variable with the search terms
-$terms = array();
+$terms = [];
 
 $escaper = $this->getObjectManager()->create('Magento\Framework\Escaper');
 
 $searchBlock = $this->getLayout()->getBlock('catalogsearch_advanced_result');
 $searchCriterias = $searchBlock->getSearchCriterias();
-foreach (array('left', 'right') as $side) {
+foreach (['left', 'right'] as $side) {
     if (@$searchCriterias[$side]) {
         foreach ($searchCriterias[$side] as $criteria) {
             $terms[] = $escaper
-                ->escapeHtml(__($criteria['name'])                )
+                ->escapeHtml(__($criteria['name']))
                 .":"
                 .$escaper
                 ->escapeHtml($criteria['value']);
@@ -32,7 +32,7 @@ if (empty($terms)) {
 }
 
 // set some custom data by imploding the terms
-$customData = array();
+$customData = [];
 $customData["page_type"] = "advanced search results";
 $customData["page_type"] = "advanced search";
 $customData["search_results"] = $searchBlock->getResultCount();

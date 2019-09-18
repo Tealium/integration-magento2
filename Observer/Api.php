@@ -38,8 +38,7 @@ class Api implements ObserverInterface
     {
         // if the "tealium_api" parameter is set to true, set the response
         // to only contain relevant Tealium logic.
-        if ( $this->_request->getParam('tealium_api') == "true" )
-        {
+        if ($this->_request->getParam('tealium_api') == "true") {
             $response = $observer->getData('response');
             $html = $response->getBody();
             preg_match('/\/\/TEALIUM_START(.*)\/\/TEALIUM_END/is', $html, $matches);
@@ -50,5 +49,4 @@ class Api implements ObserverInterface
 
         return $this;
     }
-
 }

@@ -8,7 +8,8 @@
 
 namespace Tealium\Tags\Block;
 
-class Tealium extends \Magento\Framework\View\Element\Template{
+class Tealium extends \Magento\Framework\View\Element\Template
+{
     // Declare related properties and define constructor
     private $account; // account name
     private $profile; // profile name
@@ -25,8 +26,7 @@ class Tealium extends \Magento\Framework\View\Element\Template{
         \Tealium\Tags\Helper\TealiumData $helper,
         \Magento\Framework\App\Request\Http $request,
         array $data = []
-    )
-    {
+    ) {
         $this->_helper = $helper;
         $this->_request = $request;
         parent::__construct($context, $data);
@@ -37,14 +37,14 @@ class Tealium extends \Magento\Framework\View\Element\Template{
         $profileInit = false,
         $targetInit = false,
         $pageType = "Home",
-        &$data = array()
+        &$data = []
     ) {
 
         $tealiumData = $this->_helper;
         $tealiumData->setStore($data['store']);
         $tealiumData->setPage($data['page']);
 
-        $udoElements = array(
+        $udoElements = [
             'Home' => $tealiumData->getHome(),
             'Search' =>$tealiumData->getSearch(),
             'Category' =>$tealiumData->getCategory(),
@@ -52,18 +52,17 @@ class Tealium extends \Magento\Framework\View\Element\Template{
             'Cart' => $tealiumData->getCartPage(),
             'Confirmation' => $tealiumData->getOrderConfirmation(),
             'Customer' =>$tealiumData->getCustomerData()
-        );
+        ];
 
         $this->udoElements = $udoElements;
         $this->account = $accountInit;
         $this->profile = $profileInit;
         $this->target = $targetInit;
 
-        if (
-            !($this->udo = $this->udoElements[$pageType])
+        if (!($this->udo = $this->udoElements[$pageType])
             && $pageType != null
         ) {
-            $this->udo = array('page_type' => $pageType);
+            $this->udo = ['page_type' => $pageType];
         }
 
         return $this;
@@ -126,15 +125,14 @@ class Tealium extends \Magento\Framework\View\Element\Template{
     {
         $this->udo = $this->udoElements[$pageType];
         if (!$this->udo && $pageType != null) {
-            $this->udo = array('page_type' => $pageType);
+            $this->udo = ['page_type' => $pageType];
         }
     }
 
     public function render($type = null, $external = false, $sync = "sync")
     {
         // check if the tealium api is being used and render just the data layer
-        if ( $this->_request->getParam('tealium_api') != "true" && $external )
-        {
+        if ($this->_request->getParam('tealium_api') != "true" && $external) {
             // not using the api, and the script is an external script
             // instead of setting utag_data with a udo object, include
             // the external script instead
@@ -167,14 +165,14 @@ class Tealium extends \Magento\Framework\View\Element\Template{
             // determine the udo obj's type and convert to JSON
             if ($udoObject instanceof Closure) {
                 // pretty print in versions of php that support it
-                if(defined('JSON_PRETTY_PRINT')) {
+                if (defined('JSON_PRETTY_PRINT')) {
                     $udoJson = json_encode($udoObject(), JSON_PRETTY_PRINT);
                 } else {
                     $udoJson = json_encode($udoObject());
                 }
             } elseif (is_array($udoObject)) {
                 // pretty print in versions of php that support it
-                if(defined('JSON_PRETTY_PRINT')) {
+                if (defined('JSON_PRETTY_PRINT')) {
                     $udoJson = json_encode($udoObject, JSON_PRETTY_PRINT);
                 } else {
                     $udoJson = json_encode($udoObject);
@@ -216,8 +214,7 @@ $insert_tag
 EOD;
 
         // if using the tealium_api, return a page with only the javascript
-        if ( $this->_request->getParam('tealium_api') == "true" )
-        {
+        if ($this->_request->getParam('tealium_api') == "true") {
             $tag = "\n\n" . $insert_tag . "\n//TEALIUM_END\n";
             $udo = "//TEALIUM_START\n" . "\n" . $udoJs;
         }
@@ -250,5 +247,4 @@ EOD;
 
         return $renderedCode;
     }
-
 }

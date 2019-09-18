@@ -16,7 +16,7 @@ class MultishippingQtyUpdate implements ObserverInterface
 
     protected $_checkoutSession;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession,
         CheckoutSession $checkoutSession,
         Http $request
@@ -24,7 +24,7 @@ class MultishippingQtyUpdate implements ObserverInterface
         $this->_customerSession = $customerSession;
         $this->_request = $request;
         $this->_checkoutSession = $checkoutSession;
-	}
+    }
 
     /**
      *
@@ -32,8 +32,8 @@ class MultishippingQtyUpdate implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
 
         $requestParamList=$this->_request->getParams();
         $dataArray = [];
@@ -42,21 +42,21 @@ class MultishippingQtyUpdate implements ObserverInterface
         //prepere data for checking
 
         foreach ($requestParamList['ship'] as $shipItem) {
-            foreach ($shipItem as $id  => $itemData) {
+            foreach ($shipItem as $id => $itemData) {
                 if (array_key_exists($id, $dataArray)) {
                     $dataArray[$id]['qty'] = $dataArray[$id]['qty']+$itemData['qty'];
                 } else {
                     $dataArray[$id] = $itemData;
                 }
             }
-        }   
+        }
 
         //Product search with unchanged quantity
 
         $quoteList=$this->_checkoutSession->getQuote()->getAllVisibleItems();
         foreach ($dataArray as $id => $itemData) {
             foreach ($quoteList as $quoteItem) {
-                echo $quoteItem->getItemId().'  '.$quoteItem->getQty().'   ';
+                //echo $quoteItem->getItemId().'  '.$quoteItem->getQty().'   ';
                 if ($quoteItem->getItemId() == $id and $quoteItem->getQty() != $itemData['qty']) {
                     array_push($result, $id);
                 }

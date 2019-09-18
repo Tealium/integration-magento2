@@ -41,10 +41,8 @@ class JsUpdateQty implements SectionSourceInterface
         
         $result = [];
         if ($productIdList) {
-
-
             $result = [
-                'data'=>[ 
+                'data'=>[
                     'product_category'=>[],
                     'product_discount'=>[],
                     'product_id'=>[],
@@ -61,7 +59,7 @@ class JsUpdateQty implements SectionSourceInterface
             $quoteList=$this->_checkoutSession->getQuote()->getAllVisibleItems();
 
             foreach ($quoteList as $quoteItem) {
-                if (in_array($quoteItem->getItemId(), $productIdList)){
+                if (in_array($quoteItem->getItemId(), $productIdList)) {
                     $product = $this->_productRepository->get($quoteItem->getSku());
                     $productData = $this->_productHelper->getProductData($product->getId());
                     array_push($result['data']['product_category'], $productData['product_category'][0]);
@@ -76,8 +74,8 @@ class JsUpdateQty implements SectionSourceInterface
                     //if (isset($productData['product_subcategory_1'])
                     for ($index = 2; $index <= 10; $index++) {
                         if (isset($productData['product_subcategory_'.$index])) {
-                            if(!isset($result['data']['product_subcategory_'.$index])) {
-                                $result['data']['product_subcategory_'.$index] = array();
+                            if (!isset($result['data']['product_subcategory_'.$index])) {
+                                $result['data']['product_subcategory_'.$index] = [];
                             }
                             $count = count($result['data']['product_id'])-1;
                             while (count($result['data']['product_subcategory_'.$index]) < $count) {
@@ -92,5 +90,3 @@ class JsUpdateQty implements SectionSourceInterface
         return $result;
     }
 }
-
-

@@ -9,13 +9,13 @@ if (!$helper->isEnabled($store)) {
     return; // not enabled, no javascript inserted
 }
 
-$_product_id = $this->getRequest()->getParam('id',null);
-$_category_id = $this->getRequest()->getParam('cat_id',null);
+$_product_id = $this->getRequest()->getParam('id', null);
+$_category_id = $this->getRequest()->getParam('cat_id', null);
 $_product = $this->getObjectManager()->create('Magento\Catalog\Model\Product')->load($_product_id);
 $_category = $this->getObjectManager()->create('Magento\Catalog\Model\Category')->load($_category_id);
 
 // set custom data with product information
-$customData = array();
+$customData = [];
 $customData["page_name"] = $_product->getName();
 $customData["page_type"] = "product send";
 $customData["product_id"] = $_product->getId();
@@ -25,9 +25,9 @@ $customData["product_brand"] = $_product->getBrand();
 $customData["product_category"] =
     $_category ? $_category->getName() : 'no_category';
 $customData["product_unit_price"] =
-    number_format($_product->getSpecialPrice() ? : "0.00", 2, ".",'');
+    number_format($_product->getSpecialPrice() ? : "0.00", 2, ".", '');
 $customData["product_list_price"] =
-    number_format($_product->getPrice()? : "0.00", 2, ".",'');
+    number_format($_product->getPrice()? : "0.00", 2, ".", '');
 
 // create a tealium object for the page
 $tealium = $helper->init($store, $this, "ProductPage")

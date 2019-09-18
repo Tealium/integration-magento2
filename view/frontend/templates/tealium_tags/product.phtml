@@ -33,7 +33,7 @@ if ($helper->getIsExternalScript($store)) {
 // enabled in the config.
 echo $helper->getDiagnosticTag($store);
 
-if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configurable'):
+if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configurable') :
     ?>
 
     <script type="text/javascript">
@@ -57,5 +57,4 @@ if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configura
     </script>
 
 <?php
-
 endif;

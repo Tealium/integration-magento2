@@ -13,13 +13,13 @@ class CouponPost implements ObserverInterface
 
     protected $_request;
 
-	public function __construct(
+    public function __construct(
         CustomerSession $customerSession,
         Http $request
     ) {
         $this->_customerSession = $customerSession;
         $this->_request = $request;
-	}
+    }
 
     /**
      *
@@ -27,8 +27,8 @@ class CouponPost implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
 
         $requestParamList = $this->_request->getParams();
         
