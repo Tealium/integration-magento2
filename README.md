@@ -28,6 +28,12 @@ In the admin panel under store configuration, you can set the  options for the e
 
 ## Change Log
 
+- 3.0.2 Release
+    - Updated all page level UDO objects to follow Tealium best practices and include additional data
+    - Updated dynamic events (Add to Cart, Remove from Cart, Cart Quickview, etc) to follow Tealium best practices and include additional data
+    - Updated method to Add Custom UDO. "include_once" function no longer supported in v3.0.N
+    - Updated additional unsupported methods for backward and forward compatibility
+
 - 2.0.0 Release
     - Updated composer.JSON
     - Updated readme
