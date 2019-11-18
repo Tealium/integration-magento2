@@ -9,9 +9,9 @@ if (!$helper->isEnabled($store)) {
     return; // not enabled, no javascript inserted
 }
 
-$ids = array();
-$skus = array();
-$names = array();
+$ids = [];
+$skus = [];
+$names = [];
 
 // populate info for each item into local variables
 foreach ($this->helper('Magento\Catalog\Helper\Product\Compare')->getItemCollection() as $item) {
@@ -21,7 +21,7 @@ foreach ($this->helper('Magento\Catalog\Helper\Product\Compare')->getItemCollect
 }
 
 // set some custom data by imploding arrays of ids, skus, and names
-$customData = array();
+$customData = [];
 $customData["page_type"] = "product compare";
 $customData["product_id"] = implode('","', $ids);
 $customData["product_sku"] = implode('","', $skus);
