@@ -1,0 +1,21 @@
+{
+    "name": "tealium/tags",
+    "description": "",
+    "require": {
+        "php": "~7.0.13|~7.1.0|~7.2.0|7.3.12"
+    },
+    "suggest": {
+
+    },
+    "type": "magento2-module",
+    "version": "3.0.1",
+    "license": "proprietary",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Tealium\\Tags\\": ""
+        }
+    }
+}

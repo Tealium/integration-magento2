@@ -1,0 +1,1279 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="tealium" translate="label" sortOrder="10">
+            <label>Tealium</label>
+        </tab>
+        <section id="tealium_tags" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Tag Management</label>
+            <tab>tealium</tab>
+            <resource>Tealium_Tags::tealium_tags</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="onepage" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable OnePage Checkout</label>
+                    <comment><![CDATA[
+                                    <span class="notice">
+                                        Enable/Disable OnePage Checkout Support
+                                    </span>
+                                ]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="account" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Account</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Tealium account name
+                                    </span>
+                                ]]>
+                    </comment>
+                </field>
+                <field id="profile" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Profile</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Tealium profile to use on all pages
+                                    </span>
+                                ]]>
+                    </comment>
+                </field>
+                <field id="env" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Environment</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Tealium environment to load
+                                    </span>
+                                ]]>
+                    </comment>
+                </field>
+                <field id="custom_udo_enable" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Custom UDO</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Enable the use of a custom PHP UDO definition file to extend the default Tealium Magento data layer
+                                    </span>
+                                ]]>
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="udo" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom UDO file path</label>
+                    <comment>
+                        <![CDATA[
+                                <span class="notice">Full system path of custom UDO definition file</span><br />
+                                <a href="javascript:false;" onclick="javascript: document.getElementById('udo_example').style.display='block'">Click for example</a><br/>
+                                <a href="javascript:false;" onclick="javascript: document.getElementById('code_example').style.display='block'">Click for UDO PHP base code</a>
+                                <div style="display:none; background-color:#000; color:#0F0" id="udo_example">
+                                    /var/www/html/magento/udo/udo.php
+                                    <br /><a href="javascript:false;" onclick="javascript: document.getElementById('udo_example').style.display='none'">Hide</a>
+                                </div>
+                                <div style="display:none; background-color:#000; color:#0F0" id="code_example">
+                                    <pre>
+                                        &lt;?php
+                                        // TealiumExtendData use this to override or extend default values proivided by the Tealium module
+
+                                        class TealiumExtendData {
+                                            private static $store;
+                                            private static $page;
+
+                                            public static function setStore($store){
+                                                TealiumExtendData::$store = $store;
+                                            }
+
+                                            public static function setPage($page){
+                                                TealiumExtendData::$page = $page;
+                                            }
+
+                                            public function getHome(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+
+                                                return $outputArray;
+                                            }
+
+                                            public function getSearch(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+
+                                                return $outputArray;
+                                            }
+
+                                            public function getCategory(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+
+                                                return $outputArray;
+                                            }
+
+                                            public function getProductPage(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+                                                // make sure any product values are in an array
+
+                                                return $outputArray;
+                                            }
+
+                                            public function getCartPage() {
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+                                                // make sure any product values are in an array
+
+                                                return $outputArray;
+                                            }
+
+                                            public function getOrderConfirmation(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+                                                // make sure any product values are in an array
+
+                                                return  $outputArray;
+                                            }
+
+                                            public function getCustomerData(){
+                                                $store = TealiumExtendData::$store;
+                                                $page = TealiumExtendData::$page;
+
+                                                $outputArray = array();
+                                                //$outputArray[&quot;custom_key&quot;] = "value";
+
+                                                return $outputArray;
+                                            }
+                                        }
+
+
+                                        TealiumExtendData::setStore($data["store"]);
+                                        TealiumExtendData::setPage($data["page"]);
+
+
+                                        $udoElements = array(
+                                            &quot;Home&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getHome();
+                                            },
+                                            &quot;Search&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getSearch();
+                                            },
+                                            &quot;Category&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getCategory();
+                                            },
+                                            &quot;ProductPage&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getProductPage();
+                                            },
+                                            &quot;Cart&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getCartPage();
+                                            },
+                                            &quot;Confirmation&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getOrderConfirmation();
+                                            },
+                                            &quot;Customer&quot; =&gt; function(){
+                                                $tealiumData = new TealiumExtendData();
+                                                return $tealiumData-&gt;getCustomerData();
+                                            }
+                                        );
+
+
+                                        ?&gt;
+                                    </pre>
+                                    <br /><a href="javascript:false;" onclick="javascript: document.getElementById('code_example').style.display='none'">Hide</a>
+                                </div>
+                                ]]>
+                    </comment>
+                </field>
+                <field id="external_script" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable External Script Support</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Place Tealium code in external javaScript file
+                                        <br/>
+                                        *NOTE Order confirmation page will always load script on page
+                                    </span>
+                                ]]>
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="external_script_type" translate="label" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>External Script Async</label>
+                    <comment>
+                        <![CDATA[
+                                <span class="notice">
+                                    Enable async loading of the external script
+                                    <br />
+                                    !WARNING! By enabling, we can't gaurantee all of your tags will fire before the user navigates away
+                                </span>
+                            ]]>
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="diagnostic_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Diagnostic Tag</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="diagnostic_tag" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom diagnostic tag URI path</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Please contact your Account Manager for information about this feature
+                                    </span>
+                                ]]>
+                    </comment>
+                </field>
+                <field id="help" translate="label" type="label" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Help Section</label>
+                    <comment>
+                        <![CDATA[
+                                    <span class="notice">
+                                        Help Section on configuration of this plugin
+                                    </span>
+
+                                    <br />
+
+                                    <a href="javascript:false;" onclick="javascript: document.getElementById('tealium_help').style.display='block'">
+                                        Click to expand
+                                    </a>
+
+                                    <div style="display:none; background-color:#000; color:#0F0; width:250%" id="tealium_help">
+
+                                        <!-- ------------------------------------------------------------------------- -->
+                                        <div id="readme" >
+                                            <span class="name">
+                                                <span class="octicon octicon-book"></span>
+                                                README.md
+                                            </span>
+
+                                            <article class="markdown-body entry-content" itemprop="mainContentOfPage">
+
+                                                <h1>
+                                                    <a name="user-content-tealium-extension-for-magento---103" class="anchor" href="#tealium-extension-for-magento---103">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Tealium Extension for Magento 2.0.6
+                                                </h1>
+
+                                                <hr>
+
+                                                <p>
+                                                    This Extension for Magento provides Tealium customers the means to easily tag their Magento sites for the purpose of leveraging the vendor-neutral tag management platform offered by Tealium.
+                                                </p>
+
+                                                <p>This Extension provides for:</p>
+
+                                                <ul>
+                                                    <li>Making integration of Tealium into a Magento site more efficient</li>
+                                                    <li>The ability to extend the default data layer in the extension via a user defined PHP file</li>
+                                                    <li>Vendor integration via the Tealium platform</li>
+                                                    <li>Implemented with the user in mind. All generated Tealium scripts are asynchronous as to not interfere or degrade the user experience. </li>
+                                                </ul>
+
+                                                <p>
+                                                    These instructions presume you have valid accounts with both Tealium and also with the vendors you want to send data to, as well as an installed Magento instance and the knowledge on how to administer it.
+                                                </p>
+
+                                                <p>
+                                                    Implementation is a three part process:
+                                                    <ol>
+                                                        <li>Get the <a href="http://www.magentocommerce.com/magento-connect/tealium-tag-management-1.html">Tealium extension</a> from the Magento Connect Market</li>
+                                                        <li>Install the Tealium Extension for Magento via the Magento Connect Manager in your Magento admin UI</li>
+                                                        <li>
+                                                            Configure the Tealium extension in the system configuration of your admin UI
+                                                            (optional: configure the custom PHP UDO definition file to extend the already included UDO (data layer) definition file)
+                                                        </li>
+                                                        <li>Configure your Tealium IQ dashboard with any vendor tags from our marketplace and publish</li>
+                                                    </ol>
+                                                </p>
+
+                                                <hr>
+
+                                                <h2>
+                                                    <a name="user-content-table-of-contents" class="anchor" href="#table-of-contents">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Table of Contents
+                                                </h2>
+
+                                                <ul>
+                                                    <li><a href="#requirements">Requirements</a></li>
+                                                    <li><a href="#new-installation">New Installation</a></li>
+                                                    <li><a href="#how-to-use">How To Use</a></li>
+                                                    <li><a href="#tealium-iq-basic-set-up--verification-test">Tealium IQ Basic Set Up + Verification Test</a></li>
+                                                    <li><a href="#versions">Versions</a></li>
+                                                </ul>
+
+                                                <h2>
+                                                    <a name="user-content-requirements" class="anchor" href="#requirements">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Requirements
+                                                </h2>
+
+                                                <p>You will need the following items:</p>
+
+                                                <ul>
+                                                    <li>An active Tealium IQ Account</li>
+                                                    <li>Your Tealium Account Id (it will likely be your company name)</li>
+                                                    <li>The Tealium Profile name to be associated with the app (your account may have several profiles, ideally one of them is dedicated to your iOS app)</li>
+                                                    <li>The Tealium environment to use:
+
+                                                        <ul>
+                                                            <li>prod</li>
+                                                            <li>qa</li>
+                                                            <li>dev</li>
+                                                            <li>custom</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>Minimum PHP version 5.1.0</li>
+                                                    <li>Minimum Magento version 1.6</li>
+                                                </ul>
+
+                                                <h2>
+                                                    <a name="user-content-new-installation" class="anchor" href="#new-installation">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>New Installation
+                                                </h2>
+
+                                                <p>Installing the Tealium Extension into your instance of Magento requires the following steps:</p>
+
+                                                <ol>
+                                                    <li>Get the Tealium extension from the Magento Connect Market
+
+                                                        <ul>
+                                                            <li><a href="http://www.magentocommerce.com/magento-connect/tealium-tag-management-1.html">Link to Tealium on Magento Connect</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>Install the Tealium Extension for Magento via the Magento Connect Manager in your Magento admin UI</li>
+                                                    <li>Configure the Tealium extension in the system configuration of your admin UI
+
+                                                        <ul>
+                                                            <li>optional: configure the custom PHP UDO definition file to extend the already included UDO (data layer) definition file</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>All relevant best practices e-commerce variables will now be generated on your site and any tags you have set up in TealiumIQ will now work automatically</li>
+                                                </ol>
+
+                                                <h2>
+                                                    <a name="user-content-dependencies" class="anchor" href="#dependencies">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Dependencies
+                                                </h2>
+
+                                                <p>A live installation of Magento community or enterprise</p>
+
+                                                <h2>
+                                                    <a name="user-content-how-to-use" class="anchor" href="#how-to-use">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    How To Use
+                                                </h2>
+
+                                                <h3>
+                                                    <a name="user-content-predefined-data-layer-varaibles-already-available" class="anchor" href="#predefined-data-layer-varaibles-already-available">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Predefined data layer variables already available
+                                                </h3>
+
+                                                <h4>
+                                                    <a name="user-content-home" class="anchor" href="#home">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Home
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region" class="anchor" href="#site_region">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency" class="anchor" href="#site_currency">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name" class="anchor" href="#page_name">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type" class="anchor" href="#page_type">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h4>
+                                                    <a name="user-content-search" class="anchor" href="#search">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Search
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-1" class="anchor" href="#site_region-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-1" class="anchor" href="#site_currency-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-1" class="anchor" href="#page_name-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-1" class="anchor" href="#page_type-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-search_results" class="anchor" href="#search_results">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    search_results
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-search_keyword" class="anchor" href="#search_keyword">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    search_keyword
+                                                </h6>
+
+                                                <h4>
+                                                    <a name="user-content-category" class="anchor" href="#category">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Category
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-2" class="anchor" href="#site_region-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-2" class="anchor" href="#site_currency-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-2" class="anchor" href="#page_name-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-2" class="anchor" href="#page_type-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_section_name" class="anchor" href="#page_section_name">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_section_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_category_name" class="anchor" href="#page_category_name">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_category_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_subcategory_name" class="anchor" href="#page_subcategory_name">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_subcategory_name
+                                                </h6>
+
+                                                <h4>
+                                                    <a name="user-content-productpage" class="anchor" href="#productpage">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    ProductPage
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-3" class="anchor" href="#site_region-3">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-3" class="anchor" href="#site_currency-3">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-3" class="anchor" href="#page_name-3">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-3" class="anchor" href="#page_type-3">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_id" class="anchor" href="#product_id">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_sku" class="anchor" href="#product_sku">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_sku
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_name" class="anchor" href="#product_name">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_brand" class="anchor" href="#product_brand">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_brand
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_category" class="anchor" href="#product_category">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_category
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_unit_price" class="anchor" href="#product_unit_price">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_unit_price
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_list_price" class="anchor" href="#product_list_price">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_list_price
+                                                </h6>
+
+                                                <h4>
+                                                    <a name="user-content-cart" class="anchor" href="#cart">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Cart
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-4" class="anchor" href="#site_region-4">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-4" class="anchor" href="#site_currency-4">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-4" class="anchor" href="#page_name-4">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-4" class="anchor" href="#page_type-4">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_id-1" class="anchor" href="#product_id-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_sku-1" class="anchor" href="#product_sku-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_sku
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_name-1" class="anchor" href="#product_name-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_quantity" class="anchor" href="#product_quantity">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_quantity
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_list_price-1" class="anchor" href="#product_list_price-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_list_price
+                                                </h6>
+
+                                                <h4>
+                                                    <a name="user-content-confirmation" class="anchor" href="#confirmation">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Confirmation
+                                                </h4>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-5" class="anchor" href="#site_region-5">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-5" class="anchor" href="#site_currency-5">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-5" class="anchor" href="#page_name-5">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-5" class="anchor" href="#page_type-5">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_id" class="anchor" href="#order_id">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_discount" class="anchor" href="#order_discount">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_discount
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_subtotal" class="anchor" href="#order_subtotal">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_subtotal
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_shipping" class="anchor" href="#order_shipping">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_shipping
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_tax" class="anchor" href="#order_tax">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_tax
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_payment_type" class="anchor" href="#order_payment_type">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_payment_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_total" class="anchor" href="#order_total">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_total
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-order_currency" class="anchor" href="#order_currency">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    order_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-customer_id" class="anchor" href="#customer_id">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    customer_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-customer_email" class="anchor" href="#customer_email">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    customer_email
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_id-2" class="anchor" href="#product_id-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_sku-2" class="anchor" href="#product_sku-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_sku
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_name-2" class="anchor" href="#product_name-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_list_price-2" class="anchor" href="#product_list_price-2">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_list_price
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_quantity-1" class="anchor" href="#product_quantity-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_quantity
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_discount" class="anchor" href="#product_discount">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_discount
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-product_discounts" class="anchor" href="#product_discounts">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    product_discounts
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_region-6" class="anchor" href="#site_region-6">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_region
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-site_currency-6" class="anchor" href="#site_currency-6">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    site_currency
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_name-6" class="anchor" href="#page_name-6">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_name
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-page_type-6" class="anchor" href="#page_type-6">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    page_type
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-customer_id-1" class="anchor" href="#customer_id-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    customer_id
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-customer_email-1" class="anchor" href="#customer_email-1">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    customer_email
+                                                </h6>
+
+                                                <h6>
+                                                    <a name="user-content-customer_type" class="anchor" href="#customer_type">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    customer_type
+                                                </h6>
+
+                                                <h3>
+                                                    <a name="user-content-adding-custom-data-sources" class="anchor" href="#adding-custom-data-sources">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Adding Custom Data Sources
+                                                </h3>
+
+                                                <p>
+                                                    If you need to modify the default variables or page types you can define these in an external file and place it in accessible folder for the plugin to read from.
+                                                </p>
+
+                                                <ol>
+                                                    <li>In the Magento admin configuration set Enable Custom UDO to "Yes"</li>
+                                                    <li>Specify the system path to the file in the configuration</li>
+                                                    <li>If you need a base PHP block to start with click the "Click for UDO PHP base code" link and copy this code</li>
+                                                </ol>
+
+                                                <h2>
+                                                    <a name="user-content-tealium-iq-basic-set-up--verification-test" class="anchor" href="#tealium-iq-basic-set-up--verification-test">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>Tealium IQ Basic Set Up + Verification Test
+                                                </h2>
+
+                                                <p>
+                                                    This example is for mapping two variables to a Google Analytics account to your app through the Tealium Management Console.  This example presumes you have already done the following:
+                                                </p>
+
+                                                <ul>
+                                                    <li>Setup a Google analytics account from <a href="http://www.google.com/analytics/">www.google.com/analytics/</a></li>
+                                                    <li>Have added Tealium tracking code to your project (see instructions above)</li>
+                                                    <li>Have a Tealium account at <a href="http://www.tealium.com">www.tealium.com</a></li>
+                                                </ul>
+
+                                                <p>Verification steps are:</p>
+
+                                                <ol>
+                                                    <li><p>Log into your Tealium account</p></li>
+                                                    <li><p>Load the Account and Profile that matches the Account and Profile used in your <strong>Tealium($accountInit, $profileInit, $targetInit[, $pageType][, $data])</strong> method.</p></li>
+
+                                                    <li>
+                                                        <p>Goto the <strong>Data Sources</strong> tab and add the following new data source:  </p>
+
+                                                        <ul>
+                                                            <li>screen_title</li>
+                                                        </ul>
+
+                                                        <p>
+                                                            Note: leave them as the default type: Data Layer.  <em>screen_title</em> are your views' viewcontroller title or nibName property.
+                                                            Optional: copy and paste the entire set of predefined Data Sources found at: <a href="https://community.tealiumiq.com/t5/Mobile/Mobile-Autotracked-Data-Sources/m-p/1798/highlight/true#M259">https://community.tealiumiq.com/t5/Mobile/Mobile-Autotracked-Data-Sources/m-p/1798/highlight/true#M259</a>
+                                                        </p>
+
+                                                    </li>
+
+                                                    <li>
+                                                        <p>Go to the <strong>Tags</strong> tab:</p>
+
+                                                        <ul>
+                                                            <li>click on the <em>+Add Tag</em> button</li>
+                                                            <li>select Google Analytics</li>
+                                                            <li>enter any title (ie "GAN") in the title field</li>
+                                                            <li>enter your Google Analytics product id into the account id field (this is the account id assigned by Google and usually starts with the letters <em>UA</em>...)</li>
+                                                            <li>click on the <em>Next</em> button</li>
+                                                            <li>make sure the <em>Display All Pages</em> option is checked in the Load Rules section</li>
+                                                            <li>click on the <em>Next</em> button</li>
+                                                            <li>in the <em>Source Values</em> dropdown - select <em>screen_title(js)</em> - click on <em>Select Variable</em></li>
+                                                            <li>select <em>Page Name (Override)</em> option in the Mapping Toolbox</li>
+                                                            <li>click <em>save</em></li>
+                                                            <li>click <em>save</em></li>
+                                                            <li>click on the <em>finish</em></li>
+                                                        </ul>
+
+                                                    </li>
+
+                                                    <li>
+                                                        <p>Click on the <em>Save/Publish</em> button</p>
+
+                                                        <ul>
+                                                            <li>Click on Configure Publish Options... The Publish Settings dialog box will appear. Make certain the "Enable Mobile App Support" option is checked on and click "Apply". </li>
+                                                            <li>Enter any <em>Version Notes</em> regarding this deployment</li>
+                                                            <li>Select the <em>Publish Location</em> that matches the <em>environmentName</em>, or target argument from your <em>initSharedInstance:profile:target:</em> method</li>
+                                                            <li>Click "Save"</li>
+                                                        </ul>
+
+                                                        <p>NOTE: It may take up to five minutes for your newly published settings to take effect.</p>
+
+                                                    </li>
+
+                                                    <li><p>Log into your Google Analytics dash board - goto your real time tracking section</p></li>
+                                                    <li><p>Launch your app and interact with it.  You should see view appearances (page changes) show in your Google Analytics dashboard</p></li>
+                                                </ol>
+
+                                                <h2>
+                                                    <a name="user-content-faq" class="anchor" href="#faq">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    FAQ
+                                                </h2>
+
+                                                <h2></h2>
+
+                                                <h2>
+                                                    <a name="user-content-troubleshooting" class="anchor" href="#troubleshooting">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>Troubleshooting
+                                                </h2>
+
+                                                <ul>
+                                                    <li>
+                                                        A few of our customers have found that after installing the Tealium plugin for Magento and trying to go to its related configuration page they will come across a "404 Error Page not found." This covers some solutions to resolve the issue.
+                                                        There are a few things to try when you get this error. They are, in order of severity:
+
+                                                        <ul>
+                                                            <li>Log out, then log back in
+
+                                                                <ul>
+                                                                    <li>The first is self explanatory. Simply log out of the Magento admin area, then log back in. This should reset some of the Magento cache and hopefully allow access the config page. If this does not work, try completely flushing the Magento Cache. </li>
+                                                                </ul>
+                                                            </li>
+
+                                                            <li>
+                                                                Flush the Magento cache
+
+                                                                <ul>
+                                                                    <li>Go to System -&gt; Cache Management</li>
+                                                                    <li>Click the Flush Magento Cache button.</li>
+                                                                    <li>Then log out, and log back in</li>
+                                                                    <li>Try accessing the configuration page.</li>
+                                                                    <li>If you still get a 404 Error, the next step is to manually Reset the Administrator Roles.</li>
+                                                                </ul>
+                                                            </li>
+
+                                                            <li>
+                                                                Reset the Administrator roles
+
+                                                                <ul>
+                                                                    <li>Go to System -&gt; Permissions -&gt; Roles</li>
+                                                                    <li>Now click on the Administrators role in the list. There may only be one item listed, or maybe more.</li>
+                                                                    <li>Click the Role Users item on the left, then the Reset Filter button on the right. Lastly click the Save Role button at the top right.</li>
+                                                                    <li>Now go through the process of Flushing the Magento cache, and again log out and log back in.</li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+
+                                                <p>One of these techniques should fix the problem. If you are still experiencing 404 Errors after trying all of these solutions, get in contact with us and we will help you as best we can.</p>
+
+                                                <h2>
+                                                    <a name="user-content-known-limitations-of-current-build" class="anchor" href="#known-limitations-of-current-build">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Known Limitations of Current Build
+                                                </h2>
+
+                                                <h2></h2>
+
+                                                <h2>
+                                                    <a name="user-content-versions" class="anchor" href="#versions">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Versions
+                                                </h2>
+
+                                                <p>
+                                                    <em>2.0.6</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>UDO will now be pretty printed for readability</li>
+                                                    <li>Added comments to code to improve long term maintainability</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>2.0.4</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fixed one page checkout</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>2.0.3</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Fixed warnings for REQUEST isset()</li>
+                                                    <li>re-added page_type and page_name for order confirmation</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>2.0.2</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Fix typos</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>2.0.1</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Fix for extended UDO rendering blank page</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>2.0.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Added external script support and refactored</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.2.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Added UI admin toggle for onePage Checkout</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.1.1</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Fixed pages not rendering</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.1.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Added support for alternate checkout pages</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.0.2</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Added html/text help to admin config</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.0.1</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>Fixed arrays that were rendering as strings</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>1.0.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>refactored based on Tealium class</li>
+                                                    <li>added support for external UDO definition</li>
+                                                    <li>added support for diagnostic pixel</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.4.4d</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>added output of diagnostic pixel</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.4.4</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>strip commas from all dollar values</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.4.3</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fix for bad array on order page</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.4.2</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>added simple discount array</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.4.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fix for individual discounts and number formats</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.3.1</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fix for configurable product arrays</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.3.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fix for missing support message</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.2.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>fix for product page tag syntax</li>
+                                                </ul>
+
+                                                <p>
+                                                    <em>0.1.0</em>
+                                                </p>
+
+                                                <ul>
+                                                    <li>initial release</li>
+                                                </ul>
+
+                                                <h2>
+                                                    <a name="user-content-support" class="anchor" href="#support">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    Support
+                                                </h2>
+
+                                                <p>
+                                                    For additional help and support, please send all inquires to your Account Manager or post questions on our community site at:
+                                                    <a href="https://community.tealiumiq.com">https://community.tealiumiq.com</a>
+                                                </p>
+
+                                                <h2>
+                                                    <a name="user-content-about" class="anchor" href="#about">
+                                                        <span class="octicon octicon-link"></span>
+                                                    </a>
+                                                    About
+                                                </h2>
+
+                                                <p>
+                                                    Tealium PHP Library developed by Patrick McWilliams
+                                                    Copyright © 2014 Tealium, Inc. All rights reserved.
+                                                </p>
+                                            </article>
+                                        </div>
+
+                                        <!-- ------------------------------------------------------------------------- -->
+
+                                        <br />
+
+                                        <a href="javascript:false;" onclick="javascript: document.getElementById('tealium_help').style.display='none'">Hide</a>
+
+                                    </div>
+                                ]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

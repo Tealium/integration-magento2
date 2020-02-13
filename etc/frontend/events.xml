@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="checkout_cart_add_product_complete"> 
+        <observer name="checkout_cart_add_product_complete" 
+                  instance="Tealium\Tags\Observer\AddProduct" />
+    </event>
+
+    <event name="sales_quote_remove_item"> 
+        <observer name="sales_quote_remove_item" 
+                  instance="Tealium\Tags\Observer\RemoveProduct" />
+    </event>
+
+    <event name="customer_register_success"> 
+        <observer name="customer_register_success" 
+                  instance="Tealium\Tags\Observer\CreateAccount" />
+    </event>
+
+    <event name="wishlist_add_product"> 
+        <observer name="wishlist_add_product" 
+                  instance="Tealium\Tags\Observer\AddToWish" />
+    </event>
+
+    <event name="catalog_product_compare_add_product"> 
+        <observer name="catalog_product_compare_add_product" 
+                  instance="Tealium\Tags\Observer\AddToCompare" />
+    </event>
+
+    <!--<event name="controller_action_postdispatch_customer_account_logout"> 
+        <observer name="controller_action_postdispatch_customer_account_logout" 
+                  instance="Tealium\Tags\Observer\LogoutAccount" />
+    </event>-->
+
+    <event name="customer_login"> 
+        <observer name="customer_login" 
+                  instance="Tealium\Tags\Observer\LoginAccount" />
+    </event>
+
+    <event name="controller_action_postdispatch_sendfriend_product_sendmail"> 
+        <observer name="controller_action_postdispatch_sendfriend_product_sendmail" 
+                  instance="Tealium\Tags\Observer\SendFriend" />
+    </event>
+
+    <event name="controller_action_predispatch_checkout_cart_couponPost"> 
+        <observer name="controller_action_postdispatch_checkout_cart_couponPost" 
+                  instance="Tealium\Tags\Observer\CouponPost" />
+    </event>
+
+    <event name="controller_action_predispatch_checkout_sidebar_updateItemQty"> 
+        <observer name="controller_action_predispatch_checkout_sidebar_updateItemQty" 
+                  instance="Tealium\Tags\Observer\QtyUpdate" />
+    </event>
+
+    <event name="checkout_onepage_controller_success_action"> 
+        <observer name="checkout_onepage_controller_success_action" 
+                  instance="Tealium\Tags\Observer\CheckoutAction" />
+    </event>
+
+    <event name="controller_action_predispatch_checkout_cart_updatePost"> 
+        <observer name="controller_action_predispatch_checkout_cart_updatePost" 
+                  instance="Tealium\Tags\Observer\UpdatePost" />
+    </event>
+
+    <event name="controller_action_predispatch_multishipping_checkout_addressesPost"> 
+        <observer name="controller_action_predispatch_multishipping_checkout_addressesPost" 
+                  instance="Tealium\Tags\Observer\MultishippingQtyUpdate" />
+    </event>
+
+    <event name="controller_action_postdispatch_checkout_cart_updateItemOptions"> 
+        <observer name="controller_action_postdispatch_checkout_cart_updateItemOptions" 
+                  instance="Tealium\Tags\Observer\UpdateItemOptions" />
+    </event>
+    
+</config>

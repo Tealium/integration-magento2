@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="after.body.start">
+            <referenceBlock name="tealium_generic" remove="true"/>
+            <block class="Tealium\Tags\Block\Template" name="tealium_guest" as="tealium_guest" template="tealium_tags/guest_sales.phtml" before="tealium_base" >
+                <action method="setType">
+                    <argument name="tealium_type" xsi:type="string">sales guest view</argument>
+                </action>
+                <action method="setName">
+                    <argument name="tealium_name" xsi:type="string">Guest View order</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
