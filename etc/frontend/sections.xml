@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
+
+    <!---->
+    <action name="sendfriend/product/sendmail">
+        <section name="tealium-tags-sendfriend"/>
+    </action>
+
+    <action name="catalog/product_compare/add">
+        <section name="tealium-tags-add-to-compare"/>
+    </action>
+
+    <action name="checkout/cart/add">
+        <section name="tealium-tags-add-to-cart"/>
+    </action>
+
+    <action name="wishlist/index/add">
+        <section name="tealium-tags-add-to-wish"/>
+    </action>
+
+    <action name="customer/account/logout">
+        <section name="tealium-tags-customer-logout"/>
+    </action>
+
+    <action name="customer/account/loginPost">
+        <section name="tealium-tags-customer-login"/>
+    </action>
+
+    <action name="checkout/cart/delete">
+        <section name="tealium-tags-remove-from-cart"/>
+    </action>
+
+    <action name="checkout/sidebar/removeItem">
+        <section name="tealium-tags-remove-from-cart"/>
+    </action>
+
+    <action name="customer/account/createPost">
+        <section name="tealium-tags-customer-account-create"/>
+    </action>
+
+    <action name="rest/default/V1/guest-carts/*/coupons/">
+        <section name="tealium-tags-coupons"/>
+    </action>
+
+    <action name="checkout/cart/couponPost">
+        <section name="tealium-tags-coupons"/>
+    </action>
+    <action name="checkout/onepage/saveOrder">
+        <section name="tealium-tags-save-order"/>
+    </action>
+
+    <action name="checkout/sidebar/updateItemQty">
+        <section name="tealium-tags-update-qty"/>
+    </action>
+
+    <action name="checkout/cart/updatePost">
+        <section name="tealium-tags-update-qty"/>
+    </action>
+
+    <action name="multishipping/checkout/addressesPost">
+        <section name="tealium-tags-update-qty"/>
+    </action>
+
+    <action name="checkout/cart/updateItemOptions">
+        <section name="tealium-tags-update-qty"/>
+    </action>
+    
+</config>

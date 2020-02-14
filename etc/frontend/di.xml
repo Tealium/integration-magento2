@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
+        <arguments>
+            <argument name="sectionSourceMap" xsi:type="array">
+
+                <item name="tealium-tags-add-to-cart" xsi:type="string">Tealium\Tags\CustomerData\JsAddToCart</item>
+                
+                <item name="tealium-tags-remove-from-cart" xsi:type="string">Tealium\Tags\CustomerData\JsRemoveFromCart</item>
+
+                <item name="tealium-tags-add-to-compare" xsi:type="string">Tealium\Tags\CustomerData\JsAddToCompare</item>
+
+                <item name="tealium-tags-customer-account-create" xsi:type="string">Tealium\Tags\CustomerData\JsCreateAccount</item>
+
+                <item name="tealium-tags-customer-logout" xsi:type="string">Tealium\Tags\CustomerData\JsLogoutAccount</item>
+
+                <item name="tealium-tags-customer-login" xsi:type="string">Tealium\Tags\CustomerData\JsLoginAccount</item>
+
+                <item name="tealium-tags-add-to-wish" xsi:type="string">Tealium\Tags\CustomerData\JsAddToWish</item>
+
+                <item name="tealium-tags-sendfriend" xsi:type="string">Tealium\Tags\CustomerData\JsSendFriend</item>
+
+                <item name="tealium-tags-coupons" xsi:type="string">Tealium\Tags\CustomerData\JsCurrentCoupon</item>
+
+                <item name="tealium-tags-save-order" xsi:type="string">Tealium\Tags\CustomerData\JsSaveOrder</item>
+
+                <item name="tealium-tags-update-qty" xsi:type="string">Tealium\Tags\CustomerData\JsUpdateQty</item>
+
+                <item name="tealium-tags-checkout" xsi:type="string">Tealium\Tags\CustomerData\JsUpdateQty</item>
+
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\CouponManagement">
+        <plugin name="tealium_coupon_eplay" type="Tealium\Tags\Model\Plugin\CouponManagementPlugin" sortOrder="1" />
+    </type>
+</config>

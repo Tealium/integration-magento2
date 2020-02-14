@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" label="Customer My Account (All Pages)" design_abstraction="custom">
+    <body>
+        <referenceContainer name="after.body.start">
+            <referenceBlock name="tealium_generic" remove="true"/>
+            <block class="Tealium\Tags\Block\Template" name="tealium_product" as="tealium_product" template="tealium_tags/customer.phtml" before="tealium_base" >
+                <action method="setType">
+                    <argument name="tealium_type" xsi:type="string">customer account</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
