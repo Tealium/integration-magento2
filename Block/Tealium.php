@@ -219,7 +219,6 @@ class Tealium extends \Magento\Framework\View\Element\Template
 <div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
 <script type="text/javascript">
 $udoJs
-console.log(window);
 </script>
 <!-- ****************************************** -->
 EOD;

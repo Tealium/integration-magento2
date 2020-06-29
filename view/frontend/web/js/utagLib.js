@@ -16,7 +16,7 @@ define([
             		}
 		});
 		*/
-	
+
     return function (options) {
 		$.ajax({
 			  url: BASE_URL+'tealium/cart/quote',
@@ -30,20 +30,19 @@ define([
 					if (dataObject['cart_total_value'].length > 0) {
 						utag_data.cart_total_value = dataObject['cart_total_value'];
             		}
-					console.log(utag_data);
-					console.log('bbb utag lib');
+
 				  	var LibURL = $.trim($('.utagLib').html());
 				  if(typeof window.utag == 'undefined')
 					{
 						(function(a,b,c,d){
 								a=LibURL;
-								b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
+								b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;
 								d.async=true;
 								a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
 							})();
 					}
 			  }
-					
+
 			});
 	/*
       	$.get(BASE_URL+'tealium/cart/quote', function(data) {
@@ -58,11 +57,6 @@ define([
 		console.log('bbb utag lib');
 		});
 		*/
-		console.log(utag_data);
-		console.log('aaaaa utag lib');
-   
-		 
-	//	alert('hello');
     }
-	
+
 });
