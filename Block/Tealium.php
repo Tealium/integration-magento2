@@ -57,12 +57,14 @@ class Tealium extends \Magento\Framework\View\Element\Template
 		 // Fetch the current collection from the block and set pagination
 		if(!empty($categoryProductListBlock)){
 			$collections = $categoryProductListBlock->getLoadedProductCollection();
-			$collections->setCurPage(1)->setPageSize(4);
-			
-			foreach($collections as $product){
-				$productOnPage[] = $product->getSku();
-				$productOnPageId[] = $product->getId();
-			}
+            $resultCount = 1;
+            foreach ($collections as $product) {
+                $productOnPage[] = $product->getSku();
+                $productOnPageId[] = $product->getId();
+                if ($resultCount++ == 10) {
+                    break;
+                }
+            }
 			
 		}
         $udoElements = [
@@ -207,9 +209,6 @@ class Tealium extends \Magento\Framework\View\Element\Template
             } else {
                 $udoJson = "{}";
             }
-/* echo "test<pre>";
-			print_r($udoObject);
-			die; */
             // create the javascript for utag_data
             $udoJs = "var utag_data = $udoJson;";
 
@@ -219,7 +218,6 @@ class Tealium extends \Magento\Framework\View\Element\Template
 <div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
 <script type="text/javascript">
 $udoJs
-console.log(window);
 </script>
 <!-- ****************************************** -->
 EOD;
