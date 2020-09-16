@@ -231,7 +231,7 @@
                                 <span class="notice">
                                     Enable async loading of the external script
                                     <br />
-                                    !WARNING! By enabling, we can't gaurantee all of your tags will fire before the user navigates away
+                                    !WARNING! By enabling, we can't guarantee all of your tags will fire before the user navigates away
                                 </span>
                             ]]>
                     </comment>
