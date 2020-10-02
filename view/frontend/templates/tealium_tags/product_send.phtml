@@ -4,11 +4,6 @@
 $helper = $this->helper('Tealium\Tags\Helper\Data');
 $store = $this->getStore();
 
-// if Tealium extension is not enabled, return immediately to not render
-if (!$helper->isEnabled($store)) {
-    return; // not enabled, no javascript inserted
-}
-
 $_product_id = $this->getRequest()->getParam('id', null);
 $_category_id = $this->getRequest()->getParam('cat_id', null);
 $_product = $this->getObjectManager()->create('Magento\Catalog\Model\Product')->load($_product_id);

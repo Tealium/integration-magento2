@@ -4,11 +4,6 @@
 $helper = $this->helper('Tealium\Tags\Helper\Data');
 $store = $this->getStore();
 
-// if Tealium extension is not enabled, return immediately to not render
-if (!$helper->isEnabled($store)) {
-    return; // not enabled, no javascript inserted
-}
-
 // create a tealium object for the page
 $tealium = $helper->init($store, $this, "ProductPage")
     ->addCustomDataFromSetup($store, "ProductPage")
@@ -35,6 +30,7 @@ echo $helper->getDiagnosticTag($store);
 
 if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configurable') :
     ?>
+    <div> <?= $store->getId() ?> </div>
 
     <script type="text/javascript">
         require(['jquery'],function($){
@@ -49,7 +45,9 @@ if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configura
                         var oldUDO = utag_data;
                         if (oldUDO.product_price[0] != newPrice){
                             oldUDO.product_price = [newPrice];
+                            
                             utag.view(oldUDO);
+                            debugger;
                         }
                     }
                 })
