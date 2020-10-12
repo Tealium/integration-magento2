@@ -29,6 +29,8 @@
 
                 <item name="tealium-tags-checkout" xsi:type="string">Tealium\Tags\CustomerData\JsUpdateQty</item>
 
+                <item name="tealium-tags-save-review" xsi:type="string">Tealium\Tags\CustomerData\JsSaveReview</item>
+
             </argument>
         </arguments>
     </type>
