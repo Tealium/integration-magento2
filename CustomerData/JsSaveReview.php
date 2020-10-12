@@ -41,7 +41,8 @@ class JsSaveReview implements SectionSourceInterface
         $result = [];
         
         if ($productId) {
-            $result = [ 'data' => [
+            $result = [ 
+                'data' => [
                     'review_title' => $reviewTitle,
                     'review_nickname' => $reviewerNickname,
                     'review_detail' => $reivewDetail,
