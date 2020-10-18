@@ -23,30 +23,30 @@ class JsSaveReview implements SectionSourceInterface
 
     public function getSectionData()
     {
-        $nickName = $this->_coreSession->getTealiumReviewerNickname($reviewerNickname);
-        $this->_coreSession->unsTealiumReviewerNickname($reviewerNickname);
+        $nickName = $this->_coreSession->getTealiumReviewerNickname();
+        $this->_coreSession->unsTealiumReviewerNickname();
 
-        $title = $this->_coreSession->getTealiumReviewTitle($reviewTitle);
-        $this->_coreSession->unsTealiumReviewTitle($reviewTitle);
+        $title = $this->_coreSession->getTealiumReviewTitle();
+        $this->_coreSession->unsTealiumReviewTitle();
 
-        $detail = $this->_coreSession->getTealiumReviewDetail($reivewDetail);
-        $this->_coreSession->unsTealiumReviewDetail($reivewDetail);
+        $detail = $this->_coreSession->getTealiumReviewDetail();
+        $this->_coreSession->unsTealiumReviewDetail();
 
-        $rating = $this->_coreSession->getTealiumReviewRating($reviewRating);
-        $this->_coreSession->unsTealiumReviewRating($reviewRating);
+        $rating = $this->_coreSession->getTealiumReviewRating();
+        $this->_coreSession->unsTealiumReviewRating();
 
-        $productId = $this->_coreSession->getTealiumReviewProductId($productId);
-        $this->_coreSession->unsTealiumReviewProductId($productId);
+        $productId = $this->_coreSession->getTealiumReviewProductId();
+        $this->_coreSession->unsTealiumReviewProductId();
 
         $result = [];
         
         if ($productId) {
             $result = [ 
                 'data' => [
-                    'review_title' => $reviewTitle,
-                    'review_nickname' => $reviewerNickname,
-                    'review_detail' => $reivewDetail,
-                    'review_rating' => $reviewRating,
+                    'review_title' => $title,
+                    'review_nickname' => $nickName,
+                    'review_detail' => $detail,
+                    'review_rating' => $rating,
                     'review_productid' => $productId,
                     'tealium_event' => 'save_review'
                 ]

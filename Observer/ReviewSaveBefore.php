@@ -44,12 +44,6 @@ class ReviewSaveBefore implements ObserverInterface
         $product = $this->_coreRegistry->registry('current_product');
         $productId = $product->getId();
 
-        // $this->_logger->info("Name : ".$reviewerNickname);
-        // $this->_logger->info("Title : ".$reviewTitle);
-        // $this->_logger->info("Detail : ".$reivewDetail);
-        // $this->_logger->info($reviewRating);
-        // $this->_logger->info(print_r($product->getId(), true));
-
         $this->_coreSession->setTealiumReviewerNickname($reviewerNickname);
         $this->_coreSession->setTealiumReviewTitle($reviewTitle);
         $this->_coreSession->setTealiumReviewDetail($reivewDetail);
