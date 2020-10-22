@@ -70,5 +70,9 @@
         <observer name="controller_action_postdispatch_checkout_cart_updateItemOptions" 
                   instance="Tealium\Tags\Observer\UpdateItemOptions" />
     </event>
-    
+    <event name="review_save_before">
+        <observer name="review_save_before" 
+                  instance="Tealium\Tags\Observer\ReviewSaveBefore"/>
+    </event>
+
 </config>

@@ -3,11 +3,6 @@
 $helper = $this->helper('Tealium\Tags\Helper\Data');
 $store = $this->getStore();
 
-// if Tealium extension is not enabled, return immediately to not render
-if (!$helper->isEnabled($store)) {
-    return; // not enabled, no javascript inserted
-}
-
 // create a tealium object for the page
 $tealium = $helper->init($store, $this, "Customer")
     ->addCustomDataFromSetup($store, "Customer")

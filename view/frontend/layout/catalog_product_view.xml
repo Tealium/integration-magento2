@@ -9,7 +9,7 @@
     <body>
         <referenceContainer name="after.body.start">
             <referenceBlock name="tealium_generic" remove="true"/>
-            <block class="Tealium\Tags\Block\Template" name="tealium_product" as="tealium_product" template="tealium_tags/product.phtml" before="tealium_base" />
+            <block class="Tealium\Tags\Block\Template" name="tealium_product" as="tealium_product" template="tealium_tags/product.phtml" before="tealium_base" ifconfig="tealium_tags/general/enable" />
         </referenceContainer>
     </body>
 </page>

@@ -126,6 +126,16 @@ define([
         if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-update-qty")){
             sendData(tealiumTag, dataObjectQty);
         }
+
+        var dataObjectReview = customerData.get("tealium-tags-save-review");
+
+        dataObjectReview.subscribe(function (_dataObject) {
+            sendData(tealiumTag, _dataObject);
+        }, this);
+
+        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-save-review")){
+            sendData(tealiumTag, dataObjectReview);
+        }
     }
 
 });
