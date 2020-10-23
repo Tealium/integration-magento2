@@ -129,7 +129,7 @@ Verification steps are:
 1. Load the Account and Profile that matches the Account and Profile used in your Tealium($accountInit, $profileInit, $targetInit[, $pageType][, $data]) method.
 1. Goto the Data Sources tab and add the following new data source:
     - screen_title
-    Note: leave them as the default type: Data Layer. screen_title are your views' viewcontroller title or nibName property. Optional: copy and paste the entire set of predefined Data Sources found at: https://community.tealiumiq.com/t5/Mobile/Mobile-Autotracked-Data-Sources/m-p/1798/highlight/true#M259
+    - Note: leave them as the default type: Data Layer. screen_title are your views' viewcontroller title or nibName property. Optional: copy and paste the entire set of predefined Data Sources found at: https://community.tealiumiq.com/t5/Mobile/Mobile-Autotracked-Data-Sources/m-p/1798/highlight/true#M259
 
 1. Go to the Tags tab:
     - click on the +Add Tag button
@@ -149,7 +149,7 @@ Verification steps are:
     - Enter any Version Notes regarding this deployment
     - Select the Publish Location that matches the environmentName, or target argument from your initSharedInstance:profile:target: method
     - Click "Save"
-    NOTE: It may take up to five minutes for your newly published settings to take effect.
+    - NOTE: It may take up to five minutes for your newly published settings to take effect.
 1. Log into your Google Analytics dash board - goto your real time tracking section
 1. Launch your app and interact with it. You should see view appearances (page changes) show in your Google Analytics dashboard
 
