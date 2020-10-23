@@ -17,7 +17,7 @@ You will need the following items:
     - prod
     - qa
     - dev
-    - custom
+    - custom
 
 ## Installation
 ### Install via Magento Marketplace
