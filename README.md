@@ -23,10 +23,20 @@ sudo php -d set_time_limit=3600 -d memory_limit=1024M bin/magento setup:di:compi
 ```
 
 ## Configure
-In the admin panel under store configuration, you can set the  options for the extension (Stores->Configuration->Tealium->Tags). You will need to enable it, and define your TiQ account, profile, and environment information.
-
+In the admin panel under store configuration, you can set the  options for the extension (Stores -> Configuration -> Tealium -> Tag Management). You will need to enable it, and define your TiQ account, profile, and environment information.
 
 ## Change Log
+
+- 3.1.0 Release
+    - Update for support of Magento 2.4
+    - Add tracking for user-submitted product reviews
+    - Bug fixes
+
+- 3.0.2 Release
+    - Add support for Magento 2.3.3
+
+- 3.0.1 Release
+    - Add support for Magento 2.2.8, 2.3.0, and 2.3.1-2
 
 - 2.0.0 Release
     - Updated composer.JSON
@@ -38,10 +48,12 @@ In the admin panel under store configuration, you can set the  options for the e
     - Configure account info in admin panel
     - Extend and customize UDOs
 
+## Sharing Feedback
+If you should experience any issues with this plugin, please report them as issues directly to the repository. In your submitted issue, please include which version of Magento you reference, e.g. 2.4.1. Tealium also accepts enhancement requests, if you find there are features you wish to see supported in future releases. Please use the _enhancement_ label on your submitted issue.
 
 ## License
 
 Use of this software is subject to the terms and conditions of the license agreement contained in the file titled "LICENSE.txt".  Please read the license before downloading or using any of the files contained in this repository. By downloading or using any of these files, you are agreeing to be bound by and comply with the license agreement.
 
 ---
-Copyright (C) 2012-2018, Tealium Inc.
+Copyright (C) 2012-2020, Tealium Inc.
