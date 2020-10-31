@@ -55,7 +55,7 @@ class Product extends AbstractHelper
                     $product_discount = $result['product_list_price'] - $result['product_unit_price'];
                 }
                 
-                $result['product_discount'][$key] = [(string)number_format((float)$product_discount, 2, '.', '')];
+                $result['product_discount'][$key] = (string)number_format((float)$product_discount, 2, '.', '');
                 if ($result['product_list_price'][$key] == 0) {
                     $children = $product->getTypeInstance()->getUsedProducts($product);
                     foreach ($children as $child) {
