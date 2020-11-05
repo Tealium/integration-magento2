@@ -34,31 +34,66 @@ class Product extends AbstractHelper
     public function getProductData($product_id, $array = true)
     {
         $result = [];
-        $product = $this->_productRepository->getById($product_id);
-        $result['product_name'] = [(string)$product->getName()];
-        $result['product_list_price'] = [(string)number_format((float)$product->getPrice(), 2, '.', '')];
-        $result['product_sku'] = [(string)$product->getSku()];
-        $result['product_unit_price'] = [(string)number_format((float)$product->getPrice(), 2, '.', '')];
-        if ($product->getSpecialPrice()) {
-            $result['product_unit_price']  = [(string)number_format((float)$product->getSpecialPrice(), 2, '.', '')];
+        if(is_array($product_id)) {
+            foreach($product_id as $key => $pid) {
+                $product = $this->_productRepository->getById($pid);
+                $result['product_name'][$key] = (string)$product->getName();
+                $result['product_list_price'][$key] = (string)number_format((float)$product->getPrice(), 2, '.', '');
+                $result['product_sku'][$key] = (string)$product->getSku();
+                $result['product_unit_price'][$key] = (string)number_format((float)$product->getPrice(), 2, '.', '');
+                if ($product->getSpecialPrice()) {
+                    $result['product_unit_price'][$key]  = (string)number_format((float)$product->getSpecialPrice(), 2, '.', '');
+                }
+                $result['product_category'] = [''];
+                $result['product_subcategory'] = [''];
+                
+                $product_discount = 0;
+                if ($result['product_list_price'][$key] != 0 &&
+                    $result['product_unit_price'][$key] != 0 &&
+                    $result['product_list_price'][$key] != $result['product_unit_price'][$key]
+                ) {
+                    $product_discount = $result['product_list_price'] - $result['product_unit_price'];
+                }
+                
+                $result['product_discount'][$key] = (string)number_format((float)$product_discount, 2, '.', '');
+                if ($result['product_list_price'][$key] == 0) {
+                    $children = $product->getTypeInstance()->getUsedProducts($product);
+                    foreach ($children as $child) {
+                        if ($result['product_list_price'][$key] < $child->getPrice()) {
+                            $result['product_list_price'][$key] = (string)number_format((float)$child->getPrice(), 2, '.', '');
+                        }
+                    }
+                }   
+            }
         }
-        $result['product_category'] = [''];
-        $result['product_subcategory'] = [''];
-        
-        $product_discount = 0;
-        if ($result['product_list_price'][0] != 0 &&
-            $result['product_unit_price'][0] != 0 &&
-            $result['product_list_price'][0] != $result['product_unit_price'][0]
-        ) {
-            $product_discount = $result['product_list_price'][0] - $result['product_unit_price'][0];
-        }
-        
-        $result['product_discount'] = [(string)number_format((float)$product_discount, 2, '.', '')];
-        if ($result['product_list_price'][0] == 0) {
-            $children = $product->getTypeInstance()->getUsedProducts($product);
-            foreach ($children as $child) {
-                if ($result['product_list_price'][0] < $child->getPrice()) {
-                    $result['product_list_price'][0] = (string)number_format((float)$child->getPrice(), 2, '.', '');
+        else {
+            
+            $product = $this->_productRepository->getById($product_id);
+            $result['product_name'] = [(string)$product->getName()];
+            $result['product_list_price'] = [(string)number_format((float)$product->getPrice(), 2, '.', '')];
+            $result['product_sku'] = [(string)$product->getSku()];
+            $result['product_unit_price'] = [(string)number_format((float)$product->getPrice(), 2, '.', '')];
+            if ($product->getSpecialPrice()) {
+                $result['product_unit_price']  = [(string)number_format((float)$product->getSpecialPrice(), 2, '.', '')];
+            }
+            $result['product_category'] = [''];
+            $result['product_subcategory'] = [''];
+            
+            $product_discount = 0;
+            if ($result['product_list_price'][0] != 0 &&
+                $result['product_unit_price'][0] != 0 &&
+                $result['product_list_price'][0] != $result['product_unit_price'][0]
+            ) {
+                $product_discount = $result['product_list_price'][0] - $result['product_unit_price'][0];
+            }
+            
+            $result['product_discount'] = [(string)number_format((float)$product_discount, 2, '.', '')];
+            if ($result['product_list_price'][0] == 0) {
+                $children = $product->getTypeInstance()->getUsedProducts($product);
+                foreach ($children as $child) {
+                    if ($result['product_list_price'][0] < $child->getPrice()) {
+                        $result['product_list_price'][0] = (string)number_format((float)$child->getPrice(), 2, '.', '');
+                    }
                 }
             }
         }

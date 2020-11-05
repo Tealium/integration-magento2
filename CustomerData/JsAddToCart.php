@@ -62,9 +62,17 @@ class JsAddToCart implements SectionSourceInterface
 			$result['data']['cart_product_price'] = $CartPrice;
 			$result['data']['cart_product_quantity'] = $CartQty;
 			$result['data']['cart_product_sku'] = $CartSku;
-			$result['data']['product_image_url'] = $productImage;
-            $result['data']['product_quantity'] = [(string)$qty];
-            $result['data']['product_id'] = [(string)$product_id];
+            $result['data']['product_image_url'] = $productImage;
+            
+            if(is_array($product_id)) {
+                $result['data']['product_quantity'] = $qty;
+                $result['data']['product_id'] = $product_id;
+            }
+            else {
+                $result['data']['product_quantity'] = [(string)$qty];
+                $result['data']['product_id'] = [(string)$product_id];
+            }
+
             $result['data']['tealium_event'] = 'cart_add';
         }
 
