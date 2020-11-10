@@ -85,11 +85,16 @@ class Product extends AbstractHelper
                 $result['product_list_price'][0] != $result['product_unit_price'][0]
             ) {
                 $product_discount = $result['product_list_price'][0] - $result['product_unit_price'][0];
-            }
-            
+            }            
+
             $result['product_discount'] = [(string)number_format((float)$product_discount, 2, '.', '')];
             if ($result['product_list_price'][0] == 0) {
-                $children = $product->getTypeInstance()->getUsedProducts($product);
+                if($product->getTypeId() == 'grouped') {
+                    $children = $product->getTypeInstance()->getAssociatedProducts($product);
+                }
+                else {
+                    $children = $product->getTypeInstance()->getUsedProducts($product);
+                }                
                 foreach ($children as $child) {
                     if ($result['product_list_price'][0] < $child->getPrice()) {
                         $result['product_list_price'][0] = (string)number_format((float)$child->getPrice(), 2, '.', '');
