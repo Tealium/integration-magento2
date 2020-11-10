@@ -57,13 +57,11 @@ class AddProduct implements ObserverInterface
         if (isset($requestParamList['qty'])) {
             $product_quantity = $requestParamList['qty'];
         }
-        $logger = \Magento\Framework\App\ObjectManager::getInstance()->get(\Psr\Log\LoggerInterface::class);
 
         if (isset($requestParamList['super_group'])) {        
             $product_quantity = [];
             $product_id = [];
-            foreach ($requestParamList['super_group'] as $pid => $qty) {                              
-                $logger->info($pid." -> ".$qty);
+            foreach ($requestParamList['super_group'] as $pid => $qty) {
                 if (intval($qty) > 0) {
                     $product_quantity[] = $qty;
                     $product_id[] = $pid;                    
