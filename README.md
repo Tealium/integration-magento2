@@ -20,10 +20,8 @@ You will need the following items:
     - custom
 
 ## Installation
-### Install via Magento Marketplace
-You can install the Tealium Magento Extension free via the Magento Marketplace: https://marketplace.magento.com/tealium-tags.html
 
-### Alternative (manual) Install with Ubuntu
+### Install with Ubuntu
 You need to copy the Tealium folder from Github to app/code within your Magento folder.  If app/code doesn’t exist, create it.
 
 Run the following commands:
@@ -65,4 +63,4 @@ If you should experience any issues with this plugin, please report them as issu
 Use of this software is subject to the terms and conditions of the license agreement contained in the file titled "LICENSE.txt".  Please read the license before downloading or using any of the files contained in this repository. By downloading or using any of these files, you are agreeing to be bound by and comply with the license agreement.
 
 ---
-Copyright (C) 2012-2020, Tealium Inc.
+Copyright (C) 2012-2022, Tealium Inc.
