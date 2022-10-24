@@ -119,8 +119,8 @@ class TealiumData extends AbstractHelper
 			}
 			
 			 $outputArray['page_type'] = "home";
-			 $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : '';
-			 $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : '';
+			 $outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "") ? : '';
+			 $outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "") ? : '';
 			 $outputArray['site_section'] = "Clothing";
 			 $outputArray['tealium_event'] = "page_view";
 			 	
@@ -191,8 +191,8 @@ class TealiumData extends AbstractHelper
          //   $ItemsQty = $this->_cart->getQuote()->getItemsQty();
         //    $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
         }
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
+        $outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "");
+        $outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "");
 		 
         $outputArray['country_code'] = strtolower($locale[1]) ? : '';
         $outputArray['language_code'] = $locale[0] ? : '';
@@ -338,8 +338,8 @@ class TealiumData extends AbstractHelper
 		} 
 		
 		$outputArray['site_section'] = "Clothing";
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        $outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "") ? : "";
+        $outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "") ? : "";
 		$outputArray['category_id'] = $categoryId ? : "";
 		$outputArray['category_name'] = $category_name ? : $subcategory;
 		$outputArray['tealium_event'] = "category_view";
@@ -435,7 +435,7 @@ class TealiumData extends AbstractHelper
 
             if (!(
             $outputArray['product_unit_price'] = [
-                number_format($_product->getFinalPrice(), 2, '.', '')
+                number_format((float)$_product->getFinalPrice(), 2, '.', '')
             ]
             )) {
                 $outputArray['product_unit_price'] = [];
@@ -443,7 +443,7 @@ class TealiumData extends AbstractHelper
 
             if (!(
             $outputArray['product_list_price'] = [
-                number_format($_product->getData('price'), 2, '.', '')
+                number_format((float)$_product->getData('price'), 2, '.', '')
             ]
             )) {
                 $outputArray['product_list_price'] = [];
@@ -534,8 +534,8 @@ class TealiumData extends AbstractHelper
 			$outputArray['country_code'] = strtolower($locale[1]) ? : '';
         	$outputArray['language_code'] = $locale[0] ? : '';
 		}
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        $outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "") ? : "";
+        $outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "") ? : "";
 
         return $outputArray;
     }
@@ -628,11 +628,11 @@ class TealiumData extends AbstractHelper
 					$checkout_images[] = $mediaUrl.$productRepository->getImage();
 					
 					//$checkout_images[] = $mediaUrl.$item->getImage();
-					$checkout_qtys[] = number_format($item->getQty(), 0, ".", "");
+					$checkout_qtys[] = number_format((float)$item->getQty(), 0, ".", "");
 					$checkout_prices[] =
-						number_format($item->getPrice(), 2, ".", "");
+						number_format((float)$item->getPrice(), 2, ".", "");
 					$checkout_original_prices[] =
-						number_format($item->getProduct()->getPrice(), 2, ".", "");
+						number_format((float)$item->getProduct()->getPrice(), 2, ".", "");
 					$checkout_brands[] = $item->getProduct()->getBrand();
 					
 					$getCoupon = $this->_objectManager->get('Magento\Checkout\Block\Cart\Coupon');
@@ -706,8 +706,8 @@ class TealiumData extends AbstractHelper
 		$outputArray['product_image_url'] = $checkout_images ? : [];
         $outputArray['product_subcategory'] = $parentCatName ? : [];
         $outputArray['product_url'] = $checkout_url ? : [];
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : [];;
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : []; 
+        $outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "") ? : [];;
+        $outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "") ? : [];
 
 		if (empty($manufacturer)) {
 			$outputArray['product_brand'] = [""];
@@ -817,19 +817,19 @@ class TealiumData extends AbstractHelper
 				
                 $names[] = $item->getName();
 				
-                $qtys[] = number_format($item->getQtyOrdered(), 0, ".", "");
-                $prices[] = number_format($item->getPrice(), 2, ".", "");
+                $qtys[] = number_format((float)$item->getQtyOrdered(), 0, ".", "");
+                $prices[] = number_format((float)$item->getPrice(), 2, ".", "");
                 $original_prices[] =
-                    number_format($item->getProduct()->getPrice(), 2, ".", "");
+                    number_format((float)$item->getProduct()->getPrice(), 2, ".", "");
                 $discount =
-                    number_format($item->getDiscountAmount(), 2, ".", "");
+                    number_format((float)$item->getDiscountAmount(), 2, ".", "");
                 $discounts[] = $discount;
                 $applied_rules = explode(",", $item->getAppliedRuleIds());
                 $discount_object = [];
                 $brands[] = $item->getProduct()->getBrand();
                 foreach ($applied_rules as $rule) {
                     $quantity = number_format(
-                        $this->_objectManager->create('Magento\SalesRule\Model\Rule')
+                        (float)$this->_objectManager->create('Magento\SalesRule\Model\Rule')
                             ->load($rule)
                             ->getDiscountQty(),
                         0,
@@ -838,7 +838,7 @@ class TealiumData extends AbstractHelper
                     );
 
                     $amount = number_format(
-                        $this->_objectManager->create('Magento\SalesRule\Model\Rule')
+                        (float)$this->_objectManager->create('Magento\SalesRule\Model\Rule')
                             ->load($rule)
                             ->getDiscountAmount(),
                         2,
@@ -875,19 +875,19 @@ class TealiumData extends AbstractHelper
         $outputArray['page_type'] = "order";
         $outputArray['order_id'] = $order->getIncrementId() ? : "";
         $outputArray['order_discount'] =
-            number_format($order->getDiscountAmount(), 2, ".", "") ? : "";
+            number_format((float)$order->getDiscountAmount(), 2, ".", "") ? : "";
         $outputArray['order_subtotal'] =
-            number_format($order->getSubtotal(), 2, ".", "") ? : "";
+            number_format((float)$order->getSubtotal(), 2, ".", "") ? : "";
         $outputArray['order_shipping'] =
-            number_format($order->getShippingAmount(), 2, ".", "") ? : "";
+            number_format((float)$order->getShippingAmount(), 2, ".", "") ? : "";
         $outputArray['order_tax'] =
-            number_format($order->getTaxAmount(), 2, ".", "") ? : "";
+            number_format((float)$order->getTaxAmount(), 2, ".", "") ? : "";
         $outputArray['order_payment_type'] =
             $order->getPayment()
                 ? $order->getPayment()->getMethodInstance()->getTitle()
                 : 'unknown';
         $outputArray['order_total'] =
-            number_format($order->getGrandTotal(), 2, ".", "") ? : "";
+            number_format((float)$order->getGrandTotal(), 2, ".", "") ? : "";
 			
         $outputArray['order_currency'] = $order->getOrderCurrencyCode() ? : "";
         $outputArray['customer_id'] = $customer_id ? : "";
@@ -1017,10 +1017,10 @@ class TealiumData extends AbstractHelper
 		//	$GrandTotal = $quote->getGrandTotal();
 		}
 		if($ItemsQty){
-			$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
+			$outputArray['cart_total_items'] = number_format((float)$ItemsQty, 2, ".", "") ? : "";
 		}
 		if($GrandTotal){
-			$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+			$outputArray['cart_total_value'] = number_format((float)$GrandTotal, 2, ".", "") ? : "";
 		}
 		
 		$outputArray['customer_city'] = $customer_city ? : "";
