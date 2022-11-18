@@ -57,11 +57,13 @@ class Tealium extends \Magento\Framework\View\Element\Template
 		 // Fetch the current collection from the block and set pagination
 		if(!empty($categoryProductListBlock)){
 			$collections = $categoryProductListBlock->getLoadedProductCollection();
-			$collections->setCurPage(1)->setPageSize(4);
 			
 			foreach($collections as $product){
 				$productOnPage[] = $product->getSku();
 				$productOnPageId[] = $product->getId();
+				if (count($productOnPage) === 4) {
+					break;
+				}
 			}
 			
 		}
