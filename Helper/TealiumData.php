@@ -119,8 +119,20 @@ class TealiumData extends AbstractHelper
 			}
 			
 			 $outputArray['page_type'] = "home";
-			 $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : '';
-			 $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : '';
+
+             $outputArray['cart_total_items'] = "";
+             $outputArray['cart_total_value'] = "";
+
+
+             if ($ItemsQty !== null) {
+                $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
+             }
+
+             if ($GrandTotal !== null) {
+                $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
+             }
+			 
+			 
 			 $outputArray['site_section'] = "Clothing";
 			 $outputArray['tealium_event'] = "page_view";
 			 	
@@ -305,8 +317,18 @@ class TealiumData extends AbstractHelper
         
 		foreach($productOnPageId as $catProducts){
 			$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($catProducts);
-			$manufacturer[] = $productCat->getAttributeText('manufacturer');
-			$catProductList[] = $catProducts;
+			//$manufacturer[] = $productCat->getAttributeText('manufacturer');
+            $manufacturerValue = $productCat->getAttributeText('manufacturer');
+            if ($manufacturerValue !== false) {
+                $manufacturer[] = $manufacturerValue;
+            }
+			//$catProductList[] = $catProducts;
+
+            if (is_array($catProducts) && count($catProducts) > 0) {
+                $catProductList[] = $catProducts;
+            }
+            
+            
 						
 		}
 		
@@ -338,8 +360,23 @@ class TealiumData extends AbstractHelper
 		} 
 		
 		$outputArray['site_section'] = "Clothing";
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
+        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+
+        // Check if $ItemsQty and $GrandTotal are not null before formatting them
+        if ($ItemsQty !== null) {
+            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
+        } else {
+            $outputArray['cart_total_items'] = '';
+        }
+
+        if ($GrandTotal !== null) {
+            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
+        } else {
+            $outputArray['cart_total_value'] = '';
+        }
+
+
 		$outputArray['category_id'] = $categoryId ? : "";
 		$outputArray['category_name'] = $category_name ? : $subcategory;
 		$outputArray['tealium_event'] = "category_view";
@@ -489,9 +526,15 @@ class TealiumData extends AbstractHelper
             $categoryProducts = $categoryp->getProductCollection()
                                 ->addAttributeToSelect('*');
             
-            foreach($categoryProducts as $catProducts){
+            /*foreach($categoryProducts as $catProducts){
                 $catProductList[] = $catProducts['entity_id'];
+            }*/
+
+            $catProductList = [];
+            foreach ($categoryProducts as $catProduct) {
+              $catProductList[] = $catProduct['entity_id'];
             }
+            
         }
 		$ItemsQty = $this->context->getValue('ItemsQty');
 		$GrandTotal = $this->context->getValue('GrandTotal');
@@ -534,8 +577,21 @@ class TealiumData extends AbstractHelper
 			$outputArray['country_code'] = strtolower($locale[1]) ? : '';
         	$outputArray['language_code'] = $locale[0] ? : '';
 		}
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
+        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+
+        // Check if $ItemsQty and $GrandTotal are not null before formatting them
+        if ($ItemsQty !== null) {
+            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
+        } else {
+            $outputArray['cart_total_items'] = '';
+        }
+
+        if ($GrandTotal !== null) {
+            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
+        } else {
+            $outputArray['cart_total_value'] = '';
+        }
 
         return $outputArray;
     }
@@ -706,8 +762,21 @@ class TealiumData extends AbstractHelper
 		$outputArray['product_image_url'] = $checkout_images ? : [];
         $outputArray['product_subcategory'] = $parentCatName ? : [];
         $outputArray['product_url'] = $checkout_url ? : [];
-        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : [];;
-        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : []; 
+        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : [];;
+        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : []; 
+
+        // Check if $ItemsQty and $GrandTotal are not null before formatting them
+        if ($ItemsQty !== null) {
+            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
+        } else {
+            $outputArray['cart_total_items'] = '';
+        }
+
+        if ($GrandTotal !== null) {
+            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
+        } else {
+            $outputArray['cart_total_value'] = '';
+        }
 
 		if (empty($manufacturer)) {
 			$outputArray['product_brand'] = [""];
@@ -874,6 +943,36 @@ class TealiumData extends AbstractHelper
         $outputArray['page_name'] = "cart success";
         $outputArray['page_type'] = "order";
         $outputArray['order_id'] = $order->getIncrementId() ? : "";
+        
+
+
+
+
+        $outputArray['order_discount'] =
+        $order->getDiscountAmount() !== null ? number_format($order->getDiscountAmount(), 2, ".", "") : "";
+
+        $outputArray['order_subtotal'] =
+            $order->getSubtotal() !== null ? number_format($order->getSubtotal(), 2, ".", "") : "";
+
+        $outputArray['order_shipping'] =
+            $order->getShippingAmount() !== null ? number_format($order->getShippingAmount(), 2, ".", "") : "";
+
+        $outputArray['order_tax'] =
+            $order->getTaxAmount() !== null ? number_format($order->getTaxAmount(), 2, ".", "") : "";
+
+        $outputArray['order_payment_type'] =
+            $order->getPayment()
+                ? $order->getPayment()->getMethodInstance()->getTitle()
+                : 'unknown';
+
+        $outputArray['order_total'] =
+            $order->getGrandTotal() !== null ? number_format($order->getGrandTotal(), 2, ".", "") : "";
+
+
+
+
+/*
+        
         $outputArray['order_discount'] =
             number_format($order->getDiscountAmount(), 2, ".", "") ? : "";
         $outputArray['order_subtotal'] =
@@ -888,6 +987,11 @@ class TealiumData extends AbstractHelper
                 : 'unknown';
         $outputArray['order_total'] =
             number_format($order->getGrandTotal(), 2, ".", "") ? : "";
+
+*/
+
+
+            
 			
         $outputArray['order_currency'] = $order->getOrderCurrencyCode() ? : "";
         $outputArray['customer_id'] = $customer_id ? : "";

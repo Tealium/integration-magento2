@@ -47,7 +47,9 @@ class Data extends AbstractHelper
         );
     }
 
-    public function init(&$store, &$page = [], $pageType)
+    public function init(&$store, &$page, $pageType)
+    //public function init(&$store, $pageType, &$page = [])
+
     {
         // initialize basic profile settings
         $account = $this->getAccount($store);

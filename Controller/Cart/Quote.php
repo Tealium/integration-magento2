@@ -38,6 +38,7 @@ class Quote extends Action
        
 		 $result['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : '';
 		 $result['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : '';
+		
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultJson->setData($result);
         return $resultJson;
