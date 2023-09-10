@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Tealium Tags
+ * @category  
+ * @package   
+ * @author    Tilium
+ * @copyright 
+ * @license   
+ */
+-->
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="tiqcdn" type="host">*.tiqcdn.com</value>
+                <value id="segment" type="host">https://cdn.segment.com</value>
+                <value id="facebook" type="host">https://connect.facebook.net</value>
+                
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="tealiumiq" type="host">*.tealiumiq.com</value>
+                <value id="segmentcdn" type="host">https://cdn.segment.com</value>
+                <value id="segmentapi" type="host">https://api.segment.io</value>
+                
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="fbcom" type="host">https://www.facebook.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>
