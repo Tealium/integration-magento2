@@ -28,7 +28,7 @@ class JsAddToCart implements SectionSourceInterface
 
     public function getSectionData()
     {
-		$productImage = false;
+		$productImage = array();
         $product_id=$this->_customerSession->getTealiumAddProductId();
         $this->_customerSession->unsTealiumAddProductId();
 
@@ -52,9 +52,8 @@ class JsAddToCart implements SectionSourceInterface
 				$CartSku[] = 	$item->getSku();
 				$CartQty[] = 	$item->getQty();
 				$CartPrice[] =	number_format($item->getPrice(), 2, '.', '');
-				
 				$productCat = $objectManager->create('Magento\Catalog\Model\Product')->load($item->getProductId());
-				$productImage[] = $mediaUrl.$productCat->getImage();
+                $productImage[] = $mediaUrl.$productCat->getImage();
 			}
 		
 			

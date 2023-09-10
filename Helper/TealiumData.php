@@ -601,21 +601,21 @@ class TealiumData extends AbstractHelper
         $store = $this->store;
         $page = $this->page;
 
-        $checkout_ids = false;
-        $checkout_skus = false;
-        $checkout_names = false;
-        $checkout_qtys = false;
-        $checkout_prices = false;
-        $checkout_original_prices = false;
-        $checkout_brands = [];
-		$categoryName = false;
+        $checkout_ids = array();
+        $checkout_skus = array();
+        $checkout_names = array();
+        $checkout_qtys = array();
+        $checkout_prices = array();
+        $checkout_original_prices = array();
+        $checkout_brands = array();
+		$categoryName = array();
 		$GrandTotal = false;
 		$ItemsQty = false;
-		$checkout_images = false;
-		$checkout_url = false;
-		$checkout_catId = false;
-		$parentCatName = false; 
-		$itemDiscountAmmount = false;
+		$checkout_images = array();
+		$checkout_url = array();
+		$checkout_catId = array();
+		$parentCatName = array(); 
+		$itemDiscountAmmount = array();
 		$product_promo_code = false;
 		
 		$outputArray = [];
@@ -817,20 +817,20 @@ class TealiumData extends AbstractHelper
         $page = $this->page;
 
         $customer_id = false;
-        $ids = false;
-        $skus = false;
-        $names = false;
-        $brands = false;
-        $prices = false;
-        $original_prices = false;
-        $qtys = false;
-        $discounts = false;
-        $discount_quantity = false;
-		$productImage = false;
-		$productUrl = false;
-		$categoryName = false;
-		$manufacturer = false;
-		$parentCatName = false;
+        $ids = array();
+        $skus = array();
+        $names = array();
+        $brands = array();
+        $prices = array();
+        $original_prices = array();
+        $qtys = array();
+        $discounts = array();
+        $discount_quantity = array();
+		$productImage = array();
+		$productUrl = array();
+		$categoryName = array();
+		$manufacturer = array();
+		$parentCatName = array();
 		
         if ($this->_objectManager->get('Magento\Customer\Model\Session')->isLoggedIn()) {
             $customer = $this->_objectManager->get('Magento\Customer\Model\Session')->getCustomer();
@@ -897,6 +897,32 @@ class TealiumData extends AbstractHelper
                 $discount_object = [];
                 $brands[] = $item->getProduct()->getBrand();
                 foreach ($applied_rules as $rule) {
+
+                    $quantity = "";
+                    $discountQty = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
+                    ->load($rule)
+                    ->getDiscountQty();
+                
+                    if ($discountQty !== null) {
+                        $quantity = number_format($discountQty, 0, ".", "");
+                    } else {
+                        // Handle the case where $discountQty is null, e.g., provide a default value or log an error.
+                    }
+                
+                    $amount = "";
+                    $discountAmount = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
+                    ->load($rule)
+                    ->getDiscountAmount();
+                
+                    if ($discountAmount !== null) {
+                        $amount = number_format($discountAmount, 2, ".", "");
+                    } else {
+                        // Handle the case where $discountAmount is null, e.g., provide a default value or log an error.
+                    }
+                
+
+
+                    /*
                     $quantity = number_format(
                         $this->_objectManager->create('Magento\SalesRule\Model\Rule')
                             ->load($rule)
@@ -904,8 +930,8 @@ class TealiumData extends AbstractHelper
                         0,
                         ".",
                         ""
-                    );
-
+                    );*/
+                    /*
                     $amount = number_format(
                         $this->_objectManager->create('Magento\SalesRule\Model\Rule')
                             ->load($rule)
@@ -913,7 +939,7 @@ class TealiumData extends AbstractHelper
                         2,
                         ".",
                         ""
-                    );
+                    );*/
 
                     $type = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
                         ->load($rule)
