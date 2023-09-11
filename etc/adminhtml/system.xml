@@ -261,6 +261,16 @@
                         ]]>
                     </comment>
                 </field>
+                <field id="first_party_domain" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>First Party Domain</label>
+                    <comment>
+                        <![CDATA[
+                            <span class="notice">
+                                Please contact your Account Manager for information about this feature
+                            </span>
+                        ]]>
+                    </comment>
+                </field>
             </group>
         </section>
     </system>
