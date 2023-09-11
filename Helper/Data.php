@@ -282,6 +282,12 @@ class Data extends AbstractHelper
         );
     }
 
+    /* Get First party domain URL */
+    public function getFirstPartyDomain($store)
+    {
+        return $this->scopeConfig->getValue('tealium_tags/general/first_party_domain', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+    }
+
     /*
      * When placing the Tealium code in an external javaScript file, it's
      * either loaded syncronously or asyncronously.
