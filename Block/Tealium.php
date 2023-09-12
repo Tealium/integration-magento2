@@ -13,6 +13,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
     // Declare related properties and define constructor
     private $account; // account name
     private $profile; // profile name
+    private $fpurl;
     private $target;
     private $udo; // object (assoc array) of udo variables (key/val pairs)
     private $udoElements;
@@ -35,6 +36,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
     public function init(
         $accountInit = false,
         $profileInit = false,
+        $fp_url = false,
         $targetInit = false,
         $pageType = "Home",
         &$data = []
@@ -80,6 +82,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
         $this->udoElements = $udoElements;
         $this->account = $accountInit;
         $this->profile = $profileInit;
+        $this->fpurl = $fp_url;
         $this->target = $targetInit;
 
         if (!($this->udo = $this->udoElements[$pageType])
@@ -215,27 +218,58 @@ class Tealium extends \Magento\Framework\View\Element\Template
             // create the javascript for utag_data
             $udoJs = "var utag_data = $udoJson;";
 
-            // create the entire script tag to render for utag_data
-            $udo = <<<EOD
-<!-- Tealium Universal Data Object / Data Layer -->
-<div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
-<script type="text/javascript">
-$udoJs
-console.log(window);
-</script>
-<!-- ****************************************** -->
-EOD;
+            
+            if (!empty($this->fpurl) && $this->fpurl != "") {
+                // create the entire script tag to render for utag_data
+                $udo = <<<EOD
+                <!-- Tealium Universal Data Object / Data Layer -->
+                <div class="utagLib" style="display:none;">//$this->fpurl/utag/$this->account/$this->profile/$this->target/utag.js</div>
+                <script type="text/javascript">
+                $udoJs
+                console.log(window);
+                </script>
+                <!-- ****************************************** -->
+                EOD;
+            } else {
+                // create the entire script tag to render for utag_data
+                $udo = <<<EOD
+                <!-- Tealium Universal Data Object / Data Layer -->
+                <div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
+                <script type="text/javascript">
+                $udoJs
+                console.log(window);
+                </script>
+                <!-- ****************************************** -->
+                EOD;
+            }
+
+
         }
 
-        // Render Tealium tag in javaScript
-        $insert_tag = <<<EOD
-(function(a,b,c,d){
-    a='//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js';
-    b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
-    d.async=true;
-    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-})();
-EOD;
+
+        if (!empty($this->fpurl) && $this->fpurl != "") { 
+            // Render Tealium tag in javaScript
+            $insert_tag = <<<EOD
+            (function(a,b,c,d){
+                a='//$this->fpurl/utag/$this->account/$this->profile/$this->target/utag.js';
+                b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
+                d.async=true;
+                a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+            })();
+            EOD;
+        } else {
+            // Render Tealium tag in javaScript
+            $insert_tag = <<<EOD
+            (function(a,b,c,d){
+                a='//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js';
+                b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
+                d.async=true;
+                a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+            })();
+            EOD;
+        }
+
+        
 
         // enclose the tealium tag js in a <script></script> tag
         $tag = <<<EOD

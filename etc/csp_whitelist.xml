@@ -24,10 +24,15 @@
                 <value id="tealiumiq" type="host">*.tealiumiq.com</value>
                 <value id="segmentcdn" type="host">https://cdn.segment.com</value>
                 <value id="segmentapi" type="host">https://api.segment.io</value>
-                
+                <value id="ganalytics" type="host">*.google-analytics.com</value>
             </values>
         </policy>
         <policy id="img-src">
+            <values>
+                <value id="fbcom" type="host">https://www.facebook.com</value>
+            </values>
+        </policy>
+        <policy id="form-action">
             <values>
                 <value id="fbcom" type="host">https://www.facebook.com</value>
             </values>

@@ -56,6 +56,9 @@ class Data extends AbstractHelper
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
 
+        // added first party url domain
+        $fp_url = $this->getFirstPartyDomain($store);
+  
         $data = [
             "store" => $store,
             "page" => $page
@@ -63,7 +66,7 @@ class Data extends AbstractHelper
 
         $this->store = $store;
         $this->page = $page;
-        $this->tealium = $this->_objectManager->create('Tealium\Tags\Block\Tealium')->init($account, $profile, $env, $pageType, $data);
+        $this->tealium = $this->_objectManager->create('Tealium\Tags\Block\Tealium')->init($account, $profile, $fp_url, $env, $pageType, $data);
 
         return $this;
     }
@@ -206,7 +209,16 @@ class Data extends AbstractHelper
         $account = $this->getAccount($store);
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
-        return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
+
+        $fp_url = $this->getFirstPartyDomain($store);
+
+        if (!empty($fp_url) && $fp_url != "") {
+            return "//". $fp_url ."/utag/$account/$profile/$env/utag.js";
+        } else {
+            return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
+        }
+
+        
     }
 
     /*
