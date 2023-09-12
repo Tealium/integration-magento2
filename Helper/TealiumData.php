@@ -230,10 +230,10 @@ class TealiumData extends AbstractHelper
         $subcategory = false;
 		$categoryId =  false;
 		$category_name =  false;
-        $catProductList = false;
-        $browseRefineType = false;
-        $browseRefineValue = false;
-        $manufacturer = false;
+        $catProductList = array();
+        $browseRefineType = array();
+        $browseRefineValue = array();
+        $manufacturer = array();
         $ItemsQty = false;
         $GrandTotal = false;
 
