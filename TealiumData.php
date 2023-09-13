@@ -203,21 +203,8 @@ class TealiumData extends AbstractHelper
          //   $ItemsQty = $this->_cart->getQuote()->getItemsQty();
         //    $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
         }
-        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-
-        if (is_numeric($ItemsQty)) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        } else {
-            $outputArray['cart_total_items'] = "0.00"; // Default value or error handling
-        }
-        
-        if (is_numeric($GrandTotal)) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-        } else {
-            $outputArray['cart_total_value'] = "0.00"; // Default value or error handling
-        }
-        
+        $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
+        $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
 		 
         $outputArray['country_code'] = strtolower($locale[1]) ? : '';
         $outputArray['language_code'] = $locale[0] ? : '';
