@@ -261,7 +261,7 @@
                         ]]>
                     </comment>
                 </field>
-                <field id="first_party_domain" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="first_party_domain" translate="label comment" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>First Party Domain</label>
                     <comment>
                         <![CDATA[
