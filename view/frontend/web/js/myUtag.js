@@ -87,6 +87,18 @@ define([
             sendData(tealiumTag, dataObjectLogin);
         }
 
+
+        var dataObjectNews = customerData.get("tealium-tags-newsletter-signup");
+
+        dataObjectNews.subscribe(function (_dataObject) {
+            sendData(tealiumTag, _dataObject);
+        }, this);
+
+        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-newsletter-signup")){
+            sendData(tealiumTag, dataObjectLogin);
+        }
+
+
         var dataObjectWish = customerData.get("tealium-tags-add-to-wish");
 
         dataObjectWish.subscribe(function (_dataObject) {

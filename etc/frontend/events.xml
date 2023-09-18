@@ -75,4 +75,8 @@
                   instance="Tealium\Tags\Observer\ReviewSaveBefore"/>
     </event>
 
+    <event name="newsletter_subscriber_save_after">
+        <observer name="newsletter_subscriber_event" instance="Tealium\Tags\Observer\NewsletterSaveBefore" />
+    </event>
+
 </config>
