@@ -219,11 +219,12 @@ class Tealium extends \Magento\Framework\View\Element\Template
             $udoJs = "var utag_data = $udoJson;";
 
             
+            $this->fpurl = trim($this->fpurl);
             if (!empty($this->fpurl) && $this->fpurl != "") {
                 // create the entire script tag to render for utag_data
                 $udo = <<<EOD
                 <!-- Tealium Universal Data Object / Data Layer -->
-                <div class="utagLib" style="display:none;">//$this->fpurl/$this->profile/$this->target/utag.js</div>
+                <div class="utagLib" style="display:none;">https://$this->fpurl/$this->profile/$this->target/utag.js</div>
                 <script type="text/javascript">
                 $udoJs
                 console.log(window);
@@ -251,7 +252,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
             // Render Tealium tag in javaScript
             $insert_tag = <<<EOD
             (function(a,b,c,d){
-                a='//$this->fpurl/$this->profile/$this->target/utag.js';
+                a='https://$this->fpurl/$this->profile/$this->target/utag.js';
                 b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
                 d.async=true;
                 a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);

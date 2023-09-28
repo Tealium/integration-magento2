@@ -16,7 +16,8 @@
                 <value id="tiqcdn" type="host">*.tiqcdn.com</value>
                 <value id="segment" type="host">https://cdn.segment.com</value>
                 <value id="facebook" type="host">https://connect.facebook.net</value>
-                <value id="magentoc" type="host">https://magentoc.opensourcebrokers.ca</value>  
+                <value id="magentod" type="host">https://data.magento.opensourcebrokers.ca</value>  
+                <value id="teliumiq" type="host">*.teliumiq.com</value>
             </values>
         </policy>
         <policy id="connect-src">
@@ -25,10 +26,12 @@
                 <value id="segmentcdn" type="host">https://cdn.segment.com</value>
                 <value id="segmentapi" type="host">https://api.segment.io</value>
                 <value id="ganalytics" type="host">*.google-analytics.com</value>
+                <value id="magentod" type="host">https://data.magento.opensourcebrokers.ca</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
+                <value id="teliumiq" type="host">*.teliumiq.com</value>
                 <value id="fbcom" type="host">https://www.facebook.com</value>
             </values>
         </policy>

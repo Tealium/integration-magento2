@@ -35,6 +35,7 @@ class JsCreateAccount implements SectionSourceInterface
         $result = [];
         
         if ($id) {
+            $email = hash('sha256', strtolower($email);
             $result['data']['customer_email'] = (string)$email;
             $result['data']['customer_id'] = (string)$id;
             $result['data']['customer_type'] = (string)$type;

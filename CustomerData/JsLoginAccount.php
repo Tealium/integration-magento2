@@ -30,6 +30,8 @@ class JsLoginAccount implements SectionSourceInterface
         $result = [];
         
         if ($id) {
+
+            $email = hash('sha256', strtolower($email);
             $result['data']['customer_email'] = $email;
             $result['data']['customer_id'] = $id;
             $result['data']['customer_type'] = $type;

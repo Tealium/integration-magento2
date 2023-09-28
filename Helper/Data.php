@@ -212,8 +212,9 @@ class Data extends AbstractHelper
 
         $fp_url = $this->getFirstPartyDomain($store);
 
+        $fp_url = trim($fp_url);
         if (!empty($fp_url) && $fp_url != "") {
-            return "//". $fp_url ."/$profile/$env/utag.js";
+            return "https://". $fp_url ."/$profile/$env/utag.js";
         } else {
             return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
         }
