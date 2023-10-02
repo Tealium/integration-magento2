@@ -46,7 +46,7 @@ class User extends Action
         // echo json_encode(['id' => [$id], 'type' => [$groupName], 'email' => [$email] ]);
 
         // exit;
-        //$email = hash('sha256', strtolower($email);
+        //$email = hash('sha256', strtolower($email));
         $result = ['customer_id' => $id, 'customer_type' => $groupName, 'customer_email' => $email ];
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultJson->setData($result);

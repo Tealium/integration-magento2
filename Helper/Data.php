@@ -222,6 +222,17 @@ class Data extends AbstractHelper
         
     }
 
+    /* Get Customer plain text email setting */
+    public function getCustomerTxtEmail($store)
+    {
+        return $this->scopeConfig->getValue('tealium_tags/general/plain_txt_email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+    }
+
+    /* return store object */
+    public function getStore() {
+        return $this->_store;
+    }
+
     /*
      * While "this" helper provides a single interface to utility functions,
      * the "tealium" object manages udo operations. This function returns

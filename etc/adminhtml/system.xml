@@ -54,7 +54,16 @@
                                 ]]>
                     </comment>
                 </field>
-                <field id="custom_udo_enable" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="plain_txt_email" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allow plain text customer email</label>
+                    <comment><![CDATA[
+                                    <span class="notice">
+                                        If selected "No", email will be encrypted using SHA-256 hash.
+                                    </span>
+                                ]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="custom_udo_enable" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Custom UDO</label>
                     <comment>
                         <![CDATA[
@@ -65,7 +74,7 @@
                     </comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="udo" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="udo" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom UDO file path</label>
                     <comment>
                         <![CDATA[
@@ -211,7 +220,7 @@
                                 ]]>
                     </comment>
                 </field>
-                <field id="external_script" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="external_script" translate="label" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable External Script Support</label>
                     <comment>
                         <![CDATA[
@@ -224,7 +233,7 @@
                     </comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="external_script_type" translate="label" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="external_script_type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>External Script Async</label>
                     <comment>
                         <![CDATA[
@@ -237,11 +246,11 @@
                     </comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="diagnostic_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="diagnostic_enable" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Diagnostic Tag</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="diagnostic_tag" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="diagnostic_tag" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Custom diagnostic tag URI path</label>
                     <comment>
                         <![CDATA[
@@ -251,7 +260,7 @@
                                 ]]>
                     </comment>
                 </field>
-                <field id="help" translate="label" type="label" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="help" translate="label" type="label" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Help Section</label>
                     <comment>
                         <![CDATA[

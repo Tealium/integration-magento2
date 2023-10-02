@@ -5,6 +5,7 @@ namespace Tealium\Tags\CustomerData;
 use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
+use Tealium\Tags\Helper\Data as TealiumDataHelper;
 
 class JsCreateAccount implements SectionSourceInterface
 {
@@ -13,12 +14,19 @@ class JsCreateAccount implements SectionSourceInterface
 
     protected $_coreSession;
 
+    /**
+     * @var TealiumDataHelper
+     */
+    protected $tealiumDataHelper;
+
     public function __construct(
         CustomerSession $customerSession,
-        CoreSession $coreSession
+        CoreSession $coreSession,
+        TealiumDataHelper $tealiumDataHelper
     ) {
         $this->_customerSession = $customerSession;
         $this->_coreSession = $coreSession;
+        $this->tealiumDataHelper = $tealiumDataHelper;
     }
 
     public function getSectionData()
@@ -35,7 +43,12 @@ class JsCreateAccount implements SectionSourceInterface
         $result = [];
         
         if ($id) {
-            $email = hash('sha256', strtolower($email);
+
+            $store = $this->tealiumDataHelper->getStore();
+            $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
+            if ($customertxtvalue == null || $customertxtvalue == 0) {
+                $email = hash('sha256', strtolower($email));
+            } 
             $result['data']['customer_email'] = (string)$email;
             $result['data']['customer_id'] = (string)$id;
             $result['data']['customer_type'] = (string)$type;

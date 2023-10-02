@@ -48,6 +48,8 @@ class NewsletterSaveBefore implements ObserverInterface
             $this->_logger->notice('Email: ' . $email);
             $this->_logger->notice('subscriber ID: ' . $subscriptionId);
 
+            $this->_coreSession->setTealiumNewsletterEmail($email);
+
             $this->_coreSession->setTealiumNewsletterId($subscriptionId);
         } else {
             // This is an update to an existing subscription
