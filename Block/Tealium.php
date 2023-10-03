@@ -22,14 +22,18 @@ class Tealium extends \Magento\Framework\View\Element\Template
     protected $_helper;
     protected $_request;
 
+    public $_storeManager;
+
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Tealium\Tags\Helper\TealiumData $helper,
         \Magento\Framework\App\Request\Http $request,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         array $data = []
     ) {
         $this->_helper = $helper;
         $this->_request = $request;
+        $this->_storeManager=$storeManager;
         parent::__construct($context, $data);
     }
 
@@ -169,9 +173,18 @@ class Tealium extends \Magento\Framework\View\Element\Template
             // instead of setting utag_data with a udo object, include
             // the external script instead
             $type = "udo";
+
+            $base_urls = $this->_storeManager->getStore()->getBaseUrl();
+            
             $is_async = ($sync == "sync") ? "" : "async";
             $udo = "<script type=\"text/javascript\" src=\"";
-            $udo .= $_SERVER["REQUEST_URI"];
+
+            if ($_SERVER["REQUEST_URI"] != "/") {
+                $udo = $udo . $base_urls . $_SERVER["REQUEST_URI"];
+            } else {
+                $udo .= $base_urls;
+            }
+            
 
             if ($_SERVER["QUERY_STRING"]) {
                 // append more query params with '&' if query params exist
@@ -183,6 +196,9 @@ class Tealium extends \Magento\Framework\View\Element\Template
 
             // append the "tealium_api=true" query param to the url
             $udo .= "tealium_api=true\" $is_async></script>";
+
+            //var_dump($udo);
+            //exit;
         } else {
             // Either using the api, the udo is not an external script, or both.
             // Therefore the udo object must be generated as javascript code.
@@ -212,7 +228,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
             } else {
                 $udoJson = "{}";
             }
-/* echo "test<pre>";
+            /* echo "test<pre>";
 			print_r($udoObject);
 			die; */
             // create the javascript for utag_data
