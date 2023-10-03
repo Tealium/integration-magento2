@@ -54,6 +54,9 @@ If the site is not using FPD, no updates should be needed. The site domain is no
   - FPD (first party domain support)
   - Updated older PHP code that is not compliant with 8.1+
   - CSP (content security policy) updates for 2.4.6
+  - Newsletter signup Event
+  - SHA256 encryption option on customer_email UDO variable.
+  - Bug Fixes
 
 - 3.1.0 Release
     - Update for support of Magento 2.4
