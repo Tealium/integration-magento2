@@ -35,14 +35,14 @@ define([
 
         dataObjectRemove.subscribe(function (_dataObject) {
             if ('cart_empty' in _dataObject ) {
-                sendData(tealiumTag, {'data':{'tealium_event':"cart_empty"}});
+                sendData(tealiumTag, {'data':{'tealium_event':"cart_remove"}});
             }
             sendData(tealiumTag, _dataObject);
         }, this);
 
         if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-remove-from-cart")){
             if ('cart_empty' in dataObjectRemove ) {
-                sendData(tealiumTag, {'data':{'tealium_event':"cart_empty"}});
+                sendData(tealiumTag, {'data':{'tealium_event':"cart_remove"}});
             }
             sendData(tealiumTag, dataObjectRemove);
         }
@@ -86,6 +86,18 @@ define([
         if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-customer-login")){
             sendData(tealiumTag, dataObjectLogin);
         }
+
+
+        var dataObjectNews = customerData.get("tealium-tags-newsletter-signup");
+
+        dataObjectNews.subscribe(function (_dataObject) {
+            sendData(tealiumTag, _dataObject);
+        }, this);
+
+        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-newsletter-signup")){
+            sendData(tealiumTag, dataObjectLogin);
+        }
+
 
         var dataObjectWish = customerData.get("tealium-tags-add-to-wish");
 

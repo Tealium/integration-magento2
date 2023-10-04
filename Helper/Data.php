@@ -56,6 +56,9 @@ class Data extends AbstractHelper
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
 
+        // added first party url domain
+        $fp_url = $this->getFirstPartyDomain($store);
+  
         $data = [
             "store" => $store,
             "page" => $page
@@ -63,7 +66,7 @@ class Data extends AbstractHelper
 
         $this->store = $store;
         $this->page = $page;
-        $this->tealium = $this->_objectManager->create('Tealium\Tags\Block\Tealium')->init($account, $profile, $env, $pageType, $data);
+        $this->tealium = $this->_objectManager->create('Tealium\Tags\Block\Tealium')->init($account, $profile, $fp_url, $env, $pageType, $data);
 
         return $this;
     }
@@ -206,7 +209,28 @@ class Data extends AbstractHelper
         $account = $this->getAccount($store);
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
-        return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
+
+        $fp_url = $this->getFirstPartyDomain($store);
+
+        $fp_url = trim($fp_url);
+        if (!empty($fp_url) && $fp_url != "") {
+            return "https://". $fp_url ."/$profile/$env/utag.js";
+        } else {
+            return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
+        }
+
+        
+    }
+
+    /* Get Customer plain text email setting */
+    public function getCustomerTxtEmail($store)
+    {
+        return $this->scopeConfig->getValue('tealium_tags/general/plain_txt_email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+    }
+
+    /* return store object */
+    public function getStore() {
+        return $this->_store;
     }
 
     /*
@@ -280,6 +304,12 @@ class Data extends AbstractHelper
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
+    }
+
+    /* Get First party domain URL */
+    public function getFirstPartyDomain($store)
+    {
+        return $this->scopeConfig->getValue('tealium_tags/general/first_party_domain', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*

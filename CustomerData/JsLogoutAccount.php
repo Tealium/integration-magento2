@@ -4,16 +4,24 @@ namespace Tealium\Tags\CustomerData;
 
 use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
+use Tealium\Tags\Helper\Data as TealiumDataHelper;
 
 class JsLogoutAccount implements SectionSourceInterface
 {
 
     protected $_coreSession;
 
+    /**
+    * @var TealiumDataHelper
+    */
+    protected $tealiumDataHelper;
+
     public function __construct(
-        CoreSession $coreSession
+        CoreSession $coreSession,
+        TealiumDataHelper $tealiumDataHelper
     ) {
         $this->_coreSession = $coreSession;
+        $this->tealiumDataHelper = $tealiumDataHelper;
     }
 
     public function getSectionData()
@@ -46,6 +54,12 @@ class JsLogoutAccount implements SectionSourceInterface
         $result = [];
 
         if (isset($id)) {
+
+            $store = $this->tealiumDataHelper->getStore();
+            $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
+            if ($customertxtvalue == null || $customertxtvalue == 0) {
+                $email = hash('sha256', strtolower($email));
+            } 
             $result['data']['customer_email'] = $email;
             $result['data']['customer_id'] = $id;
             $result['data']['customer_type'] = $type;

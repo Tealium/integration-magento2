@@ -42,8 +42,13 @@ class Api implements ObserverInterface
             $response = $observer->getData('response');
             $html = $response->getBody();
             preg_match('/\/\/TEALIUM_START(.*)\/\/TEALIUM_END/is', $html, $matches);
-            $javaScript = "// Tealium Magento Callback API";
+            //$javaScript = "// Tealium Magento Callback API";
+            $javaScript = "";
             $javaScript .= $matches[1];
+
+//var_dump($javaScript);
+//exit;
+
             $response->setBody($javaScript);
         }
 
