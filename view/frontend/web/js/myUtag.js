@@ -17,8 +17,7 @@ define([
     return function (options) {
 	//	alert(window.utag);
 //	alert('test');
-		console.log('window.utag');
-		console.log(window.utag);
+		
         var tealiumTag = window.utag;
 
         var dataObjectAdd = customerData.get("tealium-tags-add-to-cart");

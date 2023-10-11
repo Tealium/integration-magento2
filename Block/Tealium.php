@@ -240,10 +240,12 @@ class Tealium extends \Magento\Framework\View\Element\Template
                 // create the entire script tag to render for utag_data
                 $udo = <<<EOD
                 <!-- Tealium Universal Data Object / Data Layer -->
-                <div class="utagLib" style="display:none;">https://$this->fpurl/$this->profile/$this->target/utag.js</div>
+                
                 <script type="text/javascript">
+                var utag_jsurl = "https://$this->fpurl/$this->profile/$this->target/utag.js";
+
                 $udoJs
-                console.log(window);
+                
                 </script>
                 <!-- ****************************************** -->
                 EOD;
@@ -251,10 +253,11 @@ class Tealium extends \Magento\Framework\View\Element\Template
                 // create the entire script tag to render for utag_data
                 $udo = <<<EOD
                 <!-- Tealium Universal Data Object / Data Layer -->
-                <div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
+                
                 <script type="text/javascript">
+                var utag_jsurl = "//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js";
                 $udoJs
-                console.log(window);
+                
                 </script>
                 <!-- ****************************************** -->
                 EOD;
