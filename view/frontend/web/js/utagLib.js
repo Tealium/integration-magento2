@@ -20,10 +20,13 @@ define([
 						utag_data.cart_total_value = dataObject['cart_total_value'];
             		}
 
+					
+					
 				  	
 				  if(typeof window.utag == 'undefined')
 					{
-						var LibURL = jQuery.trim(jQuery('.utagLib').html());
+						
+						var LibURL = utag_jsurl;
 						(function(a,b,c,d){
 								a=LibURL;
 								b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
@@ -36,6 +39,10 @@ define([
 			  }
 					
 			});
+	
+		
+   
+		 
 	
     }
 	
