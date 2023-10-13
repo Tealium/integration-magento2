@@ -31,6 +31,8 @@
 
                 <item name="tealium-tags-save-review" xsi:type="string">Tealium\Tags\CustomerData\JsSaveReview</item>
 
+                <item name="tealium-tags-newsletter-signup" xsi:type="string">Tealium\Tags\CustomerData\JsSaveNewsletter</item>
+
             </argument>
         </arguments>
     </type>

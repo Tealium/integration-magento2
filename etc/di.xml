@@ -7,4 +7,8 @@
         <plugin name="tags-session-depersonalize"
                 type="Tealium\Tags\Plugin\App\Action\DepersonalizePlugin" sortOrder="21"/>
     </type>
+
+    <!--<type name="Magento\Framework\App\Request\CsrfValidator">
+        <plugin name="csrf_validator_skip" type="Tealium\Tags\Plugin\CsrfValidatorSkip" />
+    </type>-->
 </config>

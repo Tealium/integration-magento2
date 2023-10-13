@@ -5,7 +5,10 @@ $store = $this->getStore();
 
 
 // create a tealium object for the page
+
 $tealium = $helper->init($store, $this, "Home")
+//$tealium = $helper->init($store, "Home", $this)
+    //->addCustomDataFromSetup($store, $thispage)
     ->addCustomDataFromSetup($store, "Home")
     ->getTealiumObject();
 

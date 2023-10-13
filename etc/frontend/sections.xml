@@ -70,5 +70,11 @@
     <action name="review/product/post">
         <section name="tealium-tags-save-review"/>
     </action>
+
+    <action name="newsletter/subscriber/new">
+        <section name="tealium-tags-newsletter-signup"/>
+    </action>
+
+    
     
 </config>
