@@ -13,6 +13,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
     // Declare related properties and define constructor
     private $account; // account name
     private $profile; // profile name
+    private $fpurl;
     private $target;
     private $udo; // object (assoc array) of udo variables (key/val pairs)
     private $udoElements;
@@ -21,20 +22,25 @@ class Tealium extends \Magento\Framework\View\Element\Template
     protected $_helper;
     protected $_request;
 
+    public $_storeManager;
+
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Tealium\Tags\Helper\TealiumData $helper,
         \Magento\Framework\App\Request\Http $request,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         array $data = []
     ) {
         $this->_helper = $helper;
         $this->_request = $request;
+        $this->_storeManager=$storeManager;
         parent::__construct($context, $data);
     }
 
     public function init(
         $accountInit = false,
         $profileInit = false,
+        $fp_url = false,
         $targetInit = false,
         $pageType = "Home",
         &$data = []
@@ -80,6 +86,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
         $this->udoElements = $udoElements;
         $this->account = $accountInit;
         $this->profile = $profileInit;
+        $this->fpurl = $fp_url;
         $this->target = $targetInit;
 
         if (!($this->udo = $this->udoElements[$pageType])
@@ -166,9 +173,18 @@ class Tealium extends \Magento\Framework\View\Element\Template
             // instead of setting utag_data with a udo object, include
             // the external script instead
             $type = "udo";
+
+            $base_urls = $this->_storeManager->getStore()->getBaseUrl();
+            
             $is_async = ($sync == "sync") ? "" : "async";
             $udo = "<script type=\"text/javascript\" src=\"";
-            $udo .= $_SERVER["REQUEST_URI"];
+
+            if ($_SERVER["REQUEST_URI"] != "/") {
+                $udo = $udo . $base_urls . $_SERVER["REQUEST_URI"];
+            } else {
+                $udo .= $base_urls;
+            }
+            
 
             if ($_SERVER["QUERY_STRING"]) {
                 // append more query params with '&' if query params exist
@@ -180,6 +196,9 @@ class Tealium extends \Magento\Framework\View\Element\Template
 
             // append the "tealium_api=true" query param to the url
             $udo .= "tealium_api=true\" $is_async></script>";
+
+            //var_dump($udo);
+            //exit;
         } else {
             // Either using the api, the udo is not an external script, or both.
             // Therefore the udo object must be generated as javascript code.
@@ -209,33 +228,68 @@ class Tealium extends \Magento\Framework\View\Element\Template
             } else {
                 $udoJson = "{}";
             }
-/* echo "test<pre>";
+            /* echo "test<pre>";
 			print_r($udoObject);
 			die; */
             // create the javascript for utag_data
             $udoJs = "var utag_data = $udoJson;";
 
-            // create the entire script tag to render for utag_data
-            $udo = <<<EOD
-<!-- Tealium Universal Data Object / Data Layer -->
-<div class="utagLib" style="display:none;">//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js</div>
-<script type="text/javascript">
-$udoJs
-console.log(window);
-</script>
-<!-- ****************************************** -->
-EOD;
+            
+            $this->fpurl = trim($this->fpurl);
+            if (!empty($this->fpurl) && $this->fpurl != "") {
+                // create the entire script tag to render for utag_data
+                $udo = <<<EOD
+                <!-- Tealium Universal Data Object / Data Layer -->
+                
+                <script type="text/javascript">
+                var utag_jsurl = "https://$this->fpurl/$this->profile/$this->target/utag.js";
+
+                $udoJs
+                
+                </script>
+                <!-- ****************************************** -->
+                EOD;
+            } else {
+                // create the entire script tag to render for utag_data
+                $udo = <<<EOD
+                <!-- Tealium Universal Data Object / Data Layer -->
+                
+                <script type="text/javascript">
+                var utag_jsurl = "//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js";
+                $udoJs
+                
+                </script>
+                <!-- ****************************************** -->
+                EOD;
+            }
+
+
         }
 
-        // Render Tealium tag in javaScript
-        $insert_tag = <<<EOD
-(function(a,b,c,d){
-    a='//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js';
-    b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
-    d.async=true;
-    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-})();
-EOD;
+
+        if (!empty($this->fpurl) && $this->fpurl != "") { 
+            // Render Tealium tag in javaScript
+            $insert_tag = <<<EOD
+            (function(a,b,c,d){
+                a='https://$this->fpurl/$this->profile/$this->target/utag.js';
+                b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
+                d.async=true;
+                a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+            })();
+            EOD;
+        } else {
+            // Render Tealium tag in javaScript
+            $insert_tag = <<<EOD
+            (function(a,b,c,d){
+                a='//tags.tiqcdn.com/utag/$this->account/$this->profile/$this->target/utag.js';
+                b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c; 
+                d.async=true;
+                a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+            })();
+            EOD;
+        }
+
+        
 
         // enclose the tealium tag js in a <script></script> tag
         $tag = <<<EOD
