@@ -35,28 +35,7 @@ sudo php -d set_time_limit=3600 -d memory_limit=1024M bin/magento setup:di:compi
 ## Configure
 In the admin panel under store configuration, you can set the  options for the extension (Stores -> Configuration -> Tealium -> Tag Management). You will need to enable it, and define your TiQ account, profile, and environment information.
 
-- 2.4.5+ With the latest update you will also have the option to enter a [FPD (First Party domain)](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/) The account field is ignored if the FPD field is filled in. Imporant note: This is for the Client Side Domain. The server side domain is configured in the Tealium Collect tag in the above documentation link. 
-- 2.4.5+ Email Hashing is optional. If set to true, SHA256() will be applied to email addresses in "customer_email" params. 
-
-## CSP for 2.4.5+ 
-If the site is not using FPD, no updates should be needed. The site domain is not wildcard whitelisted by default. www.site.com will not accept datacollect.site.com by default. 
-
-- To update:
-  - In the extition's etc dir. public_html/integration-magento/etc Should be a csp_whitelist.xml file.
-  - Update policy, "script-src", "connect-src", and "img-src" to include your FPD domain.
-  - For example: ```<value id="unique id" type="host">https://data.site.com</value>``` for your Client Side domain
-  - ```<value id="unique id" type="host">https://datac.site.com</value>``` for your Server side domain. 
-
-
 ## Change Log
-
-- Magento 2.4.6 / PHP 8.1 Update
-  - FPD (first party domain support)
-  - Updated older PHP code that is not compliant with 8.1+
-  - CSP (content security policy) updates for 2.4.6
-  - Newsletter signup Event
-  - SHA256 encryption option on customer_email UDO variable.
-  - Bug Fixes
 
 - 3.1.0 Release
     - Update for support of Magento 2.4

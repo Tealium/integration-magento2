@@ -33,7 +33,7 @@ class Index extends Action
     public function execute()
     {
         $cartData = $this->_cart->getQuote()->getAllVisibleItems();
-		
+        
         $result = [
             'data'=>[
                 'product_category'=>[],
@@ -48,7 +48,7 @@ class Index extends Action
             ]
         ];
         foreach ($cartData as $key => $value) {
-			/*
+            /*
             $product = $this->_objectManager->get('Magento\Catalog\Model\Product')->load($value->getProductId());
             foreach ($value->getOptions() as $option) {
                 if ($option) {
@@ -59,7 +59,7 @@ class Index extends Action
                     }
                 }
             }
-			*/
+            */
             $productData = $this->_productHelper->getProductData($value->getProductId());
 
             array_push($result['data']['product_category'], $productData['product_category'][0]);

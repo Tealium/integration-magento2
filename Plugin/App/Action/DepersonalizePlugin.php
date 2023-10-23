@@ -21,8 +21,8 @@ class DepersonalizePlugin
      * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
-	protected $httpContext;
-	protected $cacheable;
+    protected $httpContext;
+    protected $cacheable;
     /**
      * @param DepersonalizeChecker $depersonalizeChecker
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -31,12 +31,12 @@ class DepersonalizePlugin
     public function __construct(
         DepersonalizeChecker $depersonalizeChecker,
         \Magento\Checkout\Model\Session $checkoutSession,
-		\Magento\Framework\App\Http\Context $httpContext
+        \Magento\Framework\App\Http\Context $httpContext
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->depersonalizeChecker = $depersonalizeChecker;
-		$this->httpContext = $httpContext;
-		$this->cacheable = false;
+        $this->httpContext = $httpContext;
+        $this->cacheable = false;
     }
 
     /**
@@ -46,22 +46,21 @@ class DepersonalizePlugin
      * @param \Magento\Framework\View\LayoutInterface $result
      * @return \Magento\Framework\View\LayoutInterface
      */
-	 public function beforeGenerateXml(\Magento\Framework\View\LayoutInterface $subject)
+    public function beforeGenerateXml(\Magento\Framework\View\LayoutInterface $subject)
     {
-		$quote = $this->checkoutSession->getQuote();
-		$ItemsQty = $quote->getItemsQty();
-		$GrandTotal = $quote->getGrandTotal();
-		 $this->httpContext->setValue(
-           'ItemsQty',
-           $ItemsQty,
-            $ItemsQty
-        );
-		 $this->httpContext->setValue(
-           'GrandTotal',
-           $GrandTotal,
-            $GrandTotal
-        );
+        $quote = $this->checkoutSession->getQuote();
+        $ItemsQty = $quote->getItemsQty();
+        $GrandTotal = $quote->getGrandTotal();
+         $this->httpContext->setValue(
+             'ItemsQty',
+             $ItemsQty,
+             $ItemsQty
+         );
+         $this->httpContext->setValue(
+             'GrandTotal',
+             $GrandTotal,
+             $GrandTotal
+         );
         return [];
     }
-   
 }

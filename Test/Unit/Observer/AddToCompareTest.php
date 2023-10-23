@@ -41,8 +41,8 @@ class AddToCompareTest extends TestCase
         $this->productFactory = $this->getMockBuilder(ProductFactory::class)
             ->setMethods([
                 'create',
-                'getIdBySku'                
-            ])        
+                'getIdBySku'
+            ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -54,7 +54,7 @@ class AddToCompareTest extends TestCase
 
     public function testExecute()
     {
-        $productId = 4;        
+        $productId = 4;
 
         $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
             ->disableOriginalConstructor()
@@ -64,14 +64,14 @@ class AddToCompareTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eventObserver->expects($this->any())->method('getData')->willReturn($event);        
+        $eventObserver->expects($this->any())->method('getData')->willReturn($event);
 
         $this->productFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->productFactory);
 
         $this->productFactory->expects($this->any())
-            ->method('getIdBySku');            
+            ->method('getIdBySku');
         
 
         $this->customerSession->expects($this->once())

@@ -42,7 +42,7 @@ class AddToWishTest extends TestCase
 
     public function testExecute()
     {
-        $productId = 4;        
+        $productId = 4;
 
         $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
             ->disableOriginalConstructor()
@@ -52,7 +52,7 @@ class AddToWishTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $eventObserver->expects($this->any())->method('getData')->willReturn($event);        
+        $eventObserver->expects($this->any())->method('getData')->willReturn($event);
 
         $this->customerSession->expects($this->once())
             ->method('setTealiumAddToWishId')

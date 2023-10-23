@@ -58,13 +58,13 @@ class AddProduct implements ObserverInterface
             $product_quantity = $requestParamList['qty'];
         }
 
-        if (isset($requestParamList['super_group'])) {        
+        if (isset($requestParamList['super_group'])) {
             $product_quantity = [];
             $product_id = [];
             foreach ($requestParamList['super_group'] as $pid => $qty) {
                 if (intval($qty) > 0) {
                     $product_quantity[] = $qty;
-                    $product_id[] = $pid;                    
+                    $product_id[] = $pid;
                 }
             }
         }

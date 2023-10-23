@@ -34,8 +34,8 @@ class Product extends AbstractHelper
     public function getProductData($product_id, $array = true)
     {
         $result = [];
-        if(is_array($product_id)) {
-            foreach($product_id as $key => $pid) {
+        if (is_array($product_id)) {
+            foreach ($product_id as $key => $pid) {
                 $product = $this->_productRepository->getById($pid);
                 $result['product_name'][$key] = (string)$product->getName();
                 $result['product_list_price'][$key] = (string)number_format((float)$product->getPrice(), 2, '.', '');
@@ -63,10 +63,9 @@ class Product extends AbstractHelper
                             $result['product_list_price'][$key] = (string)number_format((float)$child->getPrice(), 2, '.', '');
                         }
                     }
-                }   
+                }
             }
-        }
-        else {
+        } else {
             
             $product = $this->_productRepository->getById($product_id);
             $result['product_name'] = [(string)$product->getName()];
@@ -85,16 +84,15 @@ class Product extends AbstractHelper
                 $result['product_list_price'][0] != $result['product_unit_price'][0]
             ) {
                 $product_discount = $result['product_list_price'][0] - $result['product_unit_price'][0];
-            }            
+            }
 
             $result['product_discount'] = [(string)number_format((float)$product_discount, 2, '.', '')];
             if ($result['product_list_price'][0] == 0) {
-                if($product->getTypeId() == 'grouped') {
+                if ($product->getTypeId() == 'grouped') {
                     $children = $product->getTypeInstance()->getAssociatedProducts($product);
-                }
-                else {
+                } else {
                     $children = $product->getTypeInstance()->getUsedProducts($product);
-                }                
+                }
                 foreach ($children as $child) {
                     if ($result['product_list_price'][0] < $child->getPrice()) {
                         $result['product_list_price'][0] = (string)number_format((float)$child->getPrice(), 2, '.', '');
