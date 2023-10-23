@@ -7,8 +7,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable; // Import the Configurable class
 
 class AddProduct implements ObserverInterface
 {
@@ -16,19 +15,19 @@ class AddProduct implements ObserverInterface
     protected $customerSession;
     protected $checkoutSession;
     protected $productRepository;
-    protected $objectManager;
+    protected $configurableProduct; // Add a property for the Configurable class
 
     public function __construct(
         Http $request,
         CustomerSession $customerSession,
         ProductRepositoryInterface $productRepository,
-        ObjectManagerInterface $objectManager,
+        Configurable $configurableProduct, // Inject the Configurable class
         CheckoutSession $checkoutSession
     ) {
         $this->request = $request;
         $this->customerSession = $customerSession;
         $this->productRepository = $productRepository;
-        $this->objectManager = $objectManager;
+        $this->configurableProduct = $configurableProduct; // Assign the injected instance
         $this->checkoutSession = $checkoutSession;
     }
 
@@ -39,7 +38,7 @@ class AddProduct implements ObserverInterface
 
         if (isset($requestParamList['super_attribute'])) {
             $product = $this->productRepository->getById($product_id);
-            $myProduct = $this->objectManager->get(Configurable::class)->getProductByAttributes($requestParamList['super_attribute'], $product);
+            $myProduct = $this->configurableProduct->getProductByAttributes($requestParamList['super_attribute'], $product); // Use the injected instance
             $product_id = $myProduct->getId();
         }
 
