@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: svatoslavzilicev
- * Date: 18.08.17
- * Time: 16:40
- */
-
 namespace Tealium\Tags\Helper;
 
 use \Magento\Framework\App\Helper\AbstractHelper;
@@ -19,7 +12,6 @@ class Data extends AbstractHelper
     protected $tealium;
     protected $store;
     protected $page;
-
     protected $_store;
     protected $_objectManager;
 
@@ -48,10 +40,7 @@ class Data extends AbstractHelper
     }
 
     public function init(&$store, &$page, $pageType)
-    //public function init(&$store, $pageType, &$page = [])
-
     {
-        // initialize basic profile settings
         $account = $this->getAccount($store);
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
@@ -105,23 +94,9 @@ class Data extends AbstractHelper
                 $viewApp->setResolver($resolver, $data);
                 $viewApp->setVars($data);
                 $viewApp->render($fileName);
-                /*
-                $viewModel = $this->_objectManager->create('Zend\View\Model\ViewModel');
-                $viewModel->setVariable('foo', 'bar');
-                $viewModel->setTemplate($fileName);
-                $viewApp->render($viewModel);
-                */
                 $udoElements = $viewApp->vars('udoElements');
 
             }
-            
-               /*
-            include_once($this->scopeConfig->getValue(
-                'tealium_tags/general/udo',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $store->getId()
-            ));
-            */
 
             // Another way to define a custom udo is to define a "getCustomUdo"
             // method, which is used to set "$udoElements"

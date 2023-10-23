@@ -5,12 +5,6 @@ use Tealium\Tags\Observer\AddToWish as Observer;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Event;
 use Magento\Customer\Model\Session as CustomerSession;
-use Magento\Checkout\Model\Session as CheckoutSession;
-use Magento\Framework\App\Request\Http;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
-use Magento\Catalog\Model\ProductFactory;
 
 class AddToWishTest extends TestCase
 {
@@ -26,7 +20,6 @@ class AddToWishTest extends TestCase
  
     protected function setUp(): void
     {
-
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)
             ->disableOriginalConstructor()
             ->setMethods([
