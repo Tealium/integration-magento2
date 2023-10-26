@@ -92,9 +92,6 @@ class TealiumData extends AbstractHelper
         $page = $this->page;
 
         $outputArray = [];
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
-
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
         $titleBlock = $page->getLayout()->getBlock('page.main.title');
@@ -109,7 +106,7 @@ class TealiumData extends AbstractHelper
         
         if ($outputArray['page_name'] == 'Home Page') {
             
-            //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+            
             $locale = $this->_localeResolver->getLocale();
             $locale = explode("_", $locale);
             $outputArray['country_code'] = strtolower($locale[1]) ? : '';
@@ -168,8 +165,7 @@ class TealiumData extends AbstractHelper
         if ($searchBlock === false) {
             return $outputArray;
         }
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
@@ -208,7 +204,7 @@ class TealiumData extends AbstractHelper
         }
        
         
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+       
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -364,8 +360,7 @@ class TealiumData extends AbstractHelper
         $titleBlock = $page->getLayout()->getBlock('category.products.list');
         
         $outputArray = [];
-        //$outputArray['site_region'] =
-        //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
 
@@ -385,7 +380,7 @@ class TealiumData extends AbstractHelper
             $outputArray['browse_refine_value'] = $browseRefineValue ? : "";
         }
         
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+        
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -438,8 +433,7 @@ class TealiumData extends AbstractHelper
         $_product = $this->_registry->registry('current_product');
 
         $outputArray = [];
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -608,7 +602,7 @@ class TealiumData extends AbstractHelper
       
         $outputArray['site_section'] = "Clothing";
         $outputArray['tealium_event'] = "product_view";
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+        
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -791,7 +785,7 @@ class TealiumData extends AbstractHelper
         }
         
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+       
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -1006,8 +1000,7 @@ class TealiumData extends AbstractHelper
         
         $outputArray = [];
 
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -1083,7 +1076,7 @@ class TealiumData extends AbstractHelper
         
         $product_promo_code = $order->getCouponCode();
     
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+       
 
         $locale = $this->_localeResolver->getLocale();
         $outputArray['order_store'] = $locale ? : '';
@@ -1160,8 +1153,7 @@ class TealiumData extends AbstractHelper
         
         $outputArray = [];
 
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+       
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -1178,7 +1170,7 @@ class TealiumData extends AbstractHelper
         $outputArray['customer_email'] = $customer_email ? : "";
         $outputArray['customer_type'] = $customer_type ? : "";
         
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+       
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
