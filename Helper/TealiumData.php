@@ -128,8 +128,6 @@ class TealiumData extends AbstractHelper
         $page = $this->page;
 
         $outputArray = [];
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -145,7 +143,6 @@ class TealiumData extends AbstractHelper
         
         if ($outputArray['page_name'] == 'Home Page') {
             
-            //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
             $locale = $this->_localeResolver->getLocale();
             $locale = explode("_", $locale);
             $outputArray['country_code'] = strtolower($locale[1]) ? : '';
@@ -160,8 +157,6 @@ class TealiumData extends AbstractHelper
             if ($this->_cart) {
                 $quote = $this->_cart->getQuote();
                 $quote = $this->_checkoutSession->getQuote();
-                //   $ItemsQty = $quote->getItemsQty();
-              //     $GrandTotal = $quote->getGrandTotal();
                 
             }
             
@@ -183,7 +178,7 @@ class TealiumData extends AbstractHelper
              $outputArray['site_section'] = "Clothing";
              $outputArray['tealium_event'] = "page_view";
                  
-             //$outputArray['telium_event'] = "page_view";
+
         }
         
         return $outputArray;
@@ -198,14 +193,11 @@ class TealiumData extends AbstractHelper
         $ItemsQty = false;
         $GrandTotal = false;
         
-        /* echo '<pre>';
-        print_r($searchBlock->getTerms());
-        die;*/
+       
         if ($searchBlock === false) {
             return $outputArray;
         }
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
@@ -223,8 +215,6 @@ class TealiumData extends AbstractHelper
             parse_str($browseQuery, $get_array);
             foreach ($get_array as $key => $value) {
                 if ($key != 'q') {
-                    
-                    //$_product = $this->_objectManager->create('Magento\Catalog\Model\Product');
 
                     $_product = $this->productFactory->create();
                     if ($key == 'price') {
@@ -248,21 +238,13 @@ class TealiumData extends AbstractHelper
             $outputArray['browse_refine_value'] = $browseRefineValue ? : "";
         }
        
-        
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
         $ItemsQty = $this->context->getValue('ItemsQty');
         $GrandTotal = $this->context->getValue('GrandTotal');
         
-        if ($this->_cart->getQuote()) {
-         //   $ItemsQty = $this->_cart->getQuote()->getItemsQty();
-        //    $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
-        }
-        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-
+        
         if (is_numeric($ItemsQty)) {
             $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
         } else {
@@ -284,7 +266,7 @@ class TealiumData extends AbstractHelper
             $outputArray['product_on_page'] = $productOnPage ? : "";
         }
         $outputArray['site_section'] = 'Clothing';
-        //$outputArray['search_results'] = '';
+        
 
             
         return $outputArray;
@@ -313,17 +295,10 @@ class TealiumData extends AbstractHelper
 
             // check for parent and grandparent
             if ($_category->getParentId()) {
-                
-                /*$parent =
-                    $this->_objectManager->create('Magento\Catalog\Model\Category')
-                        ->load($_category->getParentId());*/
 
                 $parent = $this->categoryRepository->get($_category->getParentId());
 
                 if ($parent->getParentId()) {
-                    /*$grandparent =
-                        $this->_objectManager->create('Magento\Catalog\Model\Category')
-                            ->load($parent->getParentId());*/
                     $grandparent = $this->categoryRepository->get($parent->getParentId());
                     
                 }
@@ -356,13 +331,6 @@ class TealiumData extends AbstractHelper
                 $category_name = ucfirst($cat).$catNames;
             }
         }
-    
-        /*$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
-        $categoryFactory = $objectManager->get('\Magento\Catalog\Model\CategoryFactory');
-        $categoryp = $categoryFactory->create()->load($categoryId);
-
-        $categoryProducts = $categoryp->getProductCollection()
-                             ->addAttributeToSelect('*');*/
 
 
         $categoryp = $this->categoryFactory->create()->load($categoryId);
@@ -375,7 +343,7 @@ class TealiumData extends AbstractHelper
         if ($browseQuery) {
             parse_str($browseQuery, $get_array);
             foreach ($get_array as $key => $value) {
-                //$_product = $this->_objectManager->create('Magento\Catalog\Model\Product');
+                
                 $_product = $this->productFactory->create();
 
 
@@ -392,16 +360,11 @@ class TealiumData extends AbstractHelper
         $ItemsQty = $this->context->getValue('ItemsQty');
         $GrandTotal = $this->context->getValue('GrandTotal');
         
-        if ($this->_cart->getQuote()) {
-         //   $ItemsQty = $this->_cart->getQuote()->getItemsQty();
-        //    $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
-        }
+       
         
         foreach ($productOnPageId as $catProducts) {
 
             
-            
-            //$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($catProducts);
             
             $productCat = $this->productRepository->getById($catProducts);
 
@@ -451,8 +414,7 @@ class TealiumData extends AbstractHelper
         }
         
         $outputArray['site_section'] = "Clothing";
-        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        
 
         // Check if $ItemsQty and $GrandTotal are not null before formatting them
         if ($ItemsQty !== null) {
@@ -494,8 +456,7 @@ class TealiumData extends AbstractHelper
         $_product = $this->_registry->registry('current_product');
 
         $outputArray = [];
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+      
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -505,12 +466,6 @@ class TealiumData extends AbstractHelper
 
         $mediaUrl = $this->_store
         ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
-        
-
-
-        /*echo $mediaUrl = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
-            ->getStore()
-            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'catalog/product';*/
 
        
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
@@ -563,7 +518,6 @@ class TealiumData extends AbstractHelper
                 $outputArray['product_name'] = [];
             }
 
-            //$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($_product->getId());
 
             $productCat = $this->productRepository->getById($_product->getId());
 
@@ -595,17 +549,13 @@ class TealiumData extends AbstractHelper
             $categoriesIds = $_product->getCategoryIds();
             if ($categoriesIds) {
                 foreach ($categoriesIds as $categoryId) {
-                    //$category = $this->_objectManager->create('Magento\Catalog\Model\Category')
-                            //->load($categoryId);
-
+                   
                     $category = $this->categoryFactory->create()->load($categoryId);
                     $categoryName =  $category->getName();
                     $categoryIds =  $categoryId;
                     
                     
-                    /*$parent =
-                    $this->_objectManager->create('Magento\Catalog\Model\Category')
-                    ->load($category->getParentId());*/
+                  
 
                     $parent = $this->categoryFactory->create()->load($category->getParentId());
 
@@ -633,17 +583,13 @@ class TealiumData extends AbstractHelper
         if ($_category) {
             $categoryId = $_category->getEntityId();
             
-            //$categoryFactory = $this->_objectManager->get('\Magento\Catalog\Model\CategoryFactory');
-            //$categoryp = $categoryFactory->create()->load($categoryId);
-
+           
             $categoryp = $this->categoryFactory->create()->load($categoryId);
 
             $categoryProducts = $categoryp->getProductCollection()
                                 ->addAttributeToSelect('*');
             
-            /*foreach($categoryProducts as $catProducts){
-                $catProductList[] = $catProducts['entity_id'];
-            }*/
+            
 
             $catProductList = [];
             foreach ($categoryProducts as $catProduct) {
@@ -653,10 +599,7 @@ class TealiumData extends AbstractHelper
         }
         $ItemsQty = $this->context->getValue('ItemsQty');
         $GrandTotal = $this->context->getValue('GrandTotal');
-        if ($this->_cart->getQuote()) {
-         //   $ItemsQty = $this->_cart->getQuote()->getItemsQty();
-        //    $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
-        }
+       
 
         $outputArray['product_price'] = $outputArray['product_unit_price'];
         $outputArray['product_original_price'] =
@@ -673,7 +616,6 @@ class TealiumData extends AbstractHelper
             $cats = $_product->getCategoryIds();
             if (count($cats)) {
                 $firstCategoryId = $cats[0];
-                //$_category = $this->_objectManager->create('Magento\Catalog\Model\Category')->load($firstCategoryId);
 
                 $_category = $this->categoryFactory->create()->load($firstCategoryId);
 
@@ -689,7 +631,6 @@ class TealiumData extends AbstractHelper
       
         $outputArray['site_section'] = "Clothing";
         $outputArray['tealium_event'] = "product_view";
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -697,8 +638,7 @@ class TealiumData extends AbstractHelper
             $outputArray['country_code'] = strtolower($locale[1]) ? : '';
             $outputArray['language_code'] = $locale[0] ? : '';
         }
-        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
+        
 
         // Check if $ItemsQty and $GrandTotal are not null before formatting them
         if ($ItemsQty !== null) {
@@ -741,10 +681,7 @@ class TealiumData extends AbstractHelper
         $outputArray = [];
         
         
-        /*$mediaUrl = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
-            ->getStore()
-            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'catalog/product';*/
-
+       
         $mediaUrl = $this->_store
             ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
         
@@ -773,7 +710,7 @@ class TealiumData extends AbstractHelper
                     $checkout_catId[] = $item->getCategoryIds();
                     
                     
-                    //$productRepository = $this->_objectManager->get('\Magento\Catalog\Model\ProductRepository');
+                   
 
                     $productRepository = $this->productRepository;
  
@@ -781,7 +718,6 @@ class TealiumData extends AbstractHelper
                      
                     $categoryIds = $productCategoryId->getCategoryIds();
                     
-                    //$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($item->getProductId());
 
                     $productCat = $this->productRepository->getById($item->getProductId());
                     $manufacturer[] = $productCat->getAttributeText('manufacturer');
@@ -791,16 +727,14 @@ class TealiumData extends AbstractHelper
                     if ($categoryIds) {
                         foreach ($categoriesIds as $catId) {
                             if ($catId != 2) {
-                                //$category = $this->_objectManager->create('Magento\Catalog\Model\Category')
-                                        //->load($catId);
+                                
 
                                 $category = $this->categoryFactory->create()->load($catId);
                             }
                         }
                         $categoryName[] =  $category->getName();
                         
-                        //$parent = $this->_objectManager->create('Magento\Catalog\Model\Category')
-                                    //->load($category->getParentId());
+                       
 
                         $parent = $this->categoryFactory->create()->load($category->getParentId());
                         
@@ -811,9 +745,7 @@ class TealiumData extends AbstractHelper
                     
                     
 
-                    //$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($item->getId());
-                    //$productRepository = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($item->getProductId());
-
+                    
 
                     $productCat = $this->productRepository->getById($item->getId());
                     $productRepository = $this->productRepository->getById($item->getProductId());
@@ -841,11 +773,7 @@ class TealiumData extends AbstractHelper
                         
                         
                         
-                        //$couponRules = $this->_objectManager->get('Magento\SalesRule\Model\Coupon');
-                        //$saleRule = $this->_objectManager->get('\Magento\SalesRule\Model\Rule');
-                        
-                        //$ruleId =   $couponRules->loadByCode($product_promo_code)->getRuleId();
-                        //$rule = $saleRule->load($ruleId);
+                       
 
                         $couponInstance = $this->couponFactory->create();
                         $ruleId = $couponInstance->loadByCode($product_promo_code)->getRuleId();
@@ -881,10 +809,7 @@ class TealiumData extends AbstractHelper
             }
         }
         
-        //print_r($itemDiscountAmmount);
-        //die;
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+        
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -906,7 +831,7 @@ class TealiumData extends AbstractHelper
         }
         
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+       
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -915,14 +840,12 @@ class TealiumData extends AbstractHelper
             $outputArray['language_code'] = $locale[0] ? : '';
         }
         
-        //print_r($checkout_url);
+        
         
         $outputArray['product_image_url'] = $checkout_images ? : [];
         $outputArray['product_subcategory'] = $parentCatName ? : [];
         $outputArray['product_url'] = $checkout_url ? : [];
-        //$outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : [];;
-        //$outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : [];
-
+       
         // Check if $ItemsQty and $GrandTotal are not null before formatting them
         if ($ItemsQty !== null) {
             $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
@@ -993,13 +916,11 @@ class TealiumData extends AbstractHelper
         if ($this->customerSession->isLoggedIn()) {
             $customer = $this->customerSession->getCustomer();
         
-        //if ($this->_objectManager->get('Magento\Customer\Model\Session')->isLoggedIn()) {
-            //$customer = $this->_objectManager->get('Magento\Customer\Model\Session')->getCustomer();
+        
             $customer_id = $customer->getEntityId();
             $customer_email = $customer->getEmail();
             $groupId = $customer->getGroupId();
-            //$customer_type =
-                //$this->_objectManager->create('Magento\Customer\Model\Group')->load($groupId)->getCode();
+            
 
 
             $group = $this->groupRepository->getById($groupId);
@@ -1008,21 +929,17 @@ class TealiumData extends AbstractHelper
 
         $orderInstance = $this->orderFactory->create();
 
-        //if ($this->_objectManager->create('Magento\Sales\Model\Order')) {
+       
         if ($orderInstance) {
 
             
             /** @var \Magento\Checkout\Model\Session $checkoutSession */
-            //$checkoutSession = $this->_objectManager->get('Magento\Checkout\Model\Session');
-
+            
             $checkoutSession = $this->_checkoutSession;
 
-            //$order = $this->_objectManager->create('Magento\Sales\Model\Order')
-            //->loadByIncrementId($checkoutSession->getLastOrderId());
+            
             $order = $checkoutSession->getLastRealOrder();
-            //$mediaUrl = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
-            //->getStore()
-            //->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'catalog/product';
+            
 
             $mediaUrl = $this->_store
                 ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
@@ -1032,7 +949,7 @@ class TealiumData extends AbstractHelper
                 $ids[] = $item->getProductId();
                 $skus[] = $item->getSku();
                 
-                //$productCat = $this->_objectManager->create('Magento\Catalog\Model\Product')->load($item->getProductId());
+               
 
                 
 
@@ -1043,7 +960,7 @@ class TealiumData extends AbstractHelper
                 $productUrl[] = $productCat->getProductUrl();
                 $productImage[] = $mediaUrl.$productCat->getImage();
                 
-                //$productRepository = $this->_objectManager->get('\Magento\Catalog\Model\ProductRepository');
+                
 
                 $productRepository = $this->productRepository;
                 $productCategoryId = $productRepository->getById($item->getProductId());
@@ -1052,8 +969,7 @@ class TealiumData extends AbstractHelper
                 if ($categoryIds) {
                     foreach ($categoriesIds as $catId) {
                         if ($catId != 2) {
-                            //$category = $this->_objectManager->create('Magento\Catalog\Model\Category')
-                                    //->load($catId);
+                            
 
 
                             $category = $this->categoryRepository->get($catId);
@@ -1061,8 +977,7 @@ class TealiumData extends AbstractHelper
                     }
                     $categoryName[] =  $category->getName();
                     
-                    //$parent = $this->_objectManager->create('Magento\Catalog\Model\Category')
-                                //->load($category->getParentId());
+                    
 
                     $parent = $this->categoryRepository->get($category->getParentId());
                     if ($parent->getName() != "Default Category") {
@@ -1089,36 +1004,24 @@ class TealiumData extends AbstractHelper
                     $ruleInstance = $this->ruleFactory->create();
                     $discountQty = $ruleInstance->load($rule)->getDiscountQty();
                     
-                    //$discountQty = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
-                    //->load($rule)
-                    //->getDiscountQty();
-                
+                    
                     if ($discountQty !== null) {
                         $quantity = number_format($discountQty, 0, ".", "");
-                    } else {
-                        // Handle the case where $discountQty is null, e.g., provide a default value or log an error.
-                    }
+                    } 
                 
                     $amount = "";
-                    //$discountAmount = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
-                    //->load($rule)
-                    //->getDiscountAmount();
+                   
 
                     $discountAmount = $this->ruleFactory->create()->load($rule)->getDiscountAmount();
                 
                     if ($discountAmount !== null) {
                         $amount = number_format($discountAmount, 2, ".", "");
-                    } else {
-                        // Handle the case where $discountAmount is null, e.g., provide a default value or log an error.
-                    }
+                    } 
                 
 
 
                     $type = $this->ruleFactory->create()->load($rule)->getSimpleAction();
 
-                    //$type = $this->_objectManager->create('Magento\SalesRule\Model\Rule')
-                        //->load($rule)
-                        //->getSimpleAction();
 
                     $discount_object[] = [
                         "rule" => $rule,
@@ -1138,8 +1041,7 @@ class TealiumData extends AbstractHelper
         
         $outputArray = [];
 
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+    
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -1193,7 +1095,7 @@ class TealiumData extends AbstractHelper
         
         $product_promo_code = $order->getCouponCode();
     
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+        
 
         $locale = $this->_localeResolver->getLocale();
         $outputArray['order_store'] = $locale ? : '';
@@ -1206,7 +1108,7 @@ class TealiumData extends AbstractHelper
         $shippingData = '';
         $shippingData = $order->getShippingAddress();
                 
-        //$customer = $this->_objectManager->get('Magento\Customer\Model\Session')->getCustomer();
+        
         $customer = $this->customerSession->getCustomer();
 
         if ($customer->getDefaultShippingAddress()) {
@@ -1249,8 +1151,7 @@ class TealiumData extends AbstractHelper
         $customer_city = false;
         $customer_region = false;
 
-        /*if ($this->_objectManager->get('Magento\Customer\Model\Session')->isLoggedIn()) {
-            $customer = $this->_objectManager->get('Magento\Customer\Model\Session')->getCustomer();*/
+       
 
         if ($this->customerSession->isLoggedIn()) {
             $customer = $this->customerSession->getCustomer();
@@ -1267,8 +1168,7 @@ class TealiumData extends AbstractHelper
                     $customer_region = $customer->getDefaultShippingAddress()->getRegion();
                 }
                 $groupId = $customer->getGroupId();
-                //$customer_type =
-                    //$this->_objectManager->create('Magento\Customer\Model\Group')->load($groupId)->getCode();
+                
 
 
                 $group = $this->groupRepository->getById($groupId);
@@ -1279,8 +1179,7 @@ class TealiumData extends AbstractHelper
         
         $outputArray = [];
 
-        //$outputArray['site_region'] =
-            //$this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale() ? : "";
+       
 
         $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
         $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
@@ -1297,7 +1196,7 @@ class TealiumData extends AbstractHelper
         $outputArray['customer_email'] = $customer_email ? : "";
         $outputArray['customer_type'] = $customer_type ? : "";
         
-        //$locale = $this->_objectManager->get('Magento\Framework\Locale\Resolver')->getLocale();
+        
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
@@ -1306,7 +1205,7 @@ class TealiumData extends AbstractHelper
             $outputArray['language_code'] = $locale[0] ? : '';
         }
         
-        //$session =  $this->_objectManager->get("Magento\Checkout\Model\Session");
+        
 
         $session =  $this->_checkoutSession;
         
@@ -1315,8 +1214,7 @@ class TealiumData extends AbstractHelper
         
         if ($session->getQuote()) {
             $quote =$session->getQuote();
-        //    $ItemsQty = $quote->getItemsQty();
-        //    $GrandTotal = $quote->getGrandTotal();
+        
         }
         if ($ItemsQty) {
             $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
