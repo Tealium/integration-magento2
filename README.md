@@ -55,12 +55,12 @@ Ensure you have the following:
 
 In the admin panel under store configuration (`Stores -> Configuration -> Tealium -> Tag Management`), set the extension options. Enable the extension and define your TiQ account, profile, and environment information.
 
-### Version 2.4.5+
+### Version 3.2.0
 
 - Optional FPD (First Party Domain) configuration.
 - Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
 
-### CSP for Version 2.4.5+
+### CSP for Version 3.2.0
 
 - Update the `csp_whitelist.xml` file in the extension's `etc` directory (`public_html/integration-magento/etc`).
 - Update policies ("script-src," "connect-src," and "img-src") to include your FPD domain.
@@ -74,15 +74,18 @@ Example:
 
 ## Change Log
 
-### Magento 2.4.6 / PHP 8.1 Update
-
-- 3.2.0 Release
+- 3.2.0 Release (Magento 2.4.6 / PHP 8.1 Update)
     - FPD (First Party Domain) support
     - Update older PHP code for compliance with PHP 8.1+
     - CSP (Content Security Policy) updates for Magento 2.4.6
     - Newsletter signup Event
     - SHA256 encryption option on customer_email UDO variable
     - Bug Fixes
+    - Magento Tests Passed
+      
+    ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/ab19aef9-12c9-48af-992a-bb6deadaac1b)
+
+
 
 - 3.1.0 Release
     - Update for support of Magento 2.4
