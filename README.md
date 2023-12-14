@@ -1,41 +1,88 @@
-# tealium_magento2
-Magento 2.X extension to deploy Tealium code.
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/0a2e3179-498c-487a-9c83-0e8376b87e28)
+
+
+# Tealium Magento 2 Extension
+
 
 ## Introduction
-Tealium's official integration for TiQ on the Magento 2 framework. In its current state it is an implementation of some minimal boiler plate code for implementing and extending universal data objects (UDOs) for various page types. It relies heavily on Magento's prescribed dependency injection system and layout systems. Included is a simple script that will scaffold out boiler plate code when creating a new UDO. It allows you to specify any UDOs that it may extend, and which pages of the site the new UDO should appear on. When finished, you're left with a scaffolded template that just needs to be filled in with any data specific logic for your particular use case.
 
-You can get started understanding the UDO and concepts of a data layer at [https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503](https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503).
+Tealium's official integration for TiQ on the Magento 2 framework. This extension provides a robust implementation of minimal boilerplate code for implementing and extending universal data objects (UDOs) across various page types. Leveraging Magento's prescribed dependency injection and layout systems, the module simplifies the process of creating and extending UDOs.
 
-Documentation on Magento can be found at [http://devdocs.magento.com/](http://devdocs.magento.com/).
+Included is a script that scaffolds out boilerplate code for new UDOs. It allows you to specify UDO extensions and the pages where the new UDO should appear. Once generated, you're left with a template ready to be filled in with data-specific logic for your particular use case.
+
+Get started understanding UDOs and data layer concepts at [Tealium Community](https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503).
+
+For Magento documentation, refer to [Magento DevDocs](http://devdocs.magento.com/).
 
 ## Requirements
-You will need the following items:
-- An active Tealium IQ Account
-- Your Tealium Account Id (it will likely be your company name)
-- The Tealium Profile name to be associated with the app (your account may have several profiles, ideally one of them is dedicated to your iOS app)
-- The Tealium environment to use:
-    - prod
-    - qa
-    - dev
-    - custom
+
+Ensure you have the following:
+
+- Active Tealium IQ Account
+- Tealium Account ID (usually your company name)
+- Tealium Profile name associated with the app
+- Tealium environment (prod, qa, dev, custom)
 
 ## Installation
-### Install via Magento Marketplace
-You can install the Tealium Magento Extension free via the Magento Marketplace: https://marketplace.magento.com/tealium-tags.html
 
-### Alternative (manual) Install with Ubuntu
-You need to copy the Tealium folder from Github to app/code within your Magento folder.  If app/code doesn’t exist, create it.
+### Manual Install with Ubuntu
 
-Run the following commands:
+1. **Enable Maintenance Mode:** Enable maintenance mode before installing the extension to avoid any user issues. To enable maintenance mode, run the following command:
+
+    ```bash
+    php bin/magento maintenance:enable
+    ```
+
+2. **Copy the Tealium Folder:**
+   Copy the Tealium folder from GitHub to `app/code/Tealium/Tags` within your Magento folder. If `app/code/Tealium/Tags` doesn’t exist, create it.
+
+3. **Run the Following Commands to Update Changes:**
+   
+    ```bash
+    php bin/magento setup:upgrade
+    php bin/magento setup:di:compile
+    php bin/magento setup:static-content:deploy -f
+    php bin/magento cache:flush
+    ```
+
+4. **Disable Maintenance Mode:** After the installation is complete, disable maintenance mode to allow users to access the site. To disable maintenance mode, run:
+
+    ```bash
+    php bin/magento maintenance:disable
+    ```
+
+## Configuration
+
+In the admin panel under store configuration (`Stores -> Configuration -> Tealium -> Tag Management`), set the extension options. Enable the extension and define your TiQ account, profile, and environment information.
+
+### Version 2.4.5+
+
+- Optional FPD (First Party Domain) configuration.
+- Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
+
+### CSP for Version 2.4.5+
+
+- Update the `csp_whitelist.xml` file in the extension's `etc` directory (`public_html/integration-magento/etc`).
+- Update policies ("script-src," "connect-src," and "img-src") to include your FPD domain.
+
+Example:
+
+```xml
+<value id="unique id" type="host">https://data.site.com</value> <!-- Client Side domain -->
+<value id="unique id" type="host">https://datac.site.com</value> <!-- Server side domain -->
 ```
-sudo php bin/magento setup:upgrade
-
-sudo php -d set_time_limit=3600 -d memory_limit=1024M bin/magento setup:di:compile
-```
-## Configure
-In the admin panel under store configuration, you can set the  options for the extension (Stores -> Configuration -> Tealium -> Tag Management). You will need to enable it, and define your TiQ account, profile, and environment information.
 
 ## Change Log
+
+### Magento 2.4.6 / PHP 8.1 Update
+
+- 3.2.0 Release
+    - FPD (First Party Domain) support
+    - Update older PHP code for compliance with PHP 8.1+
+    - CSP (Content Security Policy) updates for Magento 2.4.6
+    - Newsletter signup Event
+    - SHA256 encryption option on customer_email UDO variable
+    - Bug Fixes
 
 - 3.1.0 Release
     - Update for support of Magento 2.4
@@ -66,3 +113,4 @@ Use of this software is subject to the terms and conditions of the license agree
 
 ---
 Copyright (C) 2012-2020, Tealium Inc.
+
