@@ -57,7 +57,7 @@ In the admin panel under store configuration (`Stores -> Configuration -> Tealiu
 
 ### Version 3.2.0
 
-- Optional FPD (First Party Domain) configuration.
+- Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
 - Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
 
 ### CSP for Version 3.2.0
