@@ -33,7 +33,7 @@ class Index extends Action
     public function execute()
     {
         $cartData = $this->_cart->getQuote()->getAllVisibleItems();
-		
+        
         $result = [
             'data'=>[
                 'product_category'=>[],
@@ -48,18 +48,6 @@ class Index extends Action
             ]
         ];
         foreach ($cartData as $key => $value) {
-			/*
-            $product = $this->_objectManager->get('Magento\Catalog\Model\Product')->load($value->getProductId());
-            foreach ($value->getOptions() as $option) {
-                if ($option) {
-                    $optionStr = $option->getValue();
-                    if ($optionStr && (strpos($optionStr, 'super_attribute') !== false)) {
-                        $option_list = json_decode($optionStr);
-                        $product = $this->_objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable')->getProductByAttributes((array)$option_list->super_attribute, $product);
-                    }
-                }
-            }
-			*/
             $productData = $this->_productHelper->getProductData($value->getProductId());
 
             array_push($result['data']['product_category'], $productData['product_category'][0]);
@@ -84,12 +72,6 @@ class Index extends Action
                 }
             }
         }
-        // echo json_encode($result);
-        // exit;
-        
-        // $result = $this->_resultJsonFactory->create();
-        // return $result->setData($result);
-
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultJson->setData($result);
         return $resultJson;

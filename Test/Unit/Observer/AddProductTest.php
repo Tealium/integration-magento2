@@ -20,8 +20,8 @@ class AddProductTest extends TestCase
     protected $observer;
 
      /**
-     * @var Session|MockObject
-     */
+      * @var Session|MockObject
+      */
     protected $checkoutSession;
 
     /**
@@ -40,8 +40,8 @@ class AddProductTest extends TestCase
     protected function setUp(): void
     {
         $this->checkoutSession = $this->getMockBuilder(
-                CheckoutSession::class
-            )
+            CheckoutSession::class
+        )
             ->setMethods(
                 [
                     'getLastAddedProductId'
@@ -82,7 +82,7 @@ class AddProductTest extends TestCase
 
     public function testExecute()
     {
-        $productId = 4;        
+        $productId = 4;
 
         $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
             ->disableOriginalConstructor()
@@ -97,7 +97,7 @@ class AddProductTest extends TestCase
             ->setMethods(['setRedirect'])
             ->getMockForAbstractClass();
 
-        $eventObserver->expects($this->any())->method('getEvent')->willReturn($event);        
+        $eventObserver->expects($this->any())->method('getEvent')->willReturn($event);
 
         $this->checkoutSession->expects($this->once())
             ->method('getLastAddedProductId')
