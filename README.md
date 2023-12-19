@@ -55,7 +55,33 @@ Ensure you have the following:
 
 In the admin panel under store configuration (`Stores -> Configuration -> Tealium -> Tag Management`), set the extension options. Enable the extension and define your TiQ account, profile, and environment information.
 
-### Version 3.2.0
+
+
+
+
+### Basic Config Requirements
+
+**Account, Profile, Environment**
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/574f4aea-3f34-43a6-bc14-8db3cd43f6c7)
+
+
+**First Party Tracking**
+
+If you are using a first party domain place your client domain here
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/06a139d0-3502-4a6a-b10c-93354f170a00)
+
+
+**Email Hash**
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/6b4c39b2-e496-40bd-bbd1-510ddab86b13)
+
+
+
+
+
+## Lastest Version 3.2.0
 
 - Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
 - Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
