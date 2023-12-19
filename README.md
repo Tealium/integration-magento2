@@ -107,8 +107,8 @@ Example:
     - Newsletter signup Event
     - SHA256 encryption option on customer_email UDO variable
     - Bug Fixes
-    - Magento Tests Passed
-      
+    - **Magento Tests**:
+
     ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/ab19aef9-12c9-48af-992a-bb6deadaac1b)
 
 
