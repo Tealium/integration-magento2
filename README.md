@@ -107,7 +107,12 @@ Example:
     - Newsletter signup Event
     - SHA256 encryption option on customer_email UDO variable
     - Bug Fixes
-    - **Magento Tests**:
+      
+ ### Magento Tests 3.2.0
+  
+- [Code Sniffer](https://developer.adobe.com/commerce/marketplace/guides/sellers/code-sniffer/)
+- [Installation and Varnish Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/installation-and-varnish-tests/)
+- [MFTF Commerce-supplied Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/mftf-magento/)
 
     ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/ab19aef9-12c9-48af-992a-bb6deadaac1b)
 
