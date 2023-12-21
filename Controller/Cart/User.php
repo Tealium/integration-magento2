@@ -5,51 +5,51 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Checkout\Model\Cart;
+use Magento\Customer\Model\Session;
+use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
 
 class User extends Action
 {
     protected $_pageFactory;
-
     protected $_cart;
-    
     protected $_customerSession;
-
     protected $_groupFactory;
+    protected $_resultJsonFactory;
 
     public function __construct(
         PageFactory $pageFactory,
         Cart $cart,
-        Context $context
+        Context $context,
+        Session $customerSession,
+        GroupRepositoryInterface $groupFactory,
+        JsonFactory $resultJsonFactory
     ) {
         $this->_pageFactory = $pageFactory;
         $this->_cart = $cart;
-        return parent::__construct($context);
+        $this->_customerSession = $customerSession;
+        $this->_groupFactory = $groupFactory;
+        $this->_resultJsonFactory = $resultJsonFactory;
+        parent::__construct($context);
     }
 
     public function execute()
     {
-        $this->_customerSession = $this->_objectManager->create('\Magento\Customer\Model\Session');
-        $this->_groupFactory = $this->_objectManager->create('Magento\Customer\Api\GroupRepositoryInterface');
-
         $customerObject = $this->_customerSession->getCustomerData();
 
         $email = $customerObject->getEmail();
         $id = $customerObject->getId();
 
-        //get user type
-
+        // Get user type
         $groupId = $customerObject->getGroupId();
         $groupObject = $this->_groupFactory->getById($groupId);
         $groupName = $groupObject->getCode();
 
-        // echo json_encode(['id' => [$id], 'type' => [$groupName], 'email' => [$email] ]);
-
-        // exit;
-        //$email = hash('sha256', strtolower($email));
-        $result = ['customer_id' => $id, 'customer_type' => $groupName, 'customer_email' => $email ];
-        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $result = ['customer_id' => $id, 'customer_type' => $groupName, 'customer_email' => $email];
+        $resultJson = $this->_resultJsonFactory->create();
         $resultJson->setData($result);
+
         return $resultJson;
     }
 }

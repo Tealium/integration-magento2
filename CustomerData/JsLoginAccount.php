@@ -42,7 +42,7 @@ class JsLoginAccount implements SectionSourceInterface
             $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
             if ($customertxtvalue == null || $customertxtvalue == 0) {
                 $email = hash('sha256', strtolower($email));
-            } 
+            }
             
             $result['data']['customer_email_txt'] = $customertxtvalue;
 

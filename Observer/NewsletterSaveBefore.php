@@ -20,8 +20,7 @@ class NewsletterSaveBefore implements ObserverInterface
         LoggerInterface $loggerInterface,
         CoreSession $coreSession,
         Registry $coreRegistry
-    )
-    {
+    ) {
         $this->_logger = $loggerInterface;
         $this->_coreSession = $coreSession;
         $this->_coreRegistry = $coreRegistry;
@@ -56,10 +55,5 @@ class NewsletterSaveBefore implements ObserverInterface
             // You can perform custom logic for updates here
             $this->_logger->notice('Existing subscriber ID: ' . $subscriptionId);
         }
-        
-        
-        
-        
-        
     }
 }

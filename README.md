@@ -1,62 +1,122 @@
-# tealium_magento2
-Magento 2.X extension to deploy Tealium code.
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/0a2e3179-498c-487a-9c83-0e8376b87e28)
+
+
+# Tealium Magento 2 Extension
+
 
 ## Introduction
-Tealium's official integration for TiQ on the Magento 2 framework. In its current state it is an implementation of some minimal boiler plate code for implementing and extending universal data objects (UDOs) for various page types. It relies heavily on Magento's prescribed dependency injection system and layout systems. Included is a simple script that will scaffold out boiler plate code when creating a new UDO. It allows you to specify any UDOs that it may extend, and which pages of the site the new UDO should appear on. When finished, you're left with a scaffolded template that just needs to be filled in with any data specific logic for your particular use case.
 
-You can get started understanding the UDO and concepts of a data layer at [https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503](https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503).
+Tealium's official integration for TiQ on the Magento 2 framework. This extension provides a robust implementation of minimal boilerplate code for implementing and extending universal data objects (UDOs) across various page types. Leveraging Magento's prescribed dependency injection and layout systems, the module simplifies the process of creating and extending UDOs.
 
-Documentation on Magento can be found at [http://devdocs.magento.com/](http://devdocs.magento.com/).
+Included is a script that scaffolds out boilerplate code for new UDOs. It allows you to specify UDO extensions and the pages where the new UDO should appear. Once generated, you're left with a template ready to be filled in with data-specific logic for your particular use case.
+
+Get started understanding UDOs and data layer concepts at [Tealium Community](https://community.tealiumiq.com/t5/Getting-Started/Getting-Started-with-The-Data-Layer/ta-p/9503).
+
+For Magento documentation, refer to [Magento DevDocs](http://devdocs.magento.com/).
 
 ## Requirements
-You will need the following items:
-- An active Tealium IQ Account
-- Your Tealium Account Name
-- The Tealium Profile Name
-- The Tealium environment to use:
-    - prod
-    - qa
-    - dev
-    - custom
+
+Ensure you have the following:
+
+- Active Tealium IQ Account
+- Tealium Account ID (usually your company name)
+- Tealium Profile name associated with the app
+- Tealium environment (prod, qa, dev, custom)
 
 ## Installation
-### Install via Magento Marketplace
-Coming Soon
 
-### Alternative (manual) Install with Ubuntu
-You need to copy the Tealium folder from Github to app/code within your Magento folder.  If app/code doesn’t exist, create it.
+### Manual Install with Ubuntu
 
-Run the following commands:
+1. **Enable Maintenance Mode:** Enable maintenance mode before installing the extension to avoid any user issues. To enable maintenance mode, run the following command:
+
+    ```bash
+    php bin/magento maintenance:enable
+    ```
+
+2. **Copy the Tealium Folder:**
+   Copy the Tealium folder from GitHub to `app/code/Tealium/Tags` within your Magento folder. If `app/code/Tealium/Tags` doesn’t exist, create it.
+
+3. **Run the Following Commands to Update Changes:**
+   
+    ```bash
+    php bin/magento setup:upgrade
+    php bin/magento setup:di:compile
+    php bin/magento setup:static-content:deploy -f
+    php bin/magento cache:flush
+    ```
+
+4. **Disable Maintenance Mode:** After the installation is complete, disable maintenance mode to allow users to access the site. To disable maintenance mode, run:
+
+    ```bash
+    php bin/magento maintenance:disable
+    ```
+
+## Configuration
+
+In the admin panel under store configuration (`Stores -> Configuration -> Tealium -> Tag Management`), set the extension options. Enable the extension and define your TiQ account, profile, and environment information.
+
+
+
+
+
+### Basic Config Requirements
+
+**Account, Profile, Environment**
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/574f4aea-3f34-43a6-bc14-8db3cd43f6c7)
+
+
+**First Party Tracking**
+
+If you are using a first party domain place your client domain here
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/06a139d0-3502-4a6a-b10c-93354f170a00)
+
+
+**Email Hash**
+
+![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/6b4c39b2-e496-40bd-bbd1-510ddab86b13)
+
+
+
+
+
+## Lastest Version 3.2.0
+
+- Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
+- Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
+
+### CSP for Version 3.2.0
+
+- Update the `csp_whitelist.xml` file in the extension's `etc` directory (`public_html/integration-magento/etc`).
+- Update policies ("script-src," "connect-src," and "img-src") to include your FPD domain.
+
+Example:
+
+```xml
+<value id="unique id" type="host">https://data.site.com</value> <!-- Client Side domain -->
+<value id="unique id" type="host">https://datac.site.com</value> <!-- Server side domain -->
 ```
-sudo php bin/magento setup:upgrade
-
-sudo php -d set_time_limit=3600 -d memory_limit=1024M bin/magento setup:di:compile
-```
-## Configure
-In the admin panel under store configuration, you can set the  options for the extension (Stores -> Configuration -> Tealium -> Tag Management). You will need to enable it, and define your TiQ account, profile, and environment information.
-
-- 2.4.5+ With the latest update you will also have the option to enter a [FPD (First Party domain)](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/) The account field is ignored if the FPD field is filled in. Imporant note: This is for the Client Side Domain. The server side domain is configured in the Tealium Collect tag in the above documentation link. 
-- 2.4.5+ Email Hashing is optional. If set to true, SHA256() will be applied to email addresses in "customer_email" params. 
-
-## CSP for 2.4.5+ 
-If the site is not using FPD, no updates should be needed. The site domain is not wildcard whitelisted by default. www.site.com will not accept datacollect.site.com by default. 
-
-- To update:
-  - In the extition's etc dir. public_html/integration-magento/etc Should be a csp_whitelist.xml file.
-  - Update policy, "script-src", "connect-src", and "img-src" to include your FPD domain.
-  - For example: ```<value id="unique id" type="host">https://data.site.com</value>``` for your Client Side domain
-  - ```<value id="unique id" type="host">https://datac.site.com</value>``` for your Server side domain. 
-
 
 ## Change Log
 
-- Magento 2.4.6 / PHP 8.1 Update
-  - FPD (first party domain support)
-  - Updated older PHP code that is not compliant with 8.1+
-  - CSP (content security policy) updates for 2.4.6
-  - Newsletter signup Event
-  - SHA256 encryption option on customer_email UDO variable.
-  - Bug Fixes
+- 3.2.0 Release (Magento 2.4.6 / PHP 8.1 Update)
+    - FPD (First Party Domain) support
+    - Update older PHP code for compliance with PHP 8.1+
+    - CSP (Content Security Policy) updates for Magento 2.4.6
+    - Newsletter signup Event
+    - SHA256 encryption option on customer_email UDO variable
+    - Bug Fixes
+      
+ ### Magento Tests 3.2.0
+  
+- [Code Sniffer](https://developer.adobe.com/commerce/marketplace/guides/sellers/code-sniffer/)
+- [Installation and Varnish Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/installation-and-varnish-tests/)
+- [MFTF Commerce-supplied Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/mftf-magento/)
+
+    ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/ab19aef9-12c9-48af-992a-bb6deadaac1b)
+
+
 
 - 3.1.0 Release
     - Update for support of Magento 2.4
@@ -86,4 +146,5 @@ If you should experience any issues with this plugin, please report them as issu
 Use of this software is subject to the terms and conditions of the license agreement contained in the file titled "LICENSE.txt".  Please read the license before downloading or using any of the files contained in this repository. By downloading or using any of these files, you are agreeing to be bound by and comply with the license agreement.
 
 ---
-Copyright (C) 2012-2023, Tealium Inc.
+Copyright (C) 2012-2024, Tealium Inc.
+

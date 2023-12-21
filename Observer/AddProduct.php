@@ -7,49 +7,38 @@ use Magento\Framework\App\Request\Http;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable; // Import the Configurable class
 
 class AddProduct implements ObserverInterface
 {
-
-    protected $_request;
-
-    protected $_customerSession;
-
-    protected $_checkoutSession;
-
-    protected $_productRepository;
-
-    protected $_objectManager;
+    protected $request;
+    protected $customerSession;
+    protected $checkoutSession;
+    protected $productRepository;
+    protected $configurableProduct; // Add a property for the Configurable class
 
     public function __construct(
         Http $request,
         CustomerSession $customerSession,
         ProductRepositoryInterface $productRepository,
-        ObjectManagerInterface $objectManager,
-        CheckoutSession $_checkoutSession
+        Configurable $configurableProduct, // Inject the Configurable class
+        CheckoutSession $checkoutSession
     ) {
-        $this->_customerSession = $customerSession;
-        $this->_checkoutSession = $_checkoutSession;
-        $this->_request = $request;
-        $this->_productRepository = $productRepository;
-        $this->_objectManager = $objectManager;
+        $this->request = $request;
+        $this->customerSession = $customerSession;
+        $this->productRepository = $productRepository;
+        $this->configurableProduct = $configurableProduct; // Assign the injected instance
+        $this->checkoutSession = $checkoutSession;
     }
-
-    /**
-     *
-     * Add data to section array for custumer data use
-     *
-     */
 
     public function execute(Observer $observer)
     {
-        //get product from session
-        $product_id=$this->_checkoutSession->getLastAddedProductId(true);
-        $requestParamList = $this->_request->getParams();
+        $product_id = $this->checkoutSession->getLastAddedProductId(true);
+        $requestParamList = $this->request->getParams();
+
         if (isset($requestParamList['super_attribute'])) {
-            $product = $this->_productRepository->getById($product_id);
-            $myProduct = $this->_objectManager->get('Magento\ConfigurableProduct\Model\Product\Type\Configurable')->getProductByAttributes($requestParamList['super_attribute'], $product);
+            $product = $this->productRepository->getById($product_id);
+            $myProduct = $this->configurableProduct->getProductByAttributes($requestParamList['super_attribute'], $product); // Use the injected instance
             $product_id = $myProduct->getId();
         }
 
@@ -58,20 +47,20 @@ class AddProduct implements ObserverInterface
             $product_quantity = $requestParamList['qty'];
         }
 
-        if (isset($requestParamList['super_group'])) {        
+        if (isset($requestParamList['super_group'])) {
             $product_quantity = [];
             $product_id = [];
             foreach ($requestParamList['super_group'] as $pid => $qty) {
                 if (intval($qty) > 0) {
                     $product_quantity[] = $qty;
-                    $product_id[] = $pid;                    
+                    $product_id[] = $pid;
                 }
             }
         }
 
-        $this->_customerSession->setTealiumAddProductId($product_id);
-        $this->_customerSession->setTealiumAddProductQty($product_quantity);
-        
+        $this->customerSession->setTealiumAddProductId($product_id);
+        $this->customerSession->setTealiumAddProductQty($product_quantity);
+
         return $this;
     }
 }

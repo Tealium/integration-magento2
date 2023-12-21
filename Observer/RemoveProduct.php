@@ -18,7 +18,7 @@ class RemoveProduct implements ObserverInterface
 
     protected $_cart;
 
-	public function __construct(
+    public function __construct(
         //Http $request,
         ProductFactory $productFactory,
         CustomerSession $customerSession,
@@ -27,8 +27,8 @@ class RemoveProduct implements ObserverInterface
         $this->_customerSession = $customerSession;
         $this->_productFactory = $productFactory;
         $this->_cart = $cart;
-       // $this->_request = $request;
-	}
+          // $this->_request = $request;
+    }
 
     /**
      *
@@ -36,8 +36,8 @@ class RemoveProduct implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         
         $quoteItem = $observer->getData('quote_item');
         $product_quantity = $quoteItem->getQty();

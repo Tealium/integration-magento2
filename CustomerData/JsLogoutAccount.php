@@ -12,8 +12,8 @@ class JsLogoutAccount implements SectionSourceInterface
     protected $_coreSession;
 
     /**
-    * @var TealiumDataHelper
-    */
+     * @var TealiumDataHelper
+     */
     protected $tealiumDataHelper;
 
     public function __construct(
@@ -37,12 +37,12 @@ class JsLogoutAccount implements SectionSourceInterface
         //echo json_encde()
     
         if (isset($_COOKIE['email'])) {
-         $email = $_COOKIE['email'];
+            $email = $_COOKIE['email'];
             unset($_COOKIE['email']);
         }
 
         if (isset($_COOKIE['type'])) {
-          $type = $_COOKIE['type'];
+            $type = $_COOKIE['type'];
             unset($_COOKIE['type']);
         }
 
@@ -59,7 +59,7 @@ class JsLogoutAccount implements SectionSourceInterface
             $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
             if ($customertxtvalue == null || $customertxtvalue == 0) {
                 $email = hash('sha256', strtolower($email));
-            } 
+            }
             $result['data']['customer_email'] = $email;
             $result['data']['customer_id'] = $id;
             $result['data']['customer_type'] = $type;
