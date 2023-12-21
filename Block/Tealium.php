@@ -50,29 +50,29 @@ class Tealium extends \Magento\Framework\View\Element\Template
         $tealiumData->setStore($data['store']);
         $tealiumData->setPage($data['page']);
 
-		$productOnPage = array();
-		$productOnPageId = array();
-		
-		
-		$q = $this->getRequest()->getParam('q');
-		if($q){
-			$categoryProductListBlock = $this->_layout->getBlock('search_result_list');
-		} else {
-			$categoryProductListBlock = $this->_layout->getBlock('category.products.list');
-		}
-		 // Fetch the current collection from the block and set pagination
-		if(!empty($categoryProductListBlock)){
-			$collections = $categoryProductListBlock->getLoadedProductCollection();
-			
-			foreach($collections as $product){
-				$productOnPage[] = $product->getSku();
-				$productOnPageId[] = $product->getId();
-				if (count($productOnPage) === 4) {
-					break;
-				}
-			}
-			
-		}
+        $productOnPage = [];
+        $productOnPageId = [];
+        
+        
+        $q = $this->getRequest()->getParam('q');
+        if ($q) {
+            $categoryProductListBlock = $this->_layout->getBlock('search_result_list');
+        } else {
+            $categoryProductListBlock = $this->_layout->getBlock('category.products.list');
+        }
+         // Fetch the current collection from the block and set pagination
+        if (!empty($categoryProductListBlock)) {
+            $collections = $categoryProductListBlock->getLoadedProductCollection();
+            
+            foreach ($collections as $product) {
+                $productOnPage[] = $product->getSku();
+                $productOnPageId[] = $product->getId();
+                if (count($productOnPage) === 4) {
+                    break;
+                }
+            }
+            
+        }
         $udoElements = [
             'Home' => $tealiumData->getHome(),
             'Search' =>$tealiumData->getSearch($productOnPage),
@@ -97,14 +97,14 @@ class Tealium extends \Magento\Framework\View\Element\Template
 
         return $this;
     }
-	
-	
+    
+    
 
     // give an object of key value pairs to update in the udo,
     // or provide a key string and value string of a single udo var to update
     public function updateUdo($objectOrKey = "", $value = "")
     {
-	
+    
         // get udo and put in local scope as "$udoObject"
         $udoObject = $this->udo;
 
@@ -121,9 +121,9 @@ class Tealium extends \Magento\Framework\View\Element\Template
         // in the udo. It describes just the modifications to the current udo
         // so that it can be updated. (could probably be better named)
         if ($objectOrKey instanceof \Closure) {
-			
+            
             $updatedUdo = $objectOrKey();
-			
+            
         } elseif (is_array($objectOrKey)) {
             $updatedUdo = $objectOrKey;
         } else {
@@ -131,7 +131,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
             // as a key/val pair
             $updatedUdo = "{}";
         }
-	
+    
         // if $updatedUdo is an assoc array, iterate through its key/val
         // pairs and update the udo
         if (is_array($updatedUdo)) {
@@ -166,7 +166,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
 
     public function render($type = null, $external = false, $sync = "sync")
     {
-		
+        
         // check if the tealium api is being used and render just the data layer
         if ($this->_request->getParam('tealium_api') != "true" && $external) {
             // not using the api, and the script is an external script
@@ -202,7 +202,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
         } else {
             // Either using the api, the udo is not an external script, or both.
             // Therefore the udo object must be generated as javascript code.
-				
+                
             // include any customizations
             if (isset($this->customUdo)) {
                 $this->updateUdo($this->customUdo);
@@ -229,8 +229,8 @@ class Tealium extends \Magento\Framework\View\Element\Template
                 $udoJson = "{}";
             }
             /* echo "test<pre>";
-			print_r($udoObject);
-			die; */
+            print_r($udoObject);
+            die; */
             // create the javascript for utag_data
             $udoJs = "var utag_data = $udoJson;";
 
@@ -267,7 +267,7 @@ class Tealium extends \Magento\Framework\View\Element\Template
         }
 
 
-        if (!empty($this->fpurl) && $this->fpurl != "") { 
+        if (!empty($this->fpurl) && $this->fpurl != "") {
             // Render Tealium tag in javaScript
             $insert_tag = <<<EOD
             (function(a,b,c,d){
@@ -310,7 +310,7 @@ EOD;
         if ($this->account && $this->profile && $this->target) {
             if ($type == "tag") {
                 $renderedCode = $tag;
-				 $renderedCode = "";
+                 $renderedCode = "";
             } elseif ($type == "udo") {
                 // starts with "var utag_data = " followed by json
                 $renderedCode = $udo;

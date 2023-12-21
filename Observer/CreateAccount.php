@@ -21,7 +21,7 @@ class CreateAccount implements ObserverInterface
 
     protected $_coreSession;
 
-	public function __construct(
+    public function __construct(
         //Http $request,
         ProductFactory $productFactory,
         CustomerSession $customerSession,
@@ -32,8 +32,8 @@ class CreateAccount implements ObserverInterface
         $this->_productFactory = $productFactory;
         $this->_groupFactory = $groupFactory;
         $this->_coreSession = $coreSession;
-       // $this->_request = $request;
-	}
+          // $this->_request = $request;
+    }
 
     /**
      *
@@ -41,8 +41,8 @@ class CreateAccount implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer) 
-    {	
+    public function execute(Observer $observer)
+    {
         $customerObject = $observer->getData('customer');
         $email = $customerObject->getEmail();
         $id = $customerObject->getId();

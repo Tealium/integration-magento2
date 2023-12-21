@@ -48,7 +48,7 @@ class JsCreateAccount implements SectionSourceInterface
             $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
             if ($customertxtvalue == null || $customertxtvalue == 0) {
                 $email = hash('sha256', strtolower($email));
-            } 
+            }
             $result['data']['customer_email'] = (string)$email;
             $result['data']['customer_id'] = (string)$id;
             $result['data']['customer_type'] = (string)$type;

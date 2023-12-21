@@ -20,8 +20,7 @@ class ReviewSaveBefore implements ObserverInterface
         LoggerInterface $loggerInterface,
         CoreSession $coreSession,
         Registry $coreRegistry
-    )
-    {
+    ) {
         $this->_logger = $loggerInterface;
         $this->_coreSession = $coreSession;
         $this->_coreRegistry = $coreRegistry;

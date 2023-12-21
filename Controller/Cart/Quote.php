@@ -32,8 +32,8 @@ class Quote extends Action
 
     public function execute()
     {
-		$ItemsQty = $this->_cart->getQuote()->getItemsQty();
-		$GrandTotal =$this->_cart->getQuote()->getGrandTotal();
+        $ItemsQty = $this->_cart->getQuote()->getItemsQty();
+        $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
       
         $result['cart_total_items'] = "";
         $result['cart_total_value'] = "";
@@ -44,7 +44,7 @@ class Quote extends Action
         if ($GrandTotal !== null) {
             $result['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
         }
-		
+        
         $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultJson->setData($result);
         return $resultJson;
