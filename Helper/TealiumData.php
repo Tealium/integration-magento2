@@ -747,7 +747,7 @@ class TealiumData extends AbstractHelper
 
                     
 
-                    $productCat = $this->productRepository->getById($item->getId());
+                   // $productCat = $this->productRepository->getById($item->getId());
                     $productRepository = $this->productRepository->getById($item->getProductId());
 
 
