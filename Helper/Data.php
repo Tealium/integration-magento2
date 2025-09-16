@@ -186,7 +186,7 @@ class Data extends AbstractHelper
 
         $fp_url = $this->getFirstPartyDomain($store);
 
-        $fp_url = trim($fp_url);
+        $fp_url = trim((string)($fpurl ?? ''));
         if (!empty($fp_url) && $fp_url != "") {
             return "https://". $fp_url ."/$profile/$env/utag.js";
         } else {

@@ -78,45 +78,21 @@ If you are using a first party domain place your client domain here
 ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/6b4c39b2-e496-40bd-bbd1-510ddab86b13)
 
 
-
-
-
-## Lastest Version 3.2.0
-
-- Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
-- Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
-
-### CSP for Version 3.2.0
-
-- Update the `csp_whitelist.xml` file in the extension's `etc` directory (`public_html/integration-magento/etc`).
-- Update policies ("script-src," "connect-src," and "img-src") to include your FPD domain.
-
-Example:
-
-```xml
-<value id="unique id" type="host">https://data.site.com</value> <!-- Client Side domain -->
-<value id="unique id" type="host">https://datac.site.com</value> <!-- Server side domain -->
-```
-
 ## Change Log
+- 4.1.0 Release (Magento 2.4.8 / PHP 8.4 Update)
+    - PHP code updates for compliance with PHP 8.4
 
 - 3.2.0 Release (Magento 2.4.6 / PHP 8.1 Update)
     - FPD (First Party Domain) support
+        - Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
     - Update older PHP code for compliance with PHP 8.1+
     - CSP (Content Security Policy) updates for Magento 2.4.6
+        - Update the `csp_whitelist.xml` file in the extension's `etc` directory (`public_html/integration-magento/etc`).
+        - Update policies ("script-src," "connect-src," and "img-src") to include your FPD domain.
     - Newsletter signup Event
     - SHA256 encryption option on customer_email UDO variable
+        - Email Hashing: If set to true, SHA256() will be applied to email addresses in "customer_email" params.
     - Bug Fixes
-      
- ### Magento Tests 3.2.0
-  
-- [Code Sniffer](https://developer.adobe.com/commerce/marketplace/guides/sellers/code-sniffer/)
-- [Installation and Varnish Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/installation-and-varnish-tests/)
-- [MFTF Commerce-supplied Tests](https://developer.adobe.com/commerce/marketplace/guides/sellers/mftf-magento/)
-
-    ![image](https://github.com/efrazier/integration-magento-osb/assets/3696386/ab19aef9-12c9-48af-992a-bb6deadaac1b)
-
-
 
 - 3.1.0 Release
     - Update for support of Magento 2.4
@@ -146,5 +122,5 @@ If you should experience any issues with this plugin, please report them as issu
 Use of this software is subject to the terms and conditions of the license agreement contained in the file titled "LICENSE.txt".  Please read the license before downloading or using any of the files contained in this repository. By downloading or using any of these files, you are agreeing to be bound by and comply with the license agreement.
 
 ---
-Copyright (C) 2012-2024, Tealium Inc.
+Copyright (C) 2012-2025, Tealium Inc.
 

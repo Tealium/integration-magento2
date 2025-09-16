@@ -24,6 +24,7 @@ class TealiumData extends AbstractHelper
     protected $_store;
     protected $_objectManager;
     protected $_isScopePrivate;
+    protected $_cart;
 
     /**
      * @var \Magento\Framework\Registry
@@ -91,7 +92,7 @@ class TealiumData extends AbstractHelper
         $this->_store = $store;
         $this->_objectManager = $objectManager;
         $this->_registry = $registry;
-        $this->context = $httpContext;
+        $this->httpContext = $httpContext;
         $this->_checkoutSession  = $checkoutSession;
         $this->customerSession = $customerSession;
         $this->_layout = $layout;
@@ -151,8 +152,8 @@ class TealiumData extends AbstractHelper
             $ItemsQty = $this->_cart->getQuote()->getItemsQty();
             $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
             
-            $ItemsQty = $this->context->getValue('ItemsQty');
-            $GrandTotal = $this->context->getValue('GrandTotal');
+            $ItemsQty = $this->httpContext->getValue('ItemsQty');
+            $GrandTotal = $this->httpContext->getValue('GrandTotal');
         
             if ($this->_cart) {
                 $quote = $this->_cart->getQuote();
@@ -241,8 +242,8 @@ class TealiumData extends AbstractHelper
 
         $locale = $this->_localeResolver->getLocale();
         $locale = explode("_", $locale);
-        $ItemsQty = $this->context->getValue('ItemsQty');
-        $GrandTotal = $this->context->getValue('GrandTotal');
+        $ItemsQty = $this->httpContext->getValue('ItemsQty');
+        $GrandTotal = $this->httpContext->getValue('GrandTotal');
         
         
         if (is_numeric($ItemsQty)) {
@@ -357,8 +358,8 @@ class TealiumData extends AbstractHelper
                 $browseRefineType[] =  $key;
             }
         }
-        $ItemsQty = $this->context->getValue('ItemsQty');
-        $GrandTotal = $this->context->getValue('GrandTotal');
+        $ItemsQty = $this->httpContext->getValue('ItemsQty');
+        $GrandTotal = $this->httpContext->getValue('GrandTotal');
         
        
         
@@ -597,8 +598,8 @@ class TealiumData extends AbstractHelper
             }
             
         }
-        $ItemsQty = $this->context->getValue('ItemsQty');
-        $GrandTotal = $this->context->getValue('GrandTotal');
+        $ItemsQty = $this->httpContext->getValue('ItemsQty');
+        $GrandTotal = $this->httpContext->getValue('GrandTotal');
        
 
         $outputArray['product_price'] = $outputArray['product_unit_price'];
@@ -688,8 +689,8 @@ class TealiumData extends AbstractHelper
         if ($this->_checkoutSession) {
         
             $quote = $this->_checkoutSession->getQuote();
-            $ItemsQty = $this->context->getValue('ItemsQty');
-            $GrandTotal = $this->context->getValue('GrandTotal');
+            $ItemsQty = $this->httpContext->getValue('ItemsQty');
+            $GrandTotal = $this->httpContext->getValue('GrandTotal');
             
             
             
@@ -1209,8 +1210,8 @@ class TealiumData extends AbstractHelper
 
         $session =  $this->_checkoutSession;
         
-        $ItemsQty = $this->context->getValue('ItemsQty');
-        $GrandTotal = $this->context->getValue('GrandTotal');
+        $ItemsQty = $this->httpContext->getValue('ItemsQty');
+        $GrandTotal = $this->httpContext->getValue('GrandTotal');
         
         if ($session->getQuote()) {
             $quote =$session->getQuote();

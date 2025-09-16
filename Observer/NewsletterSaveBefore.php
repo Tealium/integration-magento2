@@ -15,6 +15,8 @@ class NewsletterSaveBefore implements ObserverInterface
     protected $_logger;
 
     protected $_coreSession;
+    
+    protected $_coreRegistry;
 
     public function __construct(
         LoggerInterface $loggerInterface,
