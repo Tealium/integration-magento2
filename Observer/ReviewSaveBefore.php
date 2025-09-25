@@ -16,6 +16,8 @@ class ReviewSaveBefore implements ObserverInterface
 
     protected $_coreSession;
 
+    protected $_coreRegistry;
+
     public function __construct(
         LoggerInterface $loggerInterface,
         CoreSession $coreSession,

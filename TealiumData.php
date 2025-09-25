@@ -629,6 +629,7 @@ class TealiumData extends AbstractHelper
 		$checkout_catId = array();
 		$parentCatName = array(); 
 		$itemDiscountAmmount = array();
+        $itemTotal = array();
 		$product_promo_code = false;
 		
 		$outputArray = [];

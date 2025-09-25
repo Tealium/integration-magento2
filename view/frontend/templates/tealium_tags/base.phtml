@@ -12,5 +12,5 @@ if (!$helper->getIsExternalScript($store)) {
     // get the udo and universal code snippet and render
     $tealium = $helper->getTealiumObject($store, $this);
 
-    echo $tealium->render("tag");
+   /* @noEscape */ echo $tealium->render("tag");
 }

@@ -26,6 +26,8 @@ class QtyUpdate implements ObserverInterface
 
     protected $_productRepository;
 
+    protected $_cart;
+
     public function __construct(
         CustomerSession $customerSession,
         Cart $cart,

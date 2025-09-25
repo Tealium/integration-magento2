@@ -1,11 +1,11 @@
 <script type="text/x-magento-init">
-    {
-        "*": {
-			"TealiumTagsUtagLib": "<?php echo $block->getJsLayout();?>",
-            "TealiumTagsUtagJs": "<?php echo $block->getJsLayout();?>",
-            "TealiumTagsMiniCart":"<?php echo $block->getJsLayout();?>",
-            "TealiumTagsPaymentMethod": "<?php echo $block->getJsLayout();?>",
-            "TealiumTagsUserLogout": "<?php echo $block->getJsLayout();?>"
-        }
-    }
+{
+  "*": {
+    "Tealium_Tags/js/utagLib": <?= /* @noEscape */ $block->getJsLayout(); ?>,
+    "Tealium_Tags/js/myUtag": <?= /* @noEscape */ $block->getJsLayout(); ?>,
+    "Tealium_Tags/js/miniCart": <?= /* @noEscape */ $block->getJsLayout(); ?>,
+    "Tealium_Tags/js/extendPaymentMethod": <?= /* @noEscape */ $block->getJsLayout(); ?>,
+    "Tealium_Tags/js/userLogout": <?= /* @noEscape */ $block->getJsLayout(); ?>
+  }
+}
 </script>
