@@ -1,13 +1,12 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 use Magento\Customer\Api\GroupRepositoryInterface;
 
-class LoginAccount implements ObserverInterface
+class LoginAccount extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -32,7 +31,7 @@ class LoginAccount implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         $customerObject = $observer->getData('customer');
         $email = $customerObject->getEmail();

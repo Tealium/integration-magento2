@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 use Tealium\Tags\Helper\Data as TealiumDataHelper;
 
-class JsSaveNewsletter implements SectionSourceInterface
+class JsSaveNewsletter extends AbstractSection
 {
 
     protected $_coreSession;
@@ -24,23 +23,8 @@ class JsSaveNewsletter implements SectionSourceInterface
         $this->tealiumDataHelper = $tealiumDataHelper;
     }
 
-    public function getSectionData()
+    protected function buildSectionData()
     {
-
-        if (isset($_COOKIE['email'])) {
-            $email = $_COOKIE['email'];
-            unset($_COOKIE['email']);
-        }
-
-        if (isset($_COOKIE['type'])) {
-            $type = $_COOKIE['type'];
-            unset($_COOKIE['type']);
-        }
-
-        if (isset($_COOKIE['id'])) {
-            $id = $_COOKIE['id'];
-            unset($_COOKIE['id']);
-        }
 
         $id = $this->_coreSession->getTealiumNewsletterId();
         $this->_coreSession->unsTealiumNewsletterId();
@@ -57,7 +41,7 @@ class JsSaveNewsletter implements SectionSourceInterface
             $store = $this->tealiumDataHelper->getStore();
             $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
             if ($customertxtvalue == null || $customertxtvalue == 0) {
-                $email = hash('sha256', strtolower($email));
+                $email = hash('sha256', strtolower((string)$email));
             }
             $result['data']['customer_email'] = $email;
             

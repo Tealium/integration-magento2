@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 use Tealium\Tags\Helper\Data as TealiumDataHelper;
 
-class JsLoginAccount implements SectionSourceInterface
+class JsLoginAccount extends AbstractSection
 {
 
     protected $_coreSession;
@@ -23,7 +22,7 @@ class JsLoginAccount implements SectionSourceInterface
         $this->tealiumDataHelper = $tealiumDataHelper;
     }
 
-    public function getSectionData()
+    protected function buildSectionData()
     {
         $email = $this->_coreSession->getTealiumLoginEmail();
         $this->_coreSession->unsTealiumLoginEmail();
@@ -41,7 +40,7 @@ class JsLoginAccount implements SectionSourceInterface
             $store = $this->tealiumDataHelper->getStore();
             $customertxtvalue = $this->tealiumDataHelper->getCustomerTxtEmail($store);
             if ($customertxtvalue == null || $customertxtvalue == 0) {
-                $email = hash('sha256', strtolower($email));
+                $email = hash('sha256', strtolower((string)$email));
             }
             
             $result['data']['customer_email_txt'] = $customertxtvalue;

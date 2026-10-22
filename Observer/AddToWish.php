@@ -1,11 +1,10 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 
-class AddToWish implements ObserverInterface
+class AddToWish extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -22,7 +21,7 @@ class AddToWish implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         
         $productItem = $observer->getData('product');

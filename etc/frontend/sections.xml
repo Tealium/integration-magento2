@@ -21,11 +21,20 @@
     </action>
 
     <action name="customer/account/logout">
-        <section name="tealium-tags-customer-logout"/>
+        <section name="tealium-tags-customer"/>
     </action>
 
     <action name="customer/account/loginPost">
         <section name="tealium-tags-customer-login"/>
+        <section name="tealium-tags-customer"/>
+    </action>
+
+    <action name="customer/ajax/login">
+        <section name="tealium-tags-customer"/>
+    </action>
+
+    <action name="customer/account/editPost">
+        <section name="tealium-tags-customer"/>
     </action>
 
     <action name="checkout/cart/delete">
@@ -38,6 +47,7 @@
 
     <action name="customer/account/createPost">
         <section name="tealium-tags-customer-account-create"/>
+        <section name="tealium-tags-customer"/>
     </action>
 
     <action name="rest/default/V1/guest-carts/*/coupons/">

@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Tealium\Tags\Helper\Product;
 
-class JsSendFriend implements SectionSourceInterface
+class JsSendFriend extends AbstractSection
 {
 
     protected $_customerSession;
@@ -21,7 +20,7 @@ class JsSendFriend implements SectionSourceInterface
         $this->_productHelper = $productHelper;
     }
     
-    public function getSectionData()
+    protected function buildSectionData()
     {
         $product_id=$this->_customerSession->getTealiumSendFriend();
         $this->_customerSession->unsTealiumSendFriend();

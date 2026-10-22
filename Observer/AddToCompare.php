@@ -1,12 +1,11 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Catalog\Model\ProductFactory;
 
-class AddToCompare implements ObserverInterface
+class AddToCompare extends AbstractObserver
 {
 
 
@@ -28,7 +27,7 @@ class AddToCompare implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         
         $quoteItem = $observer->getData('product');

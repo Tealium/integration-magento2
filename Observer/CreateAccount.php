@@ -1,14 +1,13 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Customer\Api\GroupRepositoryInterface;
 
-class CreateAccount implements ObserverInterface
+class CreateAccount extends AbstractObserver
 {
 
     //protected $_request;
@@ -41,7 +40,7 @@ class CreateAccount implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         $customerObject = $observer->getData('customer');
         $email = $customerObject->getEmail();

@@ -1,152 +1,155 @@
-
-
 define([
     'Magento_Customer/js/customer-data',
     'underscore',
-	'Tealium_Tags/js/utagLib'
-/*	'utagLib1' */
-], function(customerData, _){
+    'Tealium_Tags/js/utagLib'
+], function (customerData, _) {
     'use strict';
 
-    function sendData(tealiumTag, _dataObject) {
-        if(_.isObject(_dataObject) && _.isObject(tealiumTag) && _.has(_dataObject, 'data')){
-            tealiumTag.link(_dataObject.data);
+    /**
+     * Private sections that carry one-shot Tealium events
+     */
+    var SECTIONS = [
+            'tealium-tags-add-to-cart',
+            'tealium-tags-remove-from-cart',
+            'tealium-tags-add-to-compare',
+            'tealium-tags-customer-account-create',
+            'tealium-tags-customer-login',
+            'tealium-tags-newsletter-signup',
+            'tealium-tags-add-to-wish',
+            'tealium-tags-coupons',
+            'tealium-tags-save-order',
+            'tealium-tags-update-qty',
+            'tealium-tags-save-review'
+        ],
+        STORAGE_KEY = 'tealium-tags-sent-events',
+        QUEUE_TIMEOUT = 30000,
+        queue = [],
+        timer = null,
+        sent = null,
+        firstRun = false;
+
+    /**
+     * Send every queued event if utag.js has loaded
+     *
+     * @return {Boolean}
+     */
+    function flush() {
+        var utag = window.utag;
+
+        if (!utag || typeof utag.link !== 'function') {
+            return false;
+        }
+
+        while (queue.length) {
+            utag.link(queue.shift());
+        }
+
+        return true;
+    }
+
+    /**
+     * utag.js loads asynchronously, so events are queued until it is ready
+     *
+     * @param {Object} data
+     */
+    function send(data) {
+        var started = Date.now();
+
+        queue.push(data);
+
+        if (flush() || timer) {
+            return;
+        }
+
+        timer = setInterval(function () {
+            if (flush() || Date.now() - started > QUEUE_TIMEOUT) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }, 200);
+    }
+
+    /**
+     * Events already sent, per section. Section data stays in local storage
+     * after it has been sent, so without this every page view would send it
+     * again.
+     *
+     * @return {Object}
+     */
+    function getSent() {
+        if (sent === null) {
+            try {
+                sent = JSON.parse(window.localStorage.getItem(STORAGE_KEY));
+            } catch (e) {
+                sent = null;
+            }
+            firstRun = !_.isObject(sent);
+            sent = firstRun ? {} : sent;
+        }
+
+        return sent;
+    }
+
+    /**
+     * @param {String} sectionName
+     * @param {String} signature
+     */
+    function markSent(sectionName, signature) {
+        getSent()[sectionName] = signature;
+
+        try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sent));
+        } catch (e) {
+            // storage unavailable, events are still de-duplicated for this page
         }
     }
 
-    return function (options) {
-	//	alert(window.utag);
-//	alert('test');
-		
-        var tealiumTag = window.utag;
+    /**
+     * Send the event held by a section, once
+     *
+     * @param {String} sectionName
+     * @param {Object} sectionData
+     * @param {Boolean} isStored data was already in local storage on page load
+     */
+    function handle(sectionName, sectionData, isStored) {
+        var signature;
 
-        var dataObjectAdd = customerData.get("tealium-tags-add-to-cart");
-
-        dataObjectAdd.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-add-to-cart")){
-            sendData(tealiumTag, dataObjectAdd);
+        if (!_.isObject(sectionData) || !(_.has(sectionData, 'data') || _.has(sectionData, 'cart_empty'))) {
+            return;
         }
 
-        var dataObjectRemove = customerData.get("tealium-tags-remove-from-cart");
+        signature = String(sectionData['data_id']) + ':' + JSON.stringify(_.omit(sectionData, 'data_id'));
 
-        dataObjectRemove.subscribe(function (_dataObject) {
-            if ('cart_empty' in _dataObject ) {
-                sendData(tealiumTag, {'data':{'tealium_event':"cart_remove"}});
-            }
-            sendData(tealiumTag, _dataObject);
-        }, this);
+        if (getSent()[sectionName] === signature) {
+            return;
+        }
+        markSent(sectionName, signature);
 
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-remove-from-cart")){
-            if ('cart_empty' in dataObjectRemove ) {
-                sendData(tealiumTag, {'data':{'tealium_event':"cart_remove"}});
-            }
-            sendData(tealiumTag, dataObjectRemove);
+        // the first time this runs, stored data may be from events sent long
+        // ago (before de-duplication existed), so it is only remembered
+        if (isStored && firstRun) {
+            return;
         }
 
-        var dataObjectCompare = customerData.get("tealium-tags-add-to-compare");
-
-        dataObjectCompare.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-add-to-compare")){
-            sendData(tealiumTag, dataObjectCompare);
+        if (sectionName === 'tealium-tags-remove-from-cart' && sectionData['cart_empty']) {
+            send({'tealium_event': 'cart_remove'});
         }
 
-        var dataObjectCreate = customerData.get("tealium-tags-customer-account-create");
-
-        dataObjectCreate.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-customer-account-create")){
-            sendData(tealiumTag, dataObjectCreate);
-        }
-
-        var dataObjectLogout = customerData.get("tealium-tags-customer-logout");
-
-        dataObjectLogout.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-customer-logout")){
-            sendData(tealiumTag, dataObjectLogout);
-        }
-
-        var dataObjectLogin = customerData.get("tealium-tags-customer-login");
-
-        dataObjectLogin.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-customer-login")){
-            sendData(tealiumTag, dataObjectLogin);
-        }
-
-
-        var dataObjectNews = customerData.get("tealium-tags-newsletter-signup");
-
-        dataObjectNews.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-newsletter-signup")){
-            sendData(tealiumTag, dataObjectLogin);
-        }
-
-
-        var dataObjectWish = customerData.get("tealium-tags-add-to-wish");
-
-        dataObjectWish.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-add-to-wish")){
-            sendData(tealiumTag, dataObjectWish);
-        }
-
-        var dataObjectCoupon = customerData.get("tealium-tags-coupons");
-
-        dataObjectCoupon.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-coupons")){
-            sendData(tealiumTag, dataObjectCoupon);
-        }
-
-        var dataObjectOrder = customerData.get("tealium-tags-save-order");
-
-        dataObjectOrder.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-save-order")){
-            sendData(tealiumTag, dataObjectOrder);
-        }
-
-        var dataObjectQty = customerData.get("tealium-tags-update-qty");
-
-        dataObjectQty.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-update-qty")){
-            sendData(tealiumTag, dataObjectQty);
-        }
-
-        var dataObjectReview = customerData.get("tealium-tags-save-review");
-
-        dataObjectReview.subscribe(function (_dataObject) {
-            sendData(tealiumTag, _dataObject);
-        }, this);
-
-        if(!_.contains(customerData.getExpiredKeys(), "tealium-tags-save-review")){
-            sendData(tealiumTag, dataObjectReview);
+        if (_.isObject(sectionData.data)) {
+            send(sectionData.data);
         }
     }
 
+    return function () {
+        _.each(SECTIONS, function (sectionName) {
+            var section = customerData.get(sectionName);
+
+            section.subscribe(function (sectionData) {
+                handle(sectionName, sectionData, false);
+            });
+
+            // data that arrived before this module subscribed
+            handle(sectionName, section(), true);
+        });
+    };
 });

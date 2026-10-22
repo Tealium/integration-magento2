@@ -8,7 +8,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Request\Http;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 
@@ -33,7 +33,7 @@ class AddProductTest extends TestCase
 
     protected $request;
 
-    protected $objectManager;
+    protected $configurableProduct;
 
     
  
@@ -67,15 +67,16 @@ class AddProductTest extends TestCase
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
+        $this->configurableProduct = $this->getMockBuilder(Configurable::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['getProductByAttributes'])
             ->getMock();
 
         $this->observer = new Observer(
             $this->request,
             $this->customerSession,
             $this->productRepository,
-            $this->objectManager,
+            $this->configurableProduct,
             $this->checkoutSession
         );
     }
@@ -103,7 +104,7 @@ class AddProductTest extends TestCase
             ->method('getLastAddedProductId')
             ->willReturn($productId);
 
-        $this->request->expects($this->once())->method('getParams');
+        $this->request->expects($this->once())->method('getParams')->willReturn([]);
 
         $this->productRepository->expects($this->any())->method('getById');
 
@@ -117,6 +118,36 @@ class AddProductTest extends TestCase
         
 
         /** @var $eventObserver \Magento\Framework\Event\Observer */
+        $this->observer->execute($eventObserver);
+    }
+
+    /**
+     * A configurable child that can't be resolved must not throw: the event
+     * fires after the cart is saved, and an exception makes the shopper see
+     * "We can't add this item to your shopping cart".
+     */
+    public function testUnresolvedConfigurableChildKeepsParentId()
+    {
+        $eventObserver = $this->getMockBuilder(\Magento\Framework\Event\Observer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $parent = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->checkoutSession->method('getLastAddedProductId')->willReturn(10);
+        $this->request->method('getParams')->willReturn(['super_attribute' => [93 => 52], 'qty' => 2]);
+        $this->productRepository->method('getById')->with(10)->willReturn($parent);
+        $this->configurableProduct->method('getProductByAttributes')->willReturn(null);
+
+        $this->customerSession->expects($this->once())
+            ->method('setTealiumAddProductId')
+            ->with(10);
+        $this->customerSession->expects($this->once())
+            ->method('setTealiumAddProductQty')
+            ->with(2);
+
         $this->observer->execute($eventObserver);
     }
 }

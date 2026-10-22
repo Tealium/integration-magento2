@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Tealium\Tags\Helper\Product;
 
-class JsAddToWish implements SectionSourceInterface
+class JsAddToWish extends AbstractSection
 {
 
     protected $_customerSession;
@@ -22,7 +21,7 @@ class JsAddToWish implements SectionSourceInterface
     }
 
 
-    public function getSectionData()
+    protected function buildSectionData()
     {
         
         $product_id=$this->_customerSession->getTealiumAddToWishId();

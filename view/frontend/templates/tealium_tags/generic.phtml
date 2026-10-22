@@ -5,8 +5,7 @@ $store = $this->getStore();
 
 
 // create a tealium object for the page
-$tealium = $helper->getTealiumObject($store, $this);
-if (preg_match('/checkout.+success|success.+checkout/i', $_SERVER['PHP_SELF'])) {
+if (preg_match('/checkout.*success/i', (string)$this->getRequest()->getFullActionName())) {
     $tealium = $helper->init($store, $this, "Confirmation")
         ->addCustomDataFromSetup($store, "Confirmation")
         ->getTealiumObject();

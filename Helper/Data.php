@@ -1,39 +1,56 @@
 <?php
 namespace Tealium\Tags\Helper;
 
-use \Magento\Framework\App\Helper\AbstractHelper;
-use \Tealium\Tags\lib\Tealium\TealiumData;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
-use Zend\View\Model\ViewModel;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\DataObject;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Tealium\Tags\Block\TealiumFactory;
 
 class Data extends AbstractHelper
 {
+    /**
+     * Event dispatched while building the data layer. Observers receive
+     * "page_type" and a "transport" DataObject; any data set on the transport
+     * is merged into the data layer.
+     */
+    const EVENT_CUSTOM_UDO = 'tealium_tags_custom_udo';
+
     protected $tealium;
     protected $store;
     protected $page;
-    protected $_store;
-    protected $_objectManager;
 
     /**
-     * @var \Magento\Framework\Registry
+     * @var StoreManagerInterface
      */
+    protected $_storeManager;
 
-    protected $_registry;
+    /**
+     * @var TealiumFactory
+     */
+    protected $tealiumFactory;
 
-    protected $_checkoutSession;
+    /**
+     * @var SecureHtmlRenderer
+     */
+    protected $secureRenderer;
+
+    /**
+     * @var array file path => udo elements defined by that file
+     */
+    private $customUdoFiles = [];
 
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Api\Data\StoreInterface $store,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\Registry $registry,
-        \Magento\Checkout\Model\Session $checkoutSession
+        Context $context,
+        StoreManagerInterface $storeManager,
+        TealiumFactory $tealiumFactory,
+        SecureHtmlRenderer $secureRenderer
     ) {
-        $this->_store = $store;
-        $this->_objectManager = $objectManager;
-        $this->_registry = $registry;
-        $this->_checkoutSession = $checkoutSession;
+        $this->_storeManager = $storeManager;
+        $this->tealiumFactory = $tealiumFactory;
+        $this->secureRenderer = $secureRenderer;
         parent::__construct(
             $context
         );
@@ -47,7 +64,7 @@ class Data extends AbstractHelper
 
         // added first party url domain
         $fp_url = $this->getFirstPartyDomain($store);
-  
+
         $data = [
             "store" => $store,
             "page" => $page
@@ -55,11 +72,10 @@ class Data extends AbstractHelper
 
         $this->store = $store;
         $this->page = $page;
-        $this->tealium = $this->_objectManager->create('Tealium\Tags\Block\Tealium')->init($account, $profile, $fp_url, $env, $pageType, $data);
+        $this->tealium = $this->tealiumFactory->create()->init($account, $profile, $fp_url, $env, $pageType, $data);
 
         return $this;
     }
-
 
     public function addCustomDataFromSetup(&$store, $pageType)
     {
@@ -72,54 +88,32 @@ class Data extends AbstractHelper
             "page" => $this->page
         ];
 
-        if ($this->scopeConfig->getValue('tealium_tags/general/custom_udo_enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId())) {
+        if ($this->externalUdoEnabled($store)) {
             // To define a custom udo, define the "$udoElements" variable, which
             // is an associative array with page types as keys and functions
             // that return a udo for the page types as the value.
+            $udoElements = $this->loadUdoElementsFromFile((string)$this->getUDOPath($store), $data);
 
-            // One way to define a custom udo is to include an external file
-            // that defines "$udoElements"
-        
-            $filePath = $this->scopeConfig->getValue(
-                'tealium_tags/general/udo',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $store->getId()
-            );
-            $fileName = basename($filePath);         // $file is set to "index.php"
-            $filePath = dirname($filePath);
-            if ($fileName != "" && $filePath != "" && file_exists($filePath)) {
-                $resolver = $this->_objectManager->create('Zend\View\Resolver\TemplatePathStack');
-                $resolver->addPath($filePath);
-                $viewApp = $this->_objectManager->create('Zend\View\Renderer\PhpRenderer');
-                $viewApp->setResolver($resolver, $data);
-                $viewApp->setVars($data);
-                $viewApp->render($fileName);
-                $udoElements = $viewApp->vars('udoElements');
-
-            }
-
-            // Another way to define a custom udo is to define a "getCustomUdo"
-            // method, which is used to set "$udoElements"
-            if (method_exists($this, "getCustomUdo")) {
-                $customUdoElements = getCustomUdo();
-                if (is_array($customUdoElements) &&
-                    self::isAssocArray($customUdoElements)
-                ) {
-                    $udoElements = $customUdoElements;
-                }
-            } elseif (!isset($udoElements)
-                || (
-                    isset($udoElements)
-                    && !self::isAssocArray($udoElements)
-                )
-            ) {
+            if (!is_array($udoElements) || !self::isAssocArray($udoElements)) {
                 $udoElements = [];
             }
-        
+
             // if a custom udo is defined for the page type, set the udo
             if (isset($udoElements[$pageType])) {
                 $this->tealium->setCustomUdo($udoElements[$pageType]);
             }
+        }
+
+        // modules can extend the data layer by observing this event
+        $transport = new DataObject();
+        $this->_eventManager->dispatch(self::EVENT_CUSTOM_UDO, [
+            'page_type' => $pageType,
+            'store' => $this->store,
+            'page' => $this->page,
+            'transport' => $transport
+        ]);
+        if ($transport->getData()) {
+            $this->tealium->updateUdo($transport->getData());
         }
 
         return $this;
@@ -147,13 +141,60 @@ class Data extends AbstractHelper
         return array_keys($keys) !== $keys;
     }
 
+    /**
+     * Include the custom UDO definition file and return the "$udoElements"
+     * it defines.
+     *
+     * Only .php files inside the Magento installation are included, and each
+     * file is included at most once per request.
+     *
+     * @param string $filePath
+     * @param array $data available to the file as "$data"
+     * @return array|null
+     */
+    private function loadUdoElementsFromFile($filePath, array $data)
+    {
+        if ($filePath === '') {
+            return null;
+        }
+
+        $realPath = realpath($filePath);
+        $root = realpath(BP);
+        if ($realPath === false
+            || !is_file($realPath)
+            || strtolower(pathinfo($realPath, PATHINFO_EXTENSION)) !== 'php'
+            || $root === false
+            || strpos($realPath, $root . DIRECTORY_SEPARATOR) !== 0
+        ) {
+            $this->_logger->warning(
+                'Tealium custom UDO file was not loaded. It must be an existing .php file inside the Magento root.',
+                ['path' => $filePath]
+            );
+            return null;
+        }
+
+        if (!array_key_exists($realPath, $this->customUdoFiles)) {
+            try {
+                $this->customUdoFiles[$realPath] = (static function ($__tealiumUdoFile, $data) {
+                    include $__tealiumUdoFile;
+                    return isset($udoElements) ? $udoElements : null;
+                })($realPath, $data);
+            } catch (\Throwable $e) {
+                $this->_logger->error('Tealium custom UDO file failed: ' . $e->getMessage(), ['path' => $realPath]);
+                $this->customUdoFiles[$realPath] = null;
+            }
+        }
+
+        return $this->customUdoFiles[$realPath];
+    }
+
     /*
      * Check if the udo is enabled. Used to determine if udo javascript should
      * be rendered.
      */
     public function isEnabled($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/enable', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -162,7 +203,7 @@ class Data extends AbstractHelper
      */
     public function enableOnePageCheckout($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/onepage', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/onepage', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -171,7 +212,7 @@ class Data extends AbstractHelper
      */
     public function externalUdoEnabled($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/custom_udo_enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/custom_udo_enable', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -184,10 +225,8 @@ class Data extends AbstractHelper
         $profile = $this->getProfile($store);
         $env = $this->getEnv($store);
 
-        $fp_url = $this->getFirstPartyDomain($store);
-
-        $fp_url = trim((string)($fpurl ?? ''));
-        if (!empty($fp_url) && $fp_url != "") {
+        $fp_url = trim((string)$this->getFirstPartyDomain($store));
+        if ($fp_url !== "") {
             return "https://". $fp_url ."/$profile/$env/utag.js";
         } else {
             return "//tags.tiqcdn.com/utag/$account/$profile/$env/utag.js";
@@ -197,13 +236,13 @@ class Data extends AbstractHelper
     /* Get Customer plain text email setting */
     public function getCustomerTxtEmail($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/plain_txt_email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/plain_txt_email', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
-    /* return store object */
+    /* return the current store */
     public function getStore()
     {
-        return $this->_store;
+        return $this->_storeManager->getStore();
     }
 
     /*
@@ -222,7 +261,7 @@ class Data extends AbstractHelper
      */
     public function getAccount($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/account', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/account', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -231,7 +270,7 @@ class Data extends AbstractHelper
      */
     public function getProfile($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/profile', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/profile', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -239,7 +278,7 @@ class Data extends AbstractHelper
      */
     public function getEnv($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/env', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/env', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -249,7 +288,7 @@ class Data extends AbstractHelper
      */
     public function getUDOPath($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/udo', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/udo', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -263,7 +302,20 @@ class Data extends AbstractHelper
      */
     public function getAPIEnabled($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/api_enable', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/api_enable', ScopeInterface::SCOPE_STORE, $store->getId());
+    }
+
+    /*
+     * True when this request should be answered with just the data layer
+     * javascript (see \Tealium\Tags\Observer\Api). The api is used by the
+     * "external script" mode, and can also be turned on on its own with
+     * tealium_tags/general/api_enable.
+     */
+    public function isApiRequest($store)
+    {
+        return $this->_getRequest()->getParam('tealium_api') == "true"
+            && $this->isEnabled($store)
+            && ($this->getIsExternalScript($store) || $this->getAPIEnabled($store));
     }
 
     /*
@@ -274,7 +326,7 @@ class Data extends AbstractHelper
     {
         return $this->scopeConfig->getValue(
             'tealium_tags/general/external_script',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
     }
@@ -282,7 +334,7 @@ class Data extends AbstractHelper
     /* Get First party domain URL */
     public function getFirstPartyDomain($store)
     {
-        return $this->scopeConfig->getValue('tealium_tags/general/first_party_domain', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getId());
+        return $this->scopeConfig->getValue('tealium_tags/general/first_party_domain', ScopeInterface::SCOPE_STORE, $store->getId());
     }
 
     /*
@@ -295,7 +347,7 @@ class Data extends AbstractHelper
     {
         $async = $this->scopeConfig->getValue(
             'tealium_tags/general/external_script_type',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $store->getId()
         );
         return $async ? "async" : "sync";
@@ -303,31 +355,32 @@ class Data extends AbstractHelper
 
     /*
      * Sometimes it's useful to send the entire udo to a server for diagnostics.
-     * This function returns a tag in the form of an html <img> element that
-     * will send the url encoded udo to a specified server if the feature is
-     * enabled in the config.
+     * This function returns a script that will send the url encoded udo to a
+     * specified server if the feature is enabled in the config.
+     *
+     * The user agent is read in the browser: the page may be served from the
+     * full page cache, so request headers must never be written into it.
      */
     public function getDiagnosticTag($store)
     {
-        if ($this->scopeConfig->getValue(
+        if (!$this->scopeConfig->getValue(
             'tealium_tags/general/diagnostic_enable',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $store->getId()
-        )
-        ) {
-            $utag_data = urlencode($this->tealium->render("json"));
-            $url = $this->scopeConfig->getValue(
-                'tealium_tags/general/diagnostic_tag',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $store->getId()
-            )
-                . '?origin=server&user_agent='
-                . $_SERVER ['HTTP_USER_AGENT']
-                . '&data='
-                . $utag_data;
-            return '<img src="' . $url . '" style="display:none"/>';
-        } else {
+        )) {
             return "";
         }
+
+        $url = (string)$this->scopeConfig->getValue(
+            'tealium_tags/general/diagnostic_tag',
+            ScopeInterface::SCOPE_STORE,
+            $store->getId()
+        );
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+        $script = '(function(){var i=new Image();i.src=' . json_encode($url, $flags)
+            . "+'?origin=server&user_agent='+encodeURIComponent(navigator.userAgent)"
+            . "+'&data='+" . json_encode(urlencode($this->tealium->render("json")), $flags) . ';})();';
+
+        return $this->secureRenderer->renderTag('script', ['type' => 'text/javascript'], $script, false);
     }
 }

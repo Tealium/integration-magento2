@@ -2,38 +2,36 @@
 
 namespace Tealium\Tags\Helper;
 
-use \Magento\Framework\App\Helper\AbstractHelper;
-use \Magento\Framework\App\Bootstrap;
-use \Magento\Framework\View\Layout;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Locale\Resolver;
+use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\Sales\Model\OrderFactory;
-use Magento\SalesRule\Model\RuleFactory;
-use Magento\SalesRule\Model\CouponFactory;
-
-
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Eav\Model\Config as EavConfig;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Tealium\Tags\Helper\Product as ProductHelper;
 
 class TealiumData extends AbstractHelper
 {
-
-    
-    private $store;
-    private $page;
-    protected $_store;
-    protected $_objectManager;
-    protected $_isScopePrivate;
-    protected $_cart;
+    const XML_PATH_PLAIN_TXT_EMAIL = 'tealium_tags/general/plain_txt_email';
 
     /**
-     * @var \Magento\Framework\Registry
-    */
+     * Query parameters that are never treated as browse refinements
+     */
+    const NON_REFINEMENT_PARAMS = ['q', 'p', 'product_list_order', 'product_list_dir', 'product_list_limit',
+        'product_list_mode', 'tealium_api'];
 
+    private $store;
+    private $page;
+
+    protected $_storeManager;
     protected $_registry;
     protected $_checkoutSession;
-    protected $_layout;
-    protected $httpContext;
     protected $customerSession;
 
     /**
@@ -42,74 +40,40 @@ class TealiumData extends AbstractHelper
     protected $_localeResolver;
 
     /**
-     * @var \Magento\Catalog\Model\ProductFactory
+     * @var ProductHelper
      */
-    protected $productFactory;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected $productHelper;
 
     /**
      * @var \Magento\Catalog\Api\CategoryRepositoryInterface
      */
     protected $categoryRepository;
 
-    /**
-     * @var \Magento\Catalog\Model\CategoryFactory
-     */
-    protected $categoryFactory;
-
     protected $groupRepository;
-    protected $orderFactory;
-    protected $ruleFactory;
-    protected $couponFactory;
+    protected $eavConfig;
 
-    
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Api\Data\StoreInterface $store,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\Registry $registry,
-        \Magento\Checkout\Model\Session $checkoutSession,
+        Context $context,
+        StoreManagerInterface $storeManager,
+        Registry $registry,
+        CheckoutSession $checkoutSession,
         CustomerSession $customerSession,
-        \Magento\Checkout\Model\Cart $cart,
-        \Magento\Framework\View\Layout $layout,
-        \Magento\Framework\App\Http\Context $httpContext,
         Resolver $localeResolver,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
-        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
+        ProductHelper $productHelper,
+        CategoryRepositoryInterface $categoryRepository,
         GroupRepositoryInterface $groupRepository,
-        OrderFactory $orderFactory,
-        CouponFactory $couponFactory,
-        RuleFactory $ruleFactory
-        
+        EavConfig $eavConfig
     ) {
-        $this->_isScopePrivate = true;
-        $this->_store = $store;
-        $this->_objectManager = $objectManager;
+        $this->_storeManager = $storeManager;
         $this->_registry = $registry;
-        $this->httpContext = $httpContext;
-        $this->_checkoutSession  = $checkoutSession;
+        $this->_checkoutSession = $checkoutSession;
         $this->customerSession = $customerSession;
-        $this->_layout = $layout;
-        $this->_cart = $cart;
-        $this->_layout->setIsPrivate(true);
         $this->_localeResolver = $localeResolver;
-        $this->productFactory = $productFactory;
-        $this->productRepository = $productRepository;
+        $this->productHelper = $productHelper;
         $this->categoryRepository = $categoryRepository;
-        $this->categoryFactory = $categoryFactory;
         $this->groupRepository = $groupRepository;
-        $this->orderFactory = $orderFactory;
-        $this->couponFactory = $couponFactory;
-        $this->ruleFactory = $ruleFactory;
-        parent::__construct(
-            $context
-        );
+        $this->eavConfig = $eavConfig;
+        parent::__construct($context);
     }
 
     public function setStore($store)
@@ -125,183 +89,78 @@ class TealiumData extends AbstractHelper
     // Define methods for getting udo to output for each page type
     public function getHome()
     {
-        $store = $this->store;
         $page = $this->page;
 
-        $outputArray = [];
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
+        $outputArray = $this->getSiteData();
         $titleBlock = $page->getLayout()->getBlock('page.main.title');
         if ($titleBlock) {
-            $outputArray['page_name'] =
-                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_name'] = $titleBlock->getPageTitle() ? : "";
             $outputArray['page_type'] = $page->getTealiumType() ? : "";
         } else {
             $outputArray['page_name'] = "not supported by extension";
             $outputArray['page_type'] = "not supported by extension";
         }
-        
+
         if ($outputArray['page_name'] == 'Home Page') {
-            
-            $locale = $this->_localeResolver->getLocale();
-            $locale = explode("_", $locale);
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-                
-            $ItemsQty = $this->_cart->getQuote()->getItemsQty();
-            $GrandTotal =$this->_cart->getQuote()->getGrandTotal();
-            
-            $ItemsQty = $this->httpContext->getValue('ItemsQty');
-            $GrandTotal = $this->httpContext->getValue('GrandTotal');
-        
-            if ($this->_cart) {
-                $quote = $this->_cart->getQuote();
-                $quote = $this->_checkoutSession->getQuote();
-                
-            }
-            
-             $outputArray['page_type'] = "home";
-
-             $outputArray['cart_total_items'] = "";
-             $outputArray['cart_total_value'] = "";
-
-
-            if ($ItemsQty !== null) {
-                $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-            }
-
-            if ($GrandTotal !== null) {
-                $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-            }
-             
-             
-             $outputArray['site_section'] = "Clothing";
-             $outputArray['tealium_event'] = "page_view";
-                 
-
+            $outputArray = array_merge($outputArray, $this->getLocaleCodes());
+            $outputArray['page_type'] = "home";
+            // cart totals are filled in client-side from the private "cart" section
+            $outputArray['cart_total_items'] = "";
+            $outputArray['cart_total_value'] = "";
+            $outputArray['tealium_event'] = "page_view";
         }
-        
+
         return $outputArray;
     }
 
-    public function getSearch($productOnPage = [])
+    public function getSearch()
     {
-        $store = $this->store;
         $page = $this->page;
         $searchBlock = $page->getLayout()->getBlock('search.result');
-        $outputArray = [];
-        $ItemsQty = false;
-        $GrandTotal = false;
-        
-       
+
         if ($searchBlock === false) {
-            return $outputArray;
+            return [];
         }
-        
 
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
+        $outputArray = $this->getSiteData();
         $outputArray['page_name'] = "search results";
         $outputArray['page_type'] = "search";
-        $outputArray['search_results'] = $searchBlock->getResultCount() . "" ? : "";
+        $outputArray['search_results'] = (string)$searchBlock->getResultCount();
         $outputArray['search_keyword'] =
             $page->helper('Magento\CatalogSearch\Helper\Data')->getEscapedQueryText() ? : "";
 
-        $browseQuery = $_SERVER['QUERY_STRING'];
-        $browseRefineValue = array();
-        $browseRefineType = array();
-        if ($browseQuery) {
-            parse_str($browseQuery, $get_array);
-            foreach ($get_array as $key => $value) {
-                if ($key != 'q') {
+        $outputArray = array_merge($outputArray, $this->getBrowseRefinements());
 
-                    $_product = $this->productFactory->create();
-                    if ($key == 'price') {
-                        $browseRefineValue[] = $value;
-                    }
-                    $_attributeId = $_product->getResource()->getAttribute($key);
-                    if (!empty($_attributeId)) {
-                        $browseRefineValue[] = $_attributeId->getSource()->getOptionText($value);
-                    }
-                    $browseRefineType[] =  $key;
-                }
-            }
-        }
+        // cart totals are filled in client-side from the private "cart" section
+        $outputArray['cart_total_items'] = "0.00";
+        $outputArray['cart_total_value'] = "0.00";
 
-        
-        
-        if (!empty($browseRefineType)) {
-            $outputArray['browse_refine_type'] = $browseRefineType ? : "";
-        }
-        if (!empty($browseRefineValue)) {
-            $outputArray['browse_refine_value'] = $browseRefineValue ? : "";
-        }
-       
-
-        $locale = $this->_localeResolver->getLocale();
-        $locale = explode("_", $locale);
-        $ItemsQty = $this->httpContext->getValue('ItemsQty');
-        $GrandTotal = $this->httpContext->getValue('GrandTotal');
-        
-        
-        if (is_numeric($ItemsQty)) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        } else {
-            $outputArray['cart_total_items'] = "0.00"; // Default value or error handling
-        }
-        
-        if (is_numeric($GrandTotal)) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-        } else {
-            $outputArray['cart_total_value'] = "0.00"; // Default value or error handling
-        }
-        
-         
-        $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-        $outputArray['language_code'] = $locale[0] ? : '';
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
         $outputArray['tealium_event'] = "search";
-        
-        if (!empty($productOnPage)) {
-            $outputArray['product_on_page'] = $productOnPage ? : "";
-        }
-        $outputArray['site_section'] = 'Clothing';
-        
 
-            
         return $outputArray;
     }
 
-    public function getCategory($productOnPage = [], $productOnPageId = [])
+    public function getCategory()
     {
-        $store = $this->store;
         $page = $this->page;
         $section = false;
         $category = false;
         $subcategory = false;
-        $categoryId =  false;
-        $category_name =  false;
-        $catProductList = [];
-        $browseRefineType = [];
-        $browseRefineValue = [];
-        $manufacturer = [];
-        $ItemsQty = false;
-        $GrandTotal = false;
+        $categoryId = false;
+        $category_name = false;
 
-        if ($_category = $this->_registry->registry('current_category')) {
-
+        $_category = $this->_registry->registry('current_category');
+        if ($_category) {
             $parent = false;
             $grandparent = false;
 
             // check for parent and grandparent
             if ($_category->getParentId()) {
-
                 $parent = $this->categoryRepository->get($_category->getParentId());
 
                 if ($parent->getParentId()) {
                     $grandparent = $this->categoryRepository->get($parent->getParentId());
-                    
                 }
             }
 
@@ -316,262 +175,93 @@ class TealiumData extends AbstractHelper
             } else {
                 $category = $_category->getName();
             }
-            
+
             $categoryId = $_category->getEntityId();
             if ($_category->getLevel() == '3') {
-                $category_name = $category.':'.$subcategory;
+                $category_name = $category . ':' . $subcategory;
             }
             if ($_category->getLevel() == '4') {
-                
-                $categoryName = explode("/", $_category->getUrlPath());
-                $cat = strtok($_category->getUrlPath(), '/');
-                foreach ($categoryName as $catName) {
-                    $catNames[] = ucfirst(strstr($catName, "-", true));
+                $urlPath = (string)$_category->getUrlPath();
+                $catNames = [];
+                foreach (explode("/", $urlPath) as $catName) {
+                    $catNames[] = ucfirst((string)strstr($catName, "-", true));
                 }
-                $catNames = implode(":", $catNames);
-                $category_name = ucfirst($cat).$catNames;
+                $category_name = ucfirst((string)strtok($urlPath, '/')) . implode(":", $catNames);
             }
         }
 
-
-        $categoryp = $this->categoryFactory->create()->load($categoryId);
-
-        $categoryProducts = $categoryp->getProductCollection()->addAttributeToSelect('*');
-                             
-        
-         /* Getting query string for browse_refine_type*/
-        $browseQuery = $_SERVER['QUERY_STRING'];
-        if ($browseQuery) {
-            parse_str($browseQuery, $get_array);
-            foreach ($get_array as $key => $value) {
-                
-                $_product = $this->productFactory->create();
-
-
-                if ($key == 'price') {
-                    $browseRefineValue[] = $value;
-                }
-                $_attributeId = $_product->getResource()->getAttribute($key);
-                if (!empty($_attributeId)) {
-                    $browseRefineValue[] = $_attributeId->getSource()->getOptionText($value);
-                }
-                $browseRefineType[] =  $key;
-            }
-        }
-        $ItemsQty = $this->httpContext->getValue('ItemsQty');
-        $GrandTotal = $this->httpContext->getValue('GrandTotal');
-        
-       
-        
-        foreach ($productOnPageId as $catProducts) {
-
-            
-            
-            $productCat = $this->productRepository->getById($catProducts);
-
-            $manufacturerValue = $productCat->getAttributeText('manufacturer');
-            
-            if ($manufacturerValue !== false) {
-                $manufacturer[] = $manufacturerValue;
-            }
-            
-
-            if (is_array($catProducts) && count($catProducts) > 0) {
-                $catProductList[] = $catProducts;
-            }
-            
-            
-                        
-        }
-        
-        $titleBlock = $page->getLayout()->getBlock('category.products.list');
-        
-        $outputArray = [];
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
-        $outputArray['page_name'] =
-            $_category ? ($_category->getName() ? : "") : "";
+        $outputArray = $this->getSiteData();
+        $outputArray['page_name'] = $_category ? ($_category->getName() ? : "") : "";
         $outputArray['page_type'] = "category";
         $outputArray['page_section_name'] = $section ? : "";
         $outputArray['page_category_name'] = $category ? : "";
         $outputArray['page_subcategory_name'] = $subcategory ? : "";
 
-        if ($browseRefineType) {
-            $outputArray['browse_refine_type'] = $browseRefineType ? : "";
-        }
-        if ($browseRefineValue) {
-            $outputArray['browse_refine_value'] = $browseRefineValue ? : "";
-        }
-        
-       
+        $outputArray = array_merge($outputArray, $this->getBrowseRefinements());
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
 
-        $locale = $this->_localeResolver->getLocale();
-        $locale = explode("_", $locale);
-        if (!empty($locale)) {
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-        }
-        
-        $outputArray['site_section'] = "Clothing";
-        
-
-        // Check if $ItemsQty and $GrandTotal are not null before formatting them
-        if ($ItemsQty !== null) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        } else {
-            $outputArray['cart_total_items'] = '';
-        }
-
-        if ($GrandTotal !== null) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-        } else {
-            $outputArray['cart_total_value'] = '';
-        }
-
+        // cart totals are filled in client-side from the private "cart" section
+        $outputArray['cart_total_items'] = '';
+        $outputArray['cart_total_value'] = '';
 
         $outputArray['category_id'] = $categoryId ? : "";
         $outputArray['category_name'] = $category_name ? : $subcategory;
         $outputArray['tealium_event'] = "category_view";
-        
-        if (!empty($productOnPage)) {
-            $outputArray['product_on_page'] = $productOnPage ? : "";
-        }
+
         return $outputArray;
     }
 
     public function getProductPage()
     {
-        $categoryId =  false;
-        $category_name =  false;
-        $catProductList = false;
-        $ItemsQty = false;
-        $GrandTotal = false;
-        $store = $this->store;
-        $page = $this->page;
-        $subcategory = false;
-        $parentCatName = false;
         $categoryName = false;
-        
+        $parentCatName = false;
+
         $_product = $this->_registry->registry('current_product');
+        $_category = $this->_registry->registry('current_category');
 
-        $outputArray = [];
-      
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
-        $outputArray['page_name'] =
-            $_product ? ($_product->getName() ? : "") : "";
+        $outputArray = $this->getSiteData();
+        $outputArray['page_name'] = $_product ? ($_product->getName() ? : "") : "";
         $outputArray['page_type'] = "product";
 
-        $mediaUrl = $this->_store
-        ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
-
-       
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
         if ($_product) {
-           
-            if (!(
-            $outputArray['product_id'] = [$_product->getId()]
-            )) {
-                $outputArray['product_id'] = [];
+            $outputArray['product_id'] = [$_product->getId()];
+            $outputArray['product_sku'] = [$_product->getSku()];
+            $outputArray['product_url'] = [$_product->getProductUrl()];
+            $outputArray['product_on_page'] = [$_product->getSku()];
+            $outputArray['product_image_url'] = [$this->getProductMediaBaseUrl() . $_product->getImage()];
+            $outputArray['product_name'] = [$_product->getName()];
+
+            $manufacturer = $this->productHelper->getManufacturer($_product);
+            $outputArray['product_brand'] = [$manufacturer === false ? "" : $manufacturer];
+
+            $outputArray['product_unit_price'] = [$this->productHelper->formatPrice($_product->getFinalPrice())];
+            $outputArray['product_list_price'] = [$this->productHelper->formatPrice($_product->getData('price'))];
+
+            // the last assigned category wins, as does the last parent that is
+            // not the store root
+            $categoryIds = array_values((array)$_product->getCategoryIds());
+            $lastCategoryId = end($categoryIds);
+            $categories = $this->productHelper->loadCategories($categoryIds);
+            $parentIds = [];
+            foreach ($categories as $category) {
+                $parentIds[] = $category['parent_id'];
             }
-
-            if (!(
-            $outputArray['product_sku'] = [
-                $_product->getSku()
-            ]
-            )) {
-                $outputArray['product_sku'] = [];
-            }
-
-            if (!(
-                $outputArray['product_url'] = [
-                    $_product->getProductUrl()
-                ]
-                )) {
-                    $outputArray['product_url'] = [];
-            }
-
-
-            if (!(
-                $outputArray['product_on_page'] = [
-                    $_product->getSku()
-                ]
-                )) {
-                    $outputArray['product_on_page'] = [];
-            }
-
-            if (!(
-                $outputArray['product_image_url'] = [
-                    $mediaUrl.$_product->getImage()
-                ]
-                )) {
-                    $outputArray['product_image_url'] = [];
-            }
-
-            if (!(
-            $outputArray['product_name'] = [
-                $_product->getName()
-            ]
-            )) {
-                $outputArray['product_name'] = [];
-            }
-
-
-            $productCat = $this->productRepository->getById($_product->getId());
-
-            $manufacturer = $productCat->getAttributeText('manufacturer');
-            if ($manufacturer === false) {
-                $outputArray['product_brand'] = [""];
-            } else {
-                $outputArray['product_brand'] = [$manufacturer];
-            }
-
-            if (!(
-            $outputArray['product_unit_price'] = [
-                number_format($_product->getFinalPrice(), 2, '.', '')
-            ]
-            )) {
-                $outputArray['product_unit_price'] = [];
-            }
-
-            if (!(
-            $outputArray['product_list_price'] = [
-                number_format($_product->getData('price'), 2, '.', '')
-            ]
-            )) {
-                $outputArray['product_list_price'] = [];
-            }
-            
-            $categoryId = $_product->getCategoryIds();
-            
-            $categoriesIds = $_product->getCategoryIds();
-            if ($categoriesIds) {
-                foreach ($categoriesIds as $categoryId) {
-                   
-                    $category = $this->categoryFactory->create()->load($categoryId);
-                    $categoryName =  $category->getName();
-                    $categoryIds =  $categoryId;
-                    
-                    
-                  
-
-                    $parent = $this->categoryFactory->create()->load($category->getParentId());
-
-
-                    if ($parent->getName() != "Default Category") {
-                        $parentCatName = $parent->getName();
-                    }
+            $parents = $this->productHelper->loadCategories($parentIds);
+            foreach ($categoryIds as $id) {
+                if (!isset($categories[(int)$id])) {
+                    continue;
+                }
+                $categoryName = $categories[(int)$id]['name'];
+                $parentId = $categories[(int)$id]['parent_id'];
+                if (isset($parents[$parentId]) && $parents[$parentId]['name'] != "Default Category") {
+                    $parentCatName = $parents[$parentId]['name'];
                 }
             }
-            
-            
-            $outputArray['category_id'] = $categoryId ? : "";
+
+            $outputArray['category_id'] = $lastCategoryId ? : "";
             $outputArray['category_name'] = $parentCatName ? : "";
-            $outputArray['product_subcategory'] = [$categoryName] ? : "";
-                        
+            $outputArray['product_subcategory'] = [$categoryName];
         } else {
             $outputArray['product_id'] = [];
             $outputArray['product_sku'] = [];
@@ -580,86 +270,39 @@ class TealiumData extends AbstractHelper
             $outputArray['product_unit_price'] = [];
             $outputArray['product_list_price'] = [];
         }
-        $_category = $this->_registry->registry('current_category');
-        if ($_category) {
-            $categoryId = $_category->getEntityId();
-            
-           
-            $categoryp = $this->categoryFactory->create()->load($categoryId);
-
-            $categoryProducts = $categoryp->getProductCollection()
-                                ->addAttributeToSelect('*');
-            
-            
-
-            $catProductList = [];
-            foreach ($categoryProducts as $catProduct) {
-                $catProductList[] = $catProduct['entity_id'];
-            }
-            
-        }
-        $ItemsQty = $this->httpContext->getValue('ItemsQty');
-        $GrandTotal = $this->httpContext->getValue('GrandTotal');
-       
 
         $outputArray['product_price'] = $outputArray['product_unit_price'];
-        $outputArray['product_original_price'] =
-            $outputArray['product_list_price'];
+        $outputArray['product_original_price'] = $outputArray['product_list_price'];
 
-        if ($this->_registry->registry('current_category')) {
-            if ($this->_registry->registry('current_category')->getName()) {
-                $outputArray['product_category'] = [$this->_registry->registry('current_category')->getName()];
-                $outputArray['product_subcategory'] = [$this->_registry->registry('current_category')->getName()];
+        if ($_category) {
+            if ($_category->getName()) {
+                $outputArray['product_category'] = [$_category->getName()];
+                $outputArray['product_subcategory'] = [$_category->getName()];
             } else {
                 $outputArray['product_category'] = [""];
             }
         } elseif ($_product) {
-            $cats = $_product->getCategoryIds();
+            $cats = array_values((array)$_product->getCategoryIds());
             if (count($cats)) {
-                $firstCategoryId = $cats[0];
-
-                $_category = $this->categoryFactory->create()->load($firstCategoryId);
-
-                $outputArray['product_category'] = [
-                    $_category->getName()
-                ];
-                
+                $first = $this->productHelper->loadCategories([$cats[0]]);
+                $outputArray['product_category'] = [isset($first[(int)$cats[0]]) ? $first[(int)$cats[0]]['name'] : ""];
             } else {
                 $outputArray['product_category'] = [""];
             }
         }
 
-      
-        $outputArray['site_section'] = "Clothing";
         $outputArray['tealium_event'] = "product_view";
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
 
-        $locale = $this->_localeResolver->getLocale();
-        $locale = explode("_", $locale);
-        if (!empty($locale)) {
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-        }
-        
-
-        // Check if $ItemsQty and $GrandTotal are not null before formatting them
-        if ($ItemsQty !== null) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        } else {
-            $outputArray['cart_total_items'] = '';
-        }
-
-        if ($GrandTotal !== null) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-        } else {
-            $outputArray['cart_total_value'] = '';
-        }
+        // cart totals are filled in client-side from the private "cart" section
+        $outputArray['cart_total_items'] = '';
+        $outputArray['cart_total_value'] = '';
 
         return $outputArray;
     }
 
     public function getCartPage()
     {
-        $store = $this->store;
         $page = $this->page;
 
         $checkout_ids = [];
@@ -668,246 +311,133 @@ class TealiumData extends AbstractHelper
         $checkout_qtys = [];
         $checkout_prices = [];
         $checkout_original_prices = [];
-        $checkout_brands = [];
-        $categoryName = [];
-        $GrandTotal = false;
-        $ItemsQty = false;
         $checkout_images = [];
         $checkout_url = [];
         $checkout_catId = [];
+        $categoryName = [];
         $parentCatName = [];
-        $itemDiscountAmmount = [];
-        $product_promo_code = false;
-        
-        $outputArray = [];
-        
-        
-       
-        $mediaUrl = $this->_store
-            ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
-        
-        if ($this->_checkoutSession) {
-        
-            $quote = $this->_checkoutSession->getQuote();
-            $ItemsQty = $this->httpContext->getValue('ItemsQty');
-            $GrandTotal = $this->httpContext->getValue('GrandTotal');
-            
-            
-            
-            // https://magento.stackexchange.com/questions/230052/what-is-alternative-for-cacheable-false
-            
-            if (!empty($ItemsQty)) {
-                foreach ($quote->getAllVisibleItems() as $item) {
-                    $itemTotal[] = $item->getPrice();
-                }
-                if (!empty($itemTotal)) {
-                    $itemTotals = array_sum($itemTotal);
-                }
-                
-                foreach ($quote->getAllVisibleItems() as $item) {
-                    $checkout_ids[] = $item->getProductId();
-                    $checkout_skus[] = $item->getSku();
-                    $checkout_names[] = $item->getName();
-                    $checkout_catId[] = $item->getCategoryIds();
-                    
-                    
-                   
+        $manufacturer = [];
+        $itemDiscountAmount = [];
 
-                    $productRepository = $this->productRepository;
- 
-                    $productCategoryId = $productRepository->getById($item->getProductId());
-                     
-                    $categoryIds = $productCategoryId->getCategoryIds();
-                    
+        $quote = $this->_checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        $product_promo_code = $quote->getCouponCode();
 
-                    $productCat = $this->productRepository->getById($item->getProductId());
-                    $manufacturer[] = $productCat->getAttributeText('manufacturer');
-                    
-                    $categoriesIds = $productCat->getCategoryIds();
-                    
-                    if ($categoryIds) {
-                        foreach ($categoriesIds as $catId) {
-                            if ($catId != 2) {
-                                
+        $productIds = [];
+        foreach ($items as $item) {
+            $productIds[] = $item->getProductId();
+        }
+        // also preloads every assigned category and its ancestors
+        $products = $this->productHelper->loadProducts($productIds);
 
-                                $category = $this->categoryFactory->create()->load($catId);
-                            }
-                        }
-                        $categoryName[] =  $category->getName();
-                        
-                       
+        $mediaUrl = $this->getProductMediaBaseUrl();
 
-                        $parent = $this->categoryFactory->create()->load($category->getParentId());
-                        
-                        if ($parent->getName() != "Default Category") {
-                            $parentCatName[] = $parent->getName();
-                        }
-                    }
-                    
-                    
+        foreach ($items as $item) {
+            $product = isset($products[(int)$item->getProductId()]) ? $products[(int)$item->getProductId()] : null;
 
-                    
+            $checkout_ids[] = $item->getProductId();
+            $checkout_skus[] = $item->getSku();
+            $checkout_names[] = $item->getName();
+            $checkout_catId[] = $item->getCategoryIds();
 
-                    $productCat = $this->productRepository->getById($item->getId());
-                    $productRepository = $this->productRepository->getById($item->getProductId());
+            $brand = $product ? $this->productHelper->getManufacturer($product) : false;
+            $manufacturer[] = $brand;
 
-
-                    
-                    
-                    $checkout_url[] = $productRepository->getProductUrl();
-                    $checkout_images[] = $mediaUrl.$productRepository->getImage();
-                    
-                    //$checkout_images[] = $mediaUrl.$item->getImage();
-                    $checkout_qtys[] = number_format($item->getQty(), 0, ".", "");
-                    $checkout_prices[] =
-                        number_format($item->getPrice(), 2, ".", "");
-                    $checkout_original_prices[] =
-                        number_format($item->getProduct()->getPrice(), 2, ".", "");
-                    $checkout_brands[] = $item->getProduct()->getBrand();
-                    
-                    $getCoupon = $this->_objectManager->get('Magento\Checkout\Block\Cart\Coupon');
-            
-                    $product_promo_code = $getCoupon->getCouponCode();
-                    
-                    if (!empty($product_promo_code)) {
-                        
-                        
-                        
-                        
-                       
-
-                        $couponInstance = $this->couponFactory->create();
-                        $ruleId = $couponInstance->loadByCode($product_promo_code)->getRuleId();
-        
-                        $ruleInstance = $this->ruleFactory->create();
-                        $rule = $ruleInstance->load($ruleId);
-
-
-
-
-                        //by_fixed by_percent cart_fixed buy_x_get_y
-                        $discountAmount = $rule->getDiscountAmount();
-                        $itemSku = $item->getSku();
-                        $itemPrice = $item->getPrice();
-                        if ($rule->getSimpleAction() == 'by_percent') {
-                                $itemPrice = $item->getPrice();
-                                $itemQty = $item->getQty();
-                                //if (!in_array($itemSku, $checkout_skus)){
-                                    $itemDiscountAmmount[] = number_format($itemPrice*$discountAmount/100*$itemQty, 2, ".", "");
-                                //}
-                        } elseif ($rule->getSimpleAction() == 'by_fixed' && $rule->getSimpleAction() == 'by_fixed') {
-                                $itemQty = $item->getQty();
-                        //        if (!in_array($itemSku, $checkout_skus)){
-                                    $itemDiscountAmmount[] = number_format($itemPrice*$discountAmount/100*$itemQty, 2, ".", "");
-                                    
-                            //    }
-                                
-                        }
-                        
-                    }
-                    
+            // the last assigned category (other than the default root) is used
+            $itemCategory = null;
+            $categoryIds = $product ? (array)$product->getCategoryIds() : [];
+            foreach ($this->productHelper->loadCategories($categoryIds) as $id => $category) {
+                if ($id != 2) {
+                    $itemCategory = $category;
                 }
             }
-        }
-        
-        
+            $parentName = '';
+            if ($itemCategory) {
+                $parent = $this->productHelper->loadCategories([$itemCategory['parent_id']]);
+                $parent = reset($parent);
+                if ($parent && $parent['name'] != "Default Category") {
+                    $parentName = $parent['name'];
+                }
+            }
+            // keep the arrays lined up with the product arrays
+            $categoryName[] = $itemCategory ? $itemCategory['name'] : '';
+            $parentCatName[] = $parentName;
 
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
+            $checkout_url[] = $product ? $product->getProductUrl() : '';
+            $checkout_images[] = $product ? $mediaUrl . $product->getImage() : '';
+            $checkout_qtys[] = number_format((float)$item->getQty(), 0, ".", "");
+            $checkout_prices[] = number_format((float)$item->getPrice(), 2, ".", "");
+            $checkout_original_prices[] = number_format((float)$item->getProduct()->getPrice(), 2, ".", "");
+
+            if (!empty($product_promo_code)) {
+                $itemDiscountAmount[] = number_format((float)$item->getDiscountAmount(), 2, ".", "");
+            }
+        }
+
+        $outputArray = $this->getSiteData();
 
         $titleBlock = $page->getLayout()->getBlock('page.main.title');
         if ($titleBlock) {
-            $outputArray['page_name'] =
-                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_name'] = $titleBlock->getPageTitle() ? : "";
             $outputArray['page_type'] = "cart";
         } else {
             $outputArray['page_name'] = "Cart";
             $outputArray['page_type'] = "cart";
         }
-         
-         
+
         if ($product_promo_code) {
-            $outputArray['product_promo_code'] = [$product_promo_code] ? :'';
-            $outputArray['product_discount_amount'] = $itemDiscountAmmount ? :'';
+            $outputArray['product_promo_code'] = [$product_promo_code];
+            $outputArray['product_discount_amount'] = $itemDiscountAmount ? : '';
         }
-        
+
         // THE FOLLOWING NEEDS TO BE MATCHED ARRAYS (SAME NUMBER OF ELEMENTS)
-       
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
 
-        $locale = $this->_localeResolver->getLocale();
-        $locale = explode("_", $locale);
-        if (!empty($locale)) {
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-        }
-        
-        
-        
-        $outputArray['product_image_url'] = $checkout_images ? : [];
-        $outputArray['product_subcategory'] = $parentCatName ? : [];
-        $outputArray['product_url'] = $checkout_url ? : [];
-       
-        // Check if $ItemsQty and $GrandTotal are not null before formatting them
-        if ($ItemsQty !== null) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "");
-        } else {
-            $outputArray['cart_total_items'] = '';
-        }
+        $outputArray['product_image_url'] = $checkout_images;
+        $outputArray['product_subcategory'] = $parentCatName;
+        $outputArray['product_url'] = $checkout_url;
 
-        if ($GrandTotal !== null) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "");
-        } else {
-            $outputArray['cart_total_value'] = '';
-        }
+        // the cart and checkout pages are not cached, so the live quote is used
+        $outputArray['cart_total_items'] = $quote->getItemsQty() !== null
+            ? number_format((float)$quote->getItemsQty(), 2, ".", "") : '';
+        $outputArray['cart_total_value'] = $quote->getGrandTotal() !== null
+            ? number_format((float)$quote->getGrandTotal(), 2, ".", "") : '';
 
-        if (empty($manufacturer)) {
-            $outputArray['product_brand'] = [""];
-        } else {
-            $outputArray['product_brand'] = $manufacturer ? : [];
-        }
-        
-        
+        $outputArray['product_brand'] = empty($manufacturer) ? [""] : $manufacturer;
+
         if ($outputArray['page_name'] != 'Checkout' && $outputArray['page_name'] != 'Shopping Cart') {
             $outputArray['category_id'] = $checkout_catId ? : "";
             $outputArray['category_name'] = $categoryName ? : "";
             $outputArray['product_subcategory'] = $parentCatName ? : "";
-            $outputArray['site_section'] = "Clothing";
-        
         }
-        $outputArray['product_id'] = $checkout_ids ? : [];
-        $outputArray['product_sku'] = $checkout_skus ? : [];
-        $outputArray['product_name'] = $checkout_names ? : [];
-        $outputArray['product_category'] = $categoryName ? : [];
-        $outputArray['product_quantity'] = $checkout_qtys ? : [];
-        $outputArray['product_unit_price'] = $checkout_prices ? : [];
-        $outputArray['product_list_price'] = $checkout_original_prices ? : [];
-            
+        $outputArray['product_id'] = $checkout_ids;
+        $outputArray['product_sku'] = $checkout_skus;
+        $outputArray['product_name'] = $checkout_names;
+        $outputArray['product_category'] = $categoryName;
+        $outputArray['product_quantity'] = $checkout_qtys;
+        $outputArray['product_unit_price'] = $checkout_prices;
+        $outputArray['product_list_price'] = $checkout_original_prices;
+
         $outputArray['tealium_event'] = "cart_view";
         if ($outputArray['page_name'] == 'Checkout') {
             $outputArray['tealium_event'] = "checkout";
         }
         $outputArray['product_price'] = $outputArray['product_unit_price'];
-        $outputArray['product_original_price'] =
-            $outputArray['product_list_price'];
-        
+        $outputArray['product_original_price'] = $outputArray['product_list_price'];
+
         return $outputArray;
     }
 
     public function getOrderConfirmation()
     {
-        $store = $this->store;
-        $page = $this->page;
-
         $customer_id = false;
         $ids = [];
         $skus = [];
         $names = [];
-        $brands = [];
         $prices = [];
         $original_prices = [];
         $qtys = [];
         $discounts = [];
-        $discount_quantity = [];
         $productImage = [];
         $productUrl = [];
         $categoryName = [];
@@ -915,231 +445,112 @@ class TealiumData extends AbstractHelper
         $parentCatName = [];
 
         if ($this->customerSession->isLoggedIn()) {
-            $customer = $this->customerSession->getCustomer();
-        
-        
-            $customer_id = $customer->getEntityId();
-            $customer_email = $customer->getEmail();
-            $groupId = $customer->getGroupId();
-            
-
-
-            $group = $this->groupRepository->getById($groupId);
-            $customer_type = $group->getCode();
+            $customer_id = $this->customerSession->getCustomerId();
         }
 
-        $orderInstance = $this->orderFactory->create();
+        $order = $this->_checkoutSession->getLastRealOrder();
+        $items = $order->getAllVisibleItems();
 
-       
-        if ($orderInstance) {
+        $productIds = [];
+        foreach ($items as $item) {
+            $productIds[] = $item->getProductId();
+        }
+        $products = $this->productHelper->loadProducts($productIds);
+        $mediaUrl = $this->getProductMediaBaseUrl();
 
-            
-            /** @var \Magento\Checkout\Model\Session $checkoutSession */
-            
-            $checkoutSession = $this->_checkoutSession;
+        foreach ($items as $item) {
+            $product = isset($products[(int)$item->getProductId()]) ? $products[(int)$item->getProductId()] : null;
 
-            
-            $order = $checkoutSession->getLastRealOrder();
-            
+            $ids[] = $item->getProductId();
+            $skus[] = $item->getSku();
+            $manufacturer[] = $product ? $this->productHelper->getManufacturer($product) : false;
+            $productUrl[] = $product ? $product->getProductUrl() : '';
+            $productImage[] = $product ? $mediaUrl . $product->getImage() : '';
 
-            $mediaUrl = $this->_store
-                ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
-            
-            foreach ($order->getAllVisibleItems() as $item) {
-                
-                $ids[] = $item->getProductId();
-                $skus[] = $item->getSku();
-                
-               
-
-                
-
-                $productCat = $this->productFactory->create()->load($item->getProductId());
-                $manufacturer[] = $productCat->getAttributeText('manufacturer');
-                
-                $categoriesIds = $productCat->getCategoryIds();
-                $productUrl[] = $productCat->getProductUrl();
-                $productImage[] = $mediaUrl.$productCat->getImage();
-                
-                
-
-                $productRepository = $this->productRepository;
-                $productCategoryId = $productRepository->getById($item->getProductId());
-                $categoryIds = $productCategoryId->getCategoryIds();
-                
-                if ($categoryIds) {
-                    foreach ($categoriesIds as $catId) {
-                        if ($catId != 2) {
-                            
-
-
-                            $category = $this->categoryRepository->get($catId);
-                        }
-                    }
-                    $categoryName[] =  $category->getName();
-                    
-                    
-
-                    $parent = $this->categoryRepository->get($category->getParentId());
-                    if ($parent->getName() != "Default Category") {
-                        $parentCatName[] = $parent->getName();
-                    }
+            // the last assigned category (other than the default root) is used
+            $itemCategory = null;
+            $categoryIds = $product ? (array)$product->getCategoryIds() : [];
+            foreach ($this->productHelper->loadCategories($categoryIds) as $id => $category) {
+                if ($id != 2) {
+                    $itemCategory = $category;
                 }
-                
-                $names[] = $item->getName();
-                
-                $qtys[] = number_format($item->getQtyOrdered(), 0, ".", "");
-                $prices[] = number_format($item->getPrice(), 2, ".", "");
-                $original_prices[] =
-                    number_format($item->getProduct()->getPrice(), 2, ".", "");
-                $discount =
-                    number_format($item->getDiscountAmount(), 2, ".", "");
-                $discounts[] = $discount;
-                $applied_rules = explode(",", $item->getAppliedRuleIds() ?? '');
-                $discount_object = [];
-                $brands[] = $item->getProduct()->getBrand();
-                foreach ($applied_rules as $rule) {
-
-                    $quantity = "";
-
-                    $ruleInstance = $this->ruleFactory->create();
-                    $discountQty = $ruleInstance->load($rule)->getDiscountQty();
-                    
-                    
-                    if ($discountQty !== null) {
-                        $quantity = number_format($discountQty, 0, ".", "");
-                    } 
-                
-                    $amount = "";
-                   
-
-                    $discountAmount = $this->ruleFactory->create()->load($rule)->getDiscountAmount();
-                
-                    if ($discountAmount !== null) {
-                        $amount = number_format($discountAmount, 2, ".", "");
-                    } 
-                
-
-
-                    $type = $this->ruleFactory->create()->load($rule)->getSimpleAction();
-
-
-                    $discount_object[] = [
-                        "rule" => $rule,
-                        "quantity" => $quantity,
-                        "amount" => $amount,
-                        "type" => $type
-                    ];
-                }
-                $discount_quantity[] = [
-                    "product_id" => $item->getProductId(),
-                    "total_discount" => $discount,
-                    "discounts" => $discount_object
-                ];
             }
+            $parentName = '';
+            if ($itemCategory) {
+                $parent = $this->productHelper->loadCategories([$itemCategory['parent_id']]);
+                $parent = reset($parent);
+                if ($parent && $parent['name'] != "Default Category") {
+                    $parentName = $parent['name'];
+                }
+            }
+            // keep the arrays lined up with the product arrays
+            $categoryName[] = $itemCategory ? $itemCategory['name'] : '';
+            $parentCatName[] = $parentName;
+
+            $names[] = $item->getName();
+            $qtys[] = number_format((float)$item->getQtyOrdered(), 0, ".", "");
+            $prices[] = number_format((float)$item->getPrice(), 2, ".", "");
+            $original_prices[] = number_format((float)($product ? $product->getPrice() : 0), 2, ".", "");
+            $discounts[] = number_format((float)$item->getDiscountAmount(), 2, ".", "");
         }
-        
-        
-        $outputArray = [];
 
-    
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
+        $outputArray = $this->getSiteData();
         $outputArray['page_name'] = "cart success";
         $outputArray['page_type'] = "order";
         $outputArray['order_id'] = $order->getIncrementId() ? : "";
-        
-
-
-
-
-        $outputArray['order_discount'] =
-        $order->getDiscountAmount() !== null ? number_format($order->getDiscountAmount(), 2, ".", "") : "";
-
-        $outputArray['order_subtotal'] =
-            $order->getSubtotal() !== null ? number_format($order->getSubtotal(), 2, ".", "") : "";
-
-        $outputArray['order_shipping'] =
-            $order->getShippingAmount() !== null ? number_format($order->getShippingAmount(), 2, ".", "") : "";
-
-        $outputArray['order_tax'] =
-            $order->getTaxAmount() !== null ? number_format($order->getTaxAmount(), 2, ".", "") : "";
-
-        $outputArray['order_payment_type'] =
-            $order->getPayment()
-                ? $order->getPayment()->getMethodInstance()->getTitle()
-                : 'unknown';
-
-        $outputArray['order_total'] =
-            $order->getGrandTotal() !== null ? number_format($order->getGrandTotal(), 2, ".", "") : "";
-
-
-            
-            
+        $outputArray['order_discount'] = $this->formatNullable($order->getDiscountAmount());
+        $outputArray['order_subtotal'] = $this->formatNullable($order->getSubtotal());
+        $outputArray['order_shipping'] = $this->formatNullable($order->getShippingAmount());
+        $outputArray['order_tax'] = $this->formatNullable($order->getTaxAmount());
+        $outputArray['order_payment_type'] = $this->getPaymentTitle($order);
+        $outputArray['order_total'] = $this->formatNullable($order->getGrandTotal());
         $outputArray['order_currency'] = $order->getOrderCurrencyCode() ? : "";
         $outputArray['customer_id'] = $customer_id ? : "";
-        $outputArray['customer_email'] = $order->getCustomerEmail() ? : "";
-        $outputArray['product_id'] = $ids ? : [];
-        $outputArray['product_sku'] = $skus ? : [];
-        $outputArray['product_name'] = $names ? : [];
-        $outputArray['product_brand'] = $manufacturer ? : [];
-        $outputArray['product_category'] = $categoryName ? : [];
-        $outputArray['product_unit_price'] = $prices ? : [];
-        $outputArray['product_list_price'] = $original_prices ? : [];
+        $outputArray['customer_email'] = $this->formatEmail($order->getCustomerEmail());
+        $outputArray['product_id'] = $ids;
+        $outputArray['product_sku'] = $skus;
+        $outputArray['product_name'] = $names;
+        $outputArray['product_brand'] = $manufacturer;
+        $outputArray['product_category'] = $categoryName;
+        $outputArray['product_unit_price'] = $prices;
+        $outputArray['product_list_price'] = $original_prices;
         $outputArray['product_price'] = $outputArray['product_unit_price'];
-        $outputArray['product_original_price'] =
-            $outputArray['product_list_price'];
-        $outputArray['product_quantity'] = $qtys ? : [];
-        $outputArray['product_discount'] = $discounts ? : [];
-        //$outputArray['product_discounts'] = $discount_quantity ? : [];
-        
+        $outputArray['product_original_price'] = $outputArray['product_list_price'];
+        $outputArray['product_quantity'] = $qtys;
+        $outputArray['product_discount'] = $discounts;
+
         $product_promo_code = $order->getCouponCode();
-    
-        
 
-        $locale = $this->_localeResolver->getLocale();
-        $outputArray['order_store'] = $locale ? : '';
-        $locale = explode("_", $locale);
-        if (!empty($locale)) {
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-            
-        }
-        $shippingData = '';
-        $shippingData = $order->getShippingAddress();
-                
-        
-        $customer = $this->customerSession->getCustomer();
+        $outputArray['order_store'] = $this->_localeResolver->getLocale() ? : '';
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
 
-        if ($customer->getDefaultShippingAddress()) {
-            $outputArray['customer_city'] = $customer->getDefaultShippingAddress()->getCity() ? : [];
-            $outputArray['customer_country'] = $customer->getDefaultShippingAddress()->getCountryId() ? : [];
-            $outputArray['customer_first_name'] = $customer->getFirstname() ? : [];
-            $outputArray['customer_last_name'] = $customer->getLastname() ? : [];
-            $outputArray['customer_postal_code'] = $customer->getDefaultShippingAddress()->getPostcode() ? : [];
-            $outputArray['customer_state'] = $customer->getDefaultShippingAddress()->getRegion() ? : [];
+        if ($this->customerSession->isLoggedIn()) {
+            $customer = $this->customerSession->getCustomer();
+            $address = $customer->getDefaultShippingAddress();
+            if ($address) {
+                $outputArray['customer_city'] = $address->getCity() ? : [];
+                $outputArray['customer_country'] = $address->getCountryId() ? : [];
+                $outputArray['customer_first_name'] = $customer->getFirstname() ? : [];
+                $outputArray['customer_last_name'] = $customer->getLastname() ? : [];
+                $outputArray['customer_postal_code'] = $address->getPostcode() ? : [];
+                $outputArray['customer_state'] = $address->getRegion() ? : [];
+            }
         }
         $outputArray['order_promo_code'] = $product_promo_code ? : [];
         $outputArray['order_shipping_amount'] = $order->getShippingAmount() ? : [];
         $outputArray['order_shipping_type'] = $order->getShippingMethod() ? : [];
         $outputArray['page_name'] = "Order Confirmation - Thank You";
-        $outputArray['product_image_url'] = $productImage ? : [];
+        $outputArray['product_image_url'] = $productImage;
         $outputArray['product_promo_code'] = $product_promo_code ? : [];
-        $outputArray['product_subcategory'] = $parentCatName ? : [];
-        $outputArray['product_url'] = $productUrl ? : [];
+        $outputArray['product_subcategory'] = $parentCatName;
+        $outputArray['product_url'] = $productUrl;
         $outputArray['tealium_event'] = "purchase";
-        
-        
-        $shippingMethod = $order->getShippingDescription();
-        $order->getShippingMethod();
-                
+
         return $outputArray;
     }
 
     public function getCustomerData()
     {
-        $store = $this->store;
         $page = $this->page;
 
         $customer_id = false;
@@ -1152,78 +563,39 @@ class TealiumData extends AbstractHelper
         $customer_city = false;
         $customer_region = false;
 
-       
-
         if ($this->customerSession->isLoggedIn()) {
             $customer = $this->customerSession->getCustomer();
             if (!empty($customer)) {
                 $customer_id = $customer->getEntityId();
                 $customer_email = $customer->getEmail();
-                
                 $customer_firstname = $customer->getFirstname();
                 $customer_lastname = $customer->getLastname();
-                if ($customer->getDefaultShippingAddress()) {
-                    $customer_postal_code = $customer->getDefaultShippingAddress()->getPostcode();
-                    $country_id = $customer->getDefaultShippingAddress()->getCountryId();
-                    $customer_city = $customer->getDefaultShippingAddress()->getCity();
-                    $customer_region = $customer->getDefaultShippingAddress()->getRegion();
+                $address = $customer->getDefaultShippingAddress();
+                if ($address) {
+                    $customer_postal_code = $address->getPostcode();
+                    $country_id = $address->getCountryId();
+                    $customer_city = $address->getCity();
+                    $customer_region = $address->getRegion();
                 }
-                $groupId = $customer->getGroupId();
-                
-
-
-                $group = $this->groupRepository->getById($groupId);
-                $customer_type = $group->getCode();
+                $customer_type = $this->getCustomerGroupCode($customer->getGroupId());
             }
-            
         }
-        
-        $outputArray = [];
 
-       
-
-        $outputArray['site_region'] =   $this->_localeResolver->getLocale() ?: "";
-        $outputArray['site_currency'] = $store->getCurrentCurrencyCode() ? : "";
+        $outputArray = $this->getSiteData();
         $titleBlock = $page->getLayout()->getBlock('page.main.title');
         if ($titleBlock) {
-            $outputArray['page_name'] =
-                $page->getLayout()->getBlock('page.main.title')->getPageTitle() ? : "";
+            $outputArray['page_name'] = $titleBlock->getPageTitle() ? : "";
             $outputArray['page_type'] = $page->getTealiumType() ? : "";
         } else {
             $outputArray['page_name'] = "Customer Data";
             $outputArray['page_type'] = "customer_data";
         }
         $outputArray['customer_id'] = $customer_id ? : "";
-        $outputArray['customer_email'] = $customer_email ? : "";
+        $outputArray['customer_email'] = $this->formatEmail($customer_email);
         $outputArray['customer_type'] = $customer_type ? : "";
-        
-        
 
-        $locale = $this->_localeResolver->getLocale();
-        $locale = explode("_", $locale);
-        if (!empty($locale)) {
-            $outputArray['country_code'] = strtolower($locale[1]) ? : '';
-            $outputArray['language_code'] = $locale[0] ? : '';
-        }
-        
-        
+        $outputArray = array_merge($outputArray, $this->getLocaleCodes());
 
-        $session =  $this->_checkoutSession;
-        
-        $ItemsQty = $this->httpContext->getValue('ItemsQty');
-        $GrandTotal = $this->httpContext->getValue('GrandTotal');
-        
-        if ($session->getQuote()) {
-            $quote =$session->getQuote();
-        
-        }
-        if ($ItemsQty) {
-            $outputArray['cart_total_items'] = number_format($ItemsQty, 2, ".", "") ? : "";
-        }
-        if ($GrandTotal) {
-            $outputArray['cart_total_value'] = number_format($GrandTotal, 2, ".", "") ? : "";
-        }
-        
         $outputArray['customer_city'] = $customer_city ? : "";
         $outputArray['customer_country'] = $country_id ? : "";
         $outputArray['customer_first_name'] = $customer_firstname ? : "";
@@ -1233,5 +605,163 @@ class TealiumData extends AbstractHelper
         $outputArray['tealium_event'] = "page_view";
 
         return $outputArray;
+    }
+
+    /**
+     * Apply the "Allow plain text customer email" setting: unless plain text
+     * is explicitly allowed, emails are SHA-256 hashed.
+     *
+     * @param string|null|false $email
+     * @return string
+     */
+    public function formatEmail($email)
+    {
+        if (!$email) {
+            return "";
+        }
+        $plain = $this->scopeConfig->getValue(
+            self::XML_PATH_PLAIN_TXT_EMAIL,
+            ScopeInterface::SCOPE_STORE,
+            $this->getStoreId()
+        );
+        return $plain ? (string)$email : hash('sha256', strtolower((string)$email));
+    }
+
+    /**
+     * @param int|null $groupId
+     * @return string
+     */
+    public function getCustomerGroupCode($groupId)
+    {
+        if ($groupId === null || $groupId === '') {
+            return "";
+        }
+        try {
+            return (string)$this->groupRepository->getById($groupId)->getCode();
+        } catch (\Exception $e) {
+            return "";
+        }
+    }
+
+    /**
+     * site_region and site_currency, shared by every page type
+     *
+     * @return array
+     */
+    private function getSiteData()
+    {
+        $store = $this->store ? : $this->_storeManager->getStore();
+        return [
+            'site_region' => $this->_localeResolver->getLocale() ? : "",
+            'site_currency' => $store->getCurrentCurrencyCode() ? : ""
+        ];
+    }
+
+    /**
+     * country_code and language_code derived from the locale, e.g. en_US
+     *
+     * @return array
+     */
+    private function getLocaleCodes()
+    {
+        $locale = explode("_", (string)$this->_localeResolver->getLocale());
+        return [
+            'country_code' => isset($locale[1]) ? strtolower($locale[1]) : '',
+            'language_code' => isset($locale[0]) ? $locale[0] : ''
+        ];
+    }
+
+    /**
+     * Layered navigation filters applied through the query string. Only
+     * price, category and filterable product attributes count as refinements;
+     * paging, sorting and tracking parameters (utm_*, gclid, ...) are ignored.
+     *
+     * @return array browse_refine_type / browse_refine_value, when present
+     */
+    private function getBrowseRefinements()
+    {
+        $types = [];
+        $values = [];
+
+        $query = method_exists($this->_request, 'getQueryValue') ? $this->_request->getQueryValue() : [];
+        foreach (is_array($query) ? $query : [] as $key => $value) {
+            if (in_array($key, self::NON_REFINEMENT_PARAMS, true) || !is_scalar($value) || $value === '') {
+                continue;
+            }
+
+            if ($key === 'price' || $key === 'cat') {
+                $types[] = $key;
+                $values[] = (string)$value;
+                continue;
+            }
+
+            try {
+                $attribute = $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $key);
+            } catch (\Exception $e) {
+                continue;
+            }
+            if (!$attribute || !$attribute->getId()
+                || !($attribute->getIsFilterable() || $attribute->getIsFilterableInSearch())
+            ) {
+                continue;
+            }
+
+            $text = $attribute->usesSource() ? $attribute->getSource()->getOptionText($value) : $value;
+            if (is_array($text)) {
+                $text = implode(',', $text);
+            }
+            $types[] = $key;
+            $values[] = (string)$text;
+        }
+
+        $result = [];
+        if (!empty($types)) {
+            $result['browse_refine_type'] = $types;
+            $result['browse_refine_value'] = $values;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string base url of product images for the current store
+     */
+    private function getProductMediaBaseUrl()
+    {
+        return $this->_storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     * @return string
+     */
+    private function getPaymentTitle($order)
+    {
+        $payment = $order->getPayment();
+        if (!$payment) {
+            return 'unknown';
+        }
+        try {
+            return (string)$payment->getMethodInstance()->getTitle();
+        } catch (\Exception $e) {
+            return (string)$payment->getMethod();
+        }
+    }
+
+    /**
+     * @param float|string|null $value
+     * @return string
+     */
+    private function formatNullable($value)
+    {
+        return $value !== null ? number_format((float)$value, 2, ".", "") : "";
+    }
+
+    /**
+     * @return int|null
+     */
+    private function getStoreId()
+    {
+        $store = $this->store ? : $this->_storeManager->getStore();
+        return $store ? $store->getId() : null;
     }
 }

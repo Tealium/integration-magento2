@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
 
+    <event name="controller_front_send_response_before">
+        <observer name="tealium_tags" instance="Tealium\Tags\Observer\Api" />
+    </event>
+
     <event name="checkout_cart_add_product_complete"> 
         <observer name="checkout_cart_add_product_complete" 
                   instance="Tealium\Tags\Observer\AddProduct" />
