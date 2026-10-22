@@ -3,29 +3,26 @@
 namespace Tealium\Tags\Observer;
 
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Review\Model\Review;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 use Magento\Framework\Registry;
+use Magento\Review\Model\Rating\OptionFactory as RatingOptionFactory;
 
-class ReviewSaveBefore implements ObserverInterface
+class ReviewSaveBefore extends AbstractObserver
 {
-    /** @var \Magento\Framework\Logger\Monolog */
-    protected $_logger;
-
     protected $_coreSession;
 
     protected $_coreRegistry;
 
+    protected $_ratingOptionFactory;
+
     public function __construct(
-        LoggerInterface $loggerInterface,
         CoreSession $coreSession,
-        Registry $coreRegistry
+        Registry $coreRegistry,
+        RatingOptionFactory $ratingOptionFactory
     ) {
-        $this->_logger = $loggerInterface;
         $this->_coreSession = $coreSession;
         $this->_coreRegistry = $coreRegistry;
+        $this->_ratingOptionFactory = $ratingOptionFactory;
     }
 
     /**
@@ -33,22 +30,36 @@ class ReviewSaveBefore implements ObserverInterface
      *
      * @param Observer $observer
      */
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
-        // /** @var Review $review */
+        /** @var \Magento\Review\Model\Review $review */
         $review = $observer->getDataByKey('object');
-        $reviewerNickname = $review->getNickname();
-        $reviewTitle = $review->getTitle();
-        $reivewDetail = $review->getDetail();
-        $reviewRating = $review->getRatings()[4] - 15;
-
         $product = $this->_coreRegistry->registry('current_product');
-        $productId = $product->getId();
+        if (!$review || !$product) {
+            return;
+        }
 
-        $this->_coreSession->setTealiumReviewerNickname($reviewerNickname);
-        $this->_coreSession->setTealiumReviewTitle($reviewTitle);
-        $this->_coreSession->setTealiumReviewDetail($reivewDetail);
-        $this->_coreSession->setTealiumReviewRating($reviewRating);
-        $this->_coreSession->setTealiumReviewProductId($productId);
+        $this->_coreSession->setTealiumReviewerNickname($review->getNickname());
+        $this->_coreSession->setTealiumReviewTitle($review->getTitle());
+        $this->_coreSession->setTealiumReviewDetail($review->getDetail());
+        $this->_coreSession->setTealiumReviewRating($this->getRatingValue($review->getRatings()));
+        $this->_coreSession->setTealiumReviewProductId($product->getId());
+    }
+
+    /**
+     * The star value (1-5) of the first rating given, or "" when the review
+     * has no rating. Ratings are submitted as rating id => option id.
+     *
+     * @param array|null $ratings
+     * @return int|string
+     */
+    private function getRatingValue($ratings)
+    {
+        if (!is_array($ratings) || empty($ratings)) {
+            return "";
+        }
+
+        $option = $this->_ratingOptionFactory->create()->load((int)reset($ratings));
+        return $option->getId() ? (int)$option->getValue() : "";
     }
 }

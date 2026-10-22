@@ -3,29 +3,16 @@
 namespace Tealium\Tags\Observer;
 
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Review\Model\Review;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
-use Magento\Framework\Registry;
 
-class NewsletterSaveBefore implements ObserverInterface
+class NewsletterSaveBefore extends AbstractObserver
 {
-    /** @var \Magento\Framework\Logger\Monolog */
-    protected $_logger;
-
     protected $_coreSession;
-    
-    protected $_coreRegistry;
 
     public function __construct(
-        LoggerInterface $loggerInterface,
-        CoreSession $coreSession,
-        Registry $coreRegistry
+        CoreSession $coreSession
     ) {
-        $this->_logger = $loggerInterface;
         $this->_coreSession = $coreSession;
-        $this->_coreRegistry = $coreRegistry;
     }
 
     /**
@@ -33,29 +20,14 @@ class NewsletterSaveBefore implements ObserverInterface
      *
      * @param Observer $observer
      */
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
-
-        // Get the newsletter subscriber object
         $subscriber = $observer->getEvent()->getSubscriber();
 
-        // Get the subscription ID
-        $subscriptionId = $subscriber->getId();
-
-        if ($subscriber->isObjectNew()) {
-            // This is a new subscription
-            $email = $subscriber->getEmail();
-            
-            $this->_logger->notice('Email: ' . $email);
-            $this->_logger->notice('subscriber ID: ' . $subscriptionId);
-
-            $this->_coreSession->setTealiumNewsletterEmail($email);
-
-            $this->_coreSession->setTealiumNewsletterId($subscriptionId);
-        } else {
-            // This is an update to an existing subscription
-            // You can perform custom logic for updates here
-            $this->_logger->notice('Existing subscriber ID: ' . $subscriptionId);
+        // only new subscriptions are tracked
+        if ($subscriber && $subscriber->isObjectNew()) {
+            $this->_coreSession->setTealiumNewsletterEmail($subscriber->getEmail());
+            $this->_coreSession->setTealiumNewsletterId($subscriber->getId());
         }
     }
 }

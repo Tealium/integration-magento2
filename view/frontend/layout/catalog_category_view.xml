@@ -10,6 +10,13 @@
         <referenceContainer name="after.body.start">
             <referenceBlock name="tealium_generic" remove="true"/>
             <block class="Tealium\Tags\Block\Template" name="tealium_category" ifconfig="tealium_tags/general/enable" as="tealium_category" template="tealium_tags/category.phtml" before="tealium_base" />
-    </referenceContainer>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Tealium\Tags\Block\Template" name="tealium_product_on_page" ifconfig="tealium_tags/general/enable" template="Tealium_Tags::tealium_tags/product_on_page.phtml">
+                <arguments>
+                    <argument name="list_block" xsi:type="string">category.products.list</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>

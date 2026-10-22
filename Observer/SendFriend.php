@@ -1,12 +1,11 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Request\Http;
 
-class SendFriend implements ObserverInterface
+class SendFriend extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -27,12 +26,12 @@ class SendFriend implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
-        $request = $this->_request->getParams();
-        $product_id = $request['id'];
-
-        $this->_customerSession->setTealiumSendFriend($product_id);
+        $product_id = $this->_request->getParam('id');
+        if ($product_id) {
+            $this->_customerSession->setTealiumSendFriend($product_id);
+        }
 
         return $this;
     }

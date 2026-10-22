@@ -1,13 +1,12 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\App\Request\Http;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 
-class UpdateItemOptions implements ObserverInterface
+class UpdateItemOptions extends AbstractObserver
 {
 
     protected $_request;
@@ -32,13 +31,12 @@ class UpdateItemOptions implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
 
-        $requestParamList = $this->_request->getParams();
-
-        if ($requestParamList['id']) {
-            $this->_customerSession->setTealiumQty([$requestParamList['id']]);
+        $id = $this->_request->getParam('id');
+        if ($id) {
+            $this->_customerSession->setTealiumQty([$id]);
         }
 
         

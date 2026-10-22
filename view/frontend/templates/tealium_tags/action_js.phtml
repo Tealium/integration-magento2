@@ -1,11 +1,19 @@
+<?php
+/** @var \Tealium\Tags\Block\Template $block */
+$helper = $this->helper('Tealium\Tags\Helper\Data');
+$store = $block->getStore();
+
+$config = [
+    '*' => [
+        // loads utag.js asynchronously, once
+        'Tealium_Tags/js/utagLib' => ['utagUrl' => $helper->getTealiumBaseUrl($store)],
+        'Tealium_Tags/js/myUtag' => new \stdClass(),
+        'Tealium_Tags/js/miniCart' => new \stdClass(),
+        'Tealium_Tags/js/extendPaymentMethod' => new \stdClass(),
+        'Tealium_Tags/js/userLogout' => new \stdClass()
+    ]
+];
+?>
 <script type="text/x-magento-init">
-{
-  "*": {
-    "Tealium_Tags/js/utagLib": <?= /* @noEscape */ $block->getJsLayout(); ?>,
-    "Tealium_Tags/js/myUtag": <?= /* @noEscape */ $block->getJsLayout(); ?>,
-    "Tealium_Tags/js/miniCart": <?= /* @noEscape */ $block->getJsLayout(); ?>,
-    "Tealium_Tags/js/extendPaymentMethod": <?= /* @noEscape */ $block->getJsLayout(); ?>,
-    "Tealium_Tags/js/userLogout": <?= /* @noEscape */ $block->getJsLayout(); ?>
-  }
-}
+<?= /* @noEscape */ json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>
 </script>

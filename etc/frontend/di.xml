@@ -6,16 +6,16 @@
             <argument name="sectionSourceMap" xsi:type="array">
 
                 <item name="tealium-tags-add-to-cart" xsi:type="string">Tealium\Tags\CustomerData\JsAddToCart</item>
-                
+
                 <item name="tealium-tags-remove-from-cart" xsi:type="string">Tealium\Tags\CustomerData\JsRemoveFromCart</item>
 
                 <item name="tealium-tags-add-to-compare" xsi:type="string">Tealium\Tags\CustomerData\JsAddToCompare</item>
 
                 <item name="tealium-tags-customer-account-create" xsi:type="string">Tealium\Tags\CustomerData\JsCreateAccount</item>
 
-                <item name="tealium-tags-customer-logout" xsi:type="string">Tealium\Tags\CustomerData\JsLogoutAccount</item>
-
                 <item name="tealium-tags-customer-login" xsi:type="string">Tealium\Tags\CustomerData\JsLoginAccount</item>
+
+                <item name="tealium-tags-customer" xsi:type="string">Tealium\Tags\CustomerData\JsCustomer</item>
 
                 <item name="tealium-tags-add-to-wish" xsi:type="string">Tealium\Tags\CustomerData\JsAddToWish</item>
 
@@ -27,8 +27,6 @@
 
                 <item name="tealium-tags-update-qty" xsi:type="string">Tealium\Tags\CustomerData\JsUpdateQty</item>
 
-                <item name="tealium-tags-checkout" xsi:type="string">Tealium\Tags\CustomerData\JsUpdateQty</item>
-
                 <item name="tealium-tags-save-review" xsi:type="string">Tealium\Tags\CustomerData\JsSaveReview</item>
 
                 <item name="tealium-tags-newsletter-signup" xsi:type="string">Tealium\Tags\CustomerData\JsSaveNewsletter</item>
@@ -36,7 +34,9 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Quote\Model\CouponManagement">
-        <plugin name="tealium_coupon_eplay" type="Tealium\Tags\Model\Plugin\CouponManagementPlugin" sortOrder="1" />
+
+    <!-- cart totals for the data layer travel with the private "cart" section -->
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="tealium_tags_cart_totals" type="Tealium\Tags\Plugin\CustomerData\CartPlugin"/>
     </type>
 </config>

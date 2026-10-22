@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Session\SessionManagerInterface as CoreSession;
 
-class JsSaveReview implements SectionSourceInterface
+class JsSaveReview extends AbstractSection
 {
 
     protected $_customerSession;
@@ -21,7 +20,7 @@ class JsSaveReview implements SectionSourceInterface
         $this->_coreSession = $coreSession;
     }
 
-    public function getSectionData()
+    protected function buildSectionData()
     {
         $nickName = $this->_coreSession->getTealiumReviewerNickname();
         $this->_coreSession->unsTealiumReviewerNickname();

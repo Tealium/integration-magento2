@@ -1,13 +1,12 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Checkout\Model\Cart;
 
-class RemoveProduct implements ObserverInterface
+class RemoveProduct extends AbstractObserver
 {
 
     //protected $_request;
@@ -36,7 +35,7 @@ class RemoveProduct implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         
         $quoteItem = $observer->getData('quote_item');

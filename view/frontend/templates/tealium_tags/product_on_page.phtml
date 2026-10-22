@@ -1,0 +1,39 @@
+<?php
+/**
+ * Adds the SKUs of the first products in the product list to utag_data.
+ *
+ * This is rendered at the end of the page, after the product list, so the
+ * list's collection has already been loaded with its paging and sorting.
+ * Reading it any earlier would load it without them.
+ *
+ * @var \Tealium\Tags\Block\Template $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$listBlock = $block->getLayout()->getBlock((string)$block->getData('list_block'));
+if (!$listBlock || !method_exists($listBlock, 'getLoadedProductCollection')) {
+    return;
+}
+
+$collection = $listBlock->getLoadedProductCollection();
+if (!$collection || !$collection->isLoaded()) {
+    return;
+}
+
+$skus = [];
+foreach ($collection as $product) {
+    $skus[] = $product->getSku();
+    if (count($skus) === 4) {
+        break;
+    }
+}
+if (empty($skus)) {
+    return;
+}
+
+$json = json_encode($skus, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+/* @noEscape */ echo $secureRenderer->renderTag(
+    'script',
+    ['type' => 'text/javascript'],
+    'if (window.utag_data) { window.utag_data.product_on_page = ' . $json . '; }',
+    false
+);

@@ -1,13 +1,12 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Request\Http;
 
-class MultishippingQtyUpdate implements ObserverInterface
+class MultishippingQtyUpdate extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -32,7 +31,7 @@ class MultishippingQtyUpdate implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
 
         $requestParamList=$this->_request->getParams();
@@ -41,8 +40,12 @@ class MultishippingQtyUpdate implements ObserverInterface
 
         //prepere data for checking
 
-        foreach ($requestParamList['ship'] as $shipItem) {
-            foreach ($shipItem as $id => $itemData) {
+        $ship = isset($requestParamList['ship']) && is_array($requestParamList['ship']) ? $requestParamList['ship'] : [];
+        foreach ($ship as $shipItem) {
+            foreach ((array)$shipItem as $id => $itemData) {
+                if (!is_array($itemData) || !isset($itemData['qty'])) {
+                    continue;
+                }
                 if (array_key_exists($id, $dataArray)) {
                     $dataArray[$id]['qty'] = $dataArray[$id]['qty']+$itemData['qty'];
                 } else {
@@ -56,7 +59,6 @@ class MultishippingQtyUpdate implements ObserverInterface
         $quoteList=$this->_checkoutSession->getQuote()->getAllVisibleItems();
         foreach ($dataArray as $id => $itemData) {
             foreach ($quoteList as $quoteItem) {
-                //echo $quoteItem->getItemId().'  '.$quoteItem->getQty().'   ';
                 if ($quoteItem->getItemId() == $id and $quoteItem->getQty() != $itemData['qty']) {
                     array_push($result, $id);
                 }

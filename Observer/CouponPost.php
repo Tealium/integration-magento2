@@ -1,12 +1,11 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Request\Http;
 
-class CouponPost implements ObserverInterface
+class CouponPost extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -27,7 +26,7 @@ class CouponPost implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
 
         $requestParamList = $this->_request->getParams();

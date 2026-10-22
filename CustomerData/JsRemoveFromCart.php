@@ -2,11 +2,10 @@
 
 namespace Tealium\Tags\CustomerData;
 
-use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Tealium\Tags\Helper\Product;
 
-class JsRemoveFromCart implements SectionSourceInterface
+class JsRemoveFromCart extends AbstractSection
 {
 
     protected $_checkoutSession;
@@ -23,16 +22,15 @@ class JsRemoveFromCart implements SectionSourceInterface
         $this->_productHelper = $productHelper;
     }
 
-    public function getSectionData()
+    protected function buildSectionData()
     {
         $product_id=$this->_customerSession->getTealiumRemoveProductId();
         $this->_customerSession->unsTealiumRemoveProductId();
 
         $qty = $this->_customerSession->getTealiumRemoveProductQty();
-        $this->_customerSession->unsTealiumAddProductQty();
+        $this->_customerSession->unsTealiumRemoveProductQty();
 
         $result = [];
-        ;
         if ($this->_customerSession->getTealiumEmptyCart()) {
             $result ['cart_empty'] = true;
             $this->_customerSession->unsTealiumEmptyCart();

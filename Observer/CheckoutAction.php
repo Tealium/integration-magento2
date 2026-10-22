@@ -1,11 +1,10 @@
 <?php
 namespace Tealium\Tags\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Model\Session as CustomerSession;
 
-class CheckoutAction implements ObserverInterface
+class CheckoutAction extends AbstractObserver
 {
 
     protected $_customerSession;
@@ -22,7 +21,7 @@ class CheckoutAction implements ObserverInterface
      *
      */
 
-    public function execute(Observer $observer)
+    protected function track(Observer $observer)
     {
         
         $order_ids = $observer->getData('order_ids');

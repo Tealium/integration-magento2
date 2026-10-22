@@ -28,31 +28,30 @@ if ($helper->getIsExternalScript($store)) {
 // enabled in the config.
 echo $helper->getDiagnosticTag($store);
 
-if ($this->getRegestry()->registry('current_product')->getTypeId() == 'configurable') :
-    ?>
+// keep product_price in sync when a configurable option changes the price
+$currentProduct = $this->getRegestry()->registry('current_product');
+if ($currentProduct && $currentProduct->getTypeId() == 'configurable') {
+    $priceScript = <<<'JS'
+require(['jquery'], function ($) {
+    $(function () {
+        $('[data-role=priceBox]').on('updatePrice', function (event) {
+            var oldPrice = event.target.innerText,
+                newPrice,
+                udo = window.utag_data;
 
-    <script type="text/javascript">
-        require(['jquery'],function($){
-            $(function(){
-                $('[data-role=priceBox]').on('updatePrice',function(event){
-                    var oldPrice = event.target.innerText;
-					//oldPrice.slice(10);
-                    if (oldPrice != ""){
-                        var newPrice = parseFloat(oldPrice.match(/[\d\.]+/));
-                       // newPrice.replace(/\r?\n|\r/g, "");
-                       // newPrice.replace(/[^0-9.]/g, "");
-                        var oldUDO = utag_data;
-                        if (oldUDO.product_price[0] != newPrice){
-                            oldUDO.product_price = [newPrice];
-                            
-                            utag.view(oldUDO);
-                            debugger;
-                        }
-                    }
-                })
-            })
+            if (oldPrice == "" || !udo || !udo.product_price) {
+                return;
+            }
+            newPrice = parseFloat(oldPrice.match(/[\d\.]+/));
+            if (udo.product_price[0] != newPrice) {
+                udo.product_price = [newPrice];
+                if (window.utag && typeof window.utag.view === 'function') {
+                    window.utag.view(udo);
+                }
+            }
         });
-    </script>
-
-<?php
-endif;
+    });
+});
+JS;
+    /* @noEscape */ echo $secureRenderer->renderTag('script', ['type' => 'text/javascript'], $priceScript, false);
+}
