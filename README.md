@@ -79,6 +79,9 @@ If you are using a first party domain place your client domain here
 
 
 ## Change Log
+- 4.2.0 Release (PHP minimum version bump)
+    - Require PHP 8.4.27 or higher (drops PHP 7.4 - 8.3 support)
+
 - 4.1.0 Release (Magento 2.4.8 / PHP 8.4 Update)
     - PHP code updates for compliance with PHP 8.4
 
