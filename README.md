@@ -85,7 +85,8 @@ If you are using a first party domain place your client domain here
 - 4.1.0 Release (Magento 2.4.8 / PHP 8.4 Update)
     - PHP code updates for compliance with PHP 8.4
 
-- 3.2.0 Release (Magento 2.4.6 / PHP 8.1 Update)
+- 4.0.0 Release (Magento 2.4.6 / PHP 8.1 Update)
+    - Note: this release was announced as 3.2.0 but tagged `v4.0`, and its `composer.json` still reports version 3.1.0 with a PHP 7.x constraint. Install `v4.1` or later instead.
     - FPD (First Party Domain) support
         - Optional FPD (First Party Domain) configuration. [FPD Tealium Docs](https://docs.tealium.com/iq-tag-management/administration/first-party-domains/about/)
     - Update older PHP code for compliance with PHP 8.1+
