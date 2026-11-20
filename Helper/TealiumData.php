@@ -526,12 +526,13 @@ class TealiumData extends AbstractHelper
 
         if ($this->customerSession->isLoggedIn()) {
             $customer = $this->customerSession->getCustomer();
-            $address = $customer->getDefaultShippingAddress();
+            // Use the address on this order (billing for virtual orders), not the customer's current default
+            $address = $order->getShippingAddress() ?: $order->getBillingAddress();
             if ($address) {
                 $outputArray['customer_city'] = $address->getCity() ? : [];
                 $outputArray['customer_country'] = $address->getCountryId() ? : [];
-                $outputArray['customer_first_name'] = $customer->getFirstname() ? : [];
-                $outputArray['customer_last_name'] = $customer->getLastname() ? : [];
+                $outputArray['customer_first_name'] = $order->getCustomerFirstname() ?: ($customer->getFirstname() ? : []);
+                $outputArray['customer_last_name'] = $order->getCustomerLastname() ?: ($customer->getLastname() ? : []);
                 $outputArray['customer_postal_code'] = $address->getPostcode() ? : [];
                 $outputArray['customer_state'] = $address->getRegion() ? : [];
             }

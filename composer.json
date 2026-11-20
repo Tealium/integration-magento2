@@ -2,7 +2,7 @@
     "name": "tealium/tags",
     "description": "",
     "require": {
-        "php": "^8.4.27",
+        "php": "~8.4.28 || ^8.5.13",
         "magento/framework": "^103.0",
         "magento/module-catalog": "^104.0",
         "magento/module-checkout": "^100.4",
@@ -20,7 +20,7 @@
 
     },
     "type": "magento2-module",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "license": "proprietary",
     "autoload": {
         "files": [

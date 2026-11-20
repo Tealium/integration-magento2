@@ -18,6 +18,7 @@ For Magento documentation, refer to [Magento DevDocs](http://devdocs.magento.com
 
 Ensure you have the following:
 
+- PHP 8.4.28+ or 8.5.13+ (earlier releases are affected by [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560))
 - Active Tealium IQ Account
 - Tealium Account ID (usually your company name)
 - Tealium Profile name associated with the app
@@ -79,6 +80,15 @@ If you are using a first party domain place your client domain here
 
 
 ## Change Log
+- 4.2.1 Release (Security: CVE-2026-115560)
+    - Require PHP `~8.4.28 || ^8.5.13`. This excludes PHP 8.4.27 and 8.5.0 - 8.5.12, which are affected by [CVE-2026-115560](https://www.cve.org/CVERecord?id=CVE-2026-115560) (PHP session serializer mismatch, possible remote code execution).
+    - Adds a critical admin system message when the running PHP version is affected and `session.upload_progress.enabled` is on. Composer checks the PHP that runs `composer install`, which may not be the PHP-FPM runtime.
+    - This is a PHP runtime vulnerability, not an extension vulnerability; the extension does not change session serialization. Mitigation until PHP is upgraded: set `session.upload_progress.enabled = 0`, and make sure every application sharing your session storage (Redis, Memcached, files) uses the same `session.serialize_handler`.
+    - Security: removed the third-party wildcard `*.opensourcebrokers.ca` from the `script-src` and `connect-src` CSP whitelist. It was unrelated to Tealium, and on Magento 2.4.7+ it applied to checkout payment pages.
+    - Fix: order events (`save_order`) listed configurable and bundle products twice (parent and child items).
+    - Fix: product compare, advanced search, popular search terms and tag list pages sent `product_id`/`product_sku`/`product_name`/`search_keyword` as one garbled string instead of an array (regression in 4.2.0). Advanced search terms are no longer HTML-encoded.
+    - Fix: the order confirmation page used the customer's current default address instead of the order's address.
+
 - 4.2.0 Release (PHP minimum version bump)
     - Require PHP 8.4.27 or higher (drops PHP 7.4 - 8.3 support)
 
