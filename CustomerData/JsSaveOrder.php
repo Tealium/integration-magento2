@@ -40,7 +40,8 @@ class JsSaveOrder extends AbstractSection
 
         $productIds = [];
         $quantities = [];
-        foreach ($order->getAllItems() as $item) {
+        // Visible items only: getAllItems() also returns configurable/bundle children, which duplicated products
+        foreach ($order->getAllVisibleItems() as $item) {
             $productIds[] = $item->getProductId();
             $quantities[] = $item->getQtyOrdered();
         }

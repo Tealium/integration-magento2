@@ -24,9 +24,9 @@ class JsSaveOrderTest extends TestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getAllItems'])
+            ->onlyMethods(['getAllItems', 'getAllVisibleItems'])
             ->getMock();
-        $order->method('getAllItems')->willReturn([
+        $order->method('getAllVisibleItems')->willReturn([
             new DataObject(['product_id' => 5, 'qty_ordered' => 2]),
             new DataObject(['product_id' => 6, 'qty_ordered' => 1])
         ]);
@@ -47,5 +47,43 @@ class JsSaveOrderTest extends TestCase
         $this->assertSame(['5', '6'], $data['data']['product_id']);
         $this->assertSame([42], $data['data']['cart_id']);
         $this->assertSame('save_order', $data['data']['tealium_event']);
+    }
+
+    /**
+     * A configurable product is one visible parent item plus a child item.
+     * Only the visible item may be reported, or products and quantities are duplicated.
+     */
+    public function testConfigurableChildItemsAreNotDuplicated()
+    {
+        $session = $this->getMockBuilder(CustomerSession::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['getTealiumCheckout', 'unsTealiumCheckout'])
+            ->getMock();
+        $session->method('getTealiumCheckout')->willReturn([7]);
+
+        $parent = new DataObject(['product_id' => 100, 'qty_ordered' => 2]);
+        $child = new DataObject(['product_id' => 200, 'qty_ordered' => 2, 'parent_item' => $parent]);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAllItems', 'getAllVisibleItems'])
+            ->getMock();
+        $order->method('getAllItems')->willReturn([$parent, $child]);
+        $order->method('getAllVisibleItems')->willReturn([$parent]);
+        $repository = $this->getMockForAbstractClass(OrderRepositoryInterface::class);
+        $repository->method('get')->willReturn($order);
+
+        $helper = $this->getMockBuilder(Product::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getItemsData'])
+            ->getMock();
+        $helper->expects($this->once())
+            ->method('getItemsData')
+            ->with([100], [2])
+            ->willReturn(['product_id' => ['100']]);
+
+        $data = (new JsSaveOrder($session, $helper, $repository))->getSectionData();
+
+        $this->assertSame(['100'], $data['data']['product_id']);
     }
 }

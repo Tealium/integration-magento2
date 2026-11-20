@@ -6,18 +6,13 @@ $store = $this->getStore();
 // populate the "$terms" local variable with the search terms
 $terms = [];
 
-$escaper = $this->getObjectManager()->create('Magento\Framework\Escaper');
-
 $searchBlock = $this->getLayout()->getBlock('catalogsearch_advanced_result');
 $searchCriterias = $searchBlock->getSearchCriterias();
 foreach (['left', 'right'] as $side) {
     if (isset($searchCriterias[$side]) && $searchCriterias[$side] ) {
         foreach ($searchCriterias[$side] as $criteria) {
-            $terms[] = $escaper
-                ->escapeHtml(__($criteria['name']))
-                .":"
-                .$escaper
-                ->escapeHtml($criteria['value']);
+            // Raw text: the data layer is JSON-encoded with JSON_HEX_* flags, so HTML-escaping here double-encodes
+            $terms[] = (string) __($criteria['name']) . ":" . (string) $criteria['value'];
         }
     }
 }
@@ -26,12 +21,12 @@ if (empty($terms)) {
     $terms[] = "no-criteria";
 }
 
-// set some custom data by imploding the terms
+// set some custom data from the terms
 $customData = [];
 $customData["page_type"] = "advanced search results";
 $customData["page_type"] = "advanced search";
 $customData["search_results"] = $searchBlock->getResultCount();
-$customData["search_keyword"] = implode('","', $terms);
+$customData["search_keyword"] = $terms;
 
 // create a tealium object for the page with custom data
 $tealium = $helper->init($store, $this, "Search")->
